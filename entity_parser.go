@@ -25,8 +25,8 @@ func getEntityData(page io.Reader) *entityData {
 
 			data := parseTableRow(z)
 			if len(data) > 0 {
-				finType, ok := reqEntityData[data[0]]
-				if ok {
+				finType := getFinDataType(data[0])
+				if finType != finDataUnknown {
 					for _, str := range data[1:] {
 						if len(str) > 0 {
 							if retData.SetData(str, finType) == nil {
