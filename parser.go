@@ -124,15 +124,15 @@ func parseTableData(z *html.Tokenizer) string {
 	return ""
 }
 
-func parseTableContents(z *html.Tokenizer) map[string]interface{} {
+func parseTableContents(z *html.Tokenizer) (string, string) {
 
-	retData := make(map[string]interface{})
+	var retKey, retVal string
 
 	token := z.Token()
 
 	if token.Type != html.StartTagToken && token.Data != "td" {
 		log.Fatal("Tokenizer passed incorrectly to parseTableData")
-		return nil
+		return "", ""
 	}
 
 	for !(token.Data == "td" && token.Type == html.EndTagToken) {
@@ -141,17 +141,14 @@ func parseTableContents(z *html.Tokenizer) map[string]interface{} {
 		}
 
 		if token.Type == html.TextToken {
-			retData["text"] = token.String
-		}
-
-		if token.Data == "a" {
-			name, href := parseHyperLinkTag(z)
-			retData[name] = href
+			retKey, retVal = "text", token.String()
+		} else if token.Data == "a" {
+			retKey, retVal = parseHyperLinkTag(z)
 		}
 		z.Next()
 		token = z.Token()
 	}
-	return retData
+	return retKey, retVal
 }
 
 func parseTableRow(z *html.Tokenizer) []string {

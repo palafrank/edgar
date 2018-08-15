@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 
 	"golang.org/x/net/html"
@@ -28,11 +27,11 @@ func getEntityData(page io.Reader) *entityData {
 			if len(data) > 0 {
 				finType, ok := reqEntityData[data[0]]
 				if ok {
-					fmt.Println("Found the share count row", finType, data)
-					for _, str := range data {
+					for _, str := range data[1:] {
 						if len(str) > 0 {
-							retData.SetData(str, finType)
-							break
+							if retData.SetData(str, finType) == nil {
+								break
+							}
 						}
 					}
 				}
