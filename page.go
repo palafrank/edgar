@@ -64,3 +64,12 @@ func getOpsPage(url string) (*OpsData, error) {
 	}
 	return getOpsData(resp)
 }
+
+func getCfPage(url string) (*CfData, error) {
+	url = baseURL + url
+	resp := getPage(url)
+	if resp == nil {
+		return nil, errors.New("Could not find the Cash Flow page " + url)
+	}
+	return getCfData(resp)
+}

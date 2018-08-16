@@ -21,6 +21,8 @@ var (
 	finDataOpsIncome         finDataType = "Operational Income"
 	finDataOpsExpense        finDataType = "Operational Expense"
 	finDataNetIncome         finDataType = "Net Income"
+	finDataOpCashFlow        finDataType = "Operating Cash Flow"
+	finDataCapEx             finDataType = "Capital Expenditure"
 	finDataUnknown           finDataType = "Unknown"
 
 	finDataSearchKeys = []finDataSearchInfo{
@@ -35,6 +37,9 @@ var (
 		{finDataOpsExpense, "operating expenses"},
 		{finDataOpsIncome, "operating income"},
 		{finDataNetIncome, "net income"},
+		{finDataOpCashFlow, "operating activities"},
+		{finDataCapEx, "plant and equipment"},
+		{finDataCapEx, "capital expen"},
 	}
 )
 
@@ -60,6 +65,11 @@ type OpsData struct {
 	OpIncome    int64 `finDataType:"Operational Income"`
 	OpExpense   int64 `finDataType:"Operational Expense"`
 	NetIncome   int64 `finDataType:"Net Income"`
+}
+
+type CfData struct {
+	OpCashFlow int64 `finDataType:"Operating Cash Flow"`
+	CapEx      int64 `finDataType:"Capital Expenditure"`
 }
 
 func (e *EntityData) SetData(d string, t finDataType) error {

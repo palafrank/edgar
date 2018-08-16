@@ -53,3 +53,20 @@ func TestOpsParser(t *testing.T) {
 		}
 	}
 }
+
+func TestCfParser(t *testing.T) {
+	f, _ := os.Open("./sample_cf.html")
+	cf, err := getCfData(f)
+	if err != nil {
+		t.Error(err.Error())
+	} else if cf == nil {
+		t.Error("Cash flow object was not returned")
+	} else {
+		if cf.OpCashFlow != 57911 {
+			t.Error("Incorrect cash flow from operations value parsed")
+		}
+		if cf.CapEx != int64(-10272) {
+			t.Error("Incorrect capital expenditure value parsed")
+		}
+	}
+}
