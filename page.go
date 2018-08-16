@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -46,11 +47,20 @@ func getFilingPage(url string, fileType filingType) map[filingDocType]string {
 	return filingPageParser(resp, fileType)
 }
 
-func getEnityPage(url string) *entityData {
+func getEnityPage(url string) (*EntityData, error) {
 	url = baseURL + url
 	resp := getPage(url)
 	if resp == nil {
-		return nil
+		return nil, errors.New("Could not find the Entity page " + url)
 	}
 	return getEntityData(resp)
+}
+
+func getOpsPage(url string) (*OpsData, error) {
+	url = baseURL + url
+	resp := getPage(url)
+	if resp == nil {
+		return nil, errors.New("Could not find the Operations page " + url)
+	}
+	return getOpsData(resp)
 }

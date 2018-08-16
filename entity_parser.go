@@ -10,35 +10,28 @@ var reqEntityData = map[string]finDataType{
 	"Entity Common Stock, Shares Outstanding": finDataSharesOutstanding,
 }
 
-func getEntityData(page io.Reader) *entityData {
+func getEntityData(page io.Reader) (*EntityData, error) {
 
-	retData := new(entityData)
+	retData := new(EntityData)
 	z := html.NewTokenizer(page)
-	tt := z.Next()
-	for tt != html.ErrorToken {
-		if tt == html.StartTagToken {
-			token := z.Token()
-			if token.Data != "tr" {
-				tt = z.Next()
-				continue
-			}
 
-			data := parseTableRow(z)
-			if len(data) > 0 {
-				finType := getFinDataType(data[0])
-				if finType != finDataUnknown {
-					for _, str := range data[1:] {
-						if len(str) > 0 {
-							if retData.SetData(str, finType) == nil {
-								break
-							}
+	data, err := parseTableRow(z)
+	for err == nil {
+		if len(data) > 0 {
+			finType := getFinDataType(data[0])
+			if finType != finDataUnknown {
+				for _, str := range data[1:] {
+					if normalizeNumber(str) > 0 {
+						err := SetData(retData, finType, str)
+						if err != nil {
+							return nil, err
 						}
+						break
 					}
 				}
 			}
-
 		}
-		tt = z.Next()
+		data, err = parseTableRow(z)
 	}
-	return retData
+	return retData, Validate(retData)
 }

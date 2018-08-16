@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"reflect"
 	"strings"
 )
 
@@ -17,6 +18,9 @@ var (
 	finDataRevenue           finDataType = "Revenue"
 	finDataCostOfRevenue     finDataType = "Cost Of Revenue"
 	finDataGrossMargin       finDataType = "Gross Margin"
+	finDataOpsIncome         finDataType = "Operational Income"
+	finDataOpsExpense        finDataType = "Operational Expense"
+	finDataNetIncome         finDataType = "Net Income"
 	finDataUnknown           finDataType = "Unknown"
 
 	finDataSearchKeys = []finDataSearchInfo{
@@ -28,6 +32,9 @@ var (
 		{finDataCostOfRevenue, "cost of revenue"},
 		{finDataGrossMargin, "gross margin"},
 		{finDataSharesOutstanding, "shares outstanding"},
+		{finDataOpsExpense, "operating expenses"},
+		{finDataOpsIncome, "operating income"},
+		{finDataNetIncome, "net income"},
 	}
 )
 
@@ -42,26 +49,65 @@ func getFinDataType(key string) finDataType {
 	return finDataUnknown
 }
 
-type entityData struct {
-	shareCount uint64
+type EntityData struct {
+	ShareCount int64 `finDataType:"Shares Outstanding"`
 }
 
-type opsData struct {
-	revenue     uint64
-	costOfSales uint64
-	grossMargin uint64
-	opIncome    uint64
-	opExpense   uint64
-	netIncome   uint64
+type OpsData struct {
+	Revenue     int64 `finDataType:"Revenue"`
+	CostOfSales int64 `finDataType:"Cost Of Revenue"`
+	GrossMargin int64 `finDataType:"Gross Margin"`
+	OpIncome    int64 `finDataType:"Operational Income"`
+	OpExpense   int64 `finDataType:"Operational Expense"`
+	NetIncome   int64 `finDataType:"Net Income"`
 }
 
-func (e *entityData) SetData(d string, t finDataType) error {
+func (e *EntityData) SetData(d string, t finDataType) error {
 	switch t {
 	case finDataSharesOutstanding:
-		e.shareCount = normalizeNumber(d)
-		if e.shareCount <= 0 {
+		e.ShareCount = normalizeNumber(d)
+		if e.ShareCount <= 0 {
 			return errors.New("Not the share count data")
 		}
 	}
 	return nil
+}
+
+//Validate is a function to check that no field is set to 0 after parsing
+func Validate(data interface{}) error {
+	var err string
+	t := reflect.TypeOf(data)
+	v := reflect.ValueOf(data)
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+		v = v.Elem()
+	}
+	for i := 0; i < t.NumField(); i++ {
+		val := v.Field(i).Int()
+		if val == 0 {
+			err += t.Field(i).Name + ","
+		}
+	}
+	if len(err) > 0 {
+		return errors.New("[" + err + "] " + "attributes did not parse")
+	}
+	return nil
+}
+
+func SetData(data interface{}, finType finDataType, val string) error {
+
+	t := reflect.TypeOf(data)
+	v := reflect.ValueOf(data)
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+		v = v.Elem()
+	}
+	for i := 0; i < t.NumField(); i++ {
+		tag, ok := t.Field(i).Tag.Lookup("finDataType")
+		if ok && string(finType) == tag {
+			v.Field(i).SetInt(normalizeNumber(val))
+			return nil
+		}
+	}
+	return errors.New("Could not find the field to set: " + string(finType))
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -151,22 +152,25 @@ func parseTableContents(z *html.Tokenizer) (string, string) {
 	return retKey, retVal
 }
 
-func parseTableRow(z *html.Tokenizer) []string {
+func parseTableRow(z *html.Tokenizer) ([]string, error) {
 	var retData []string
 	//Get the current token
 	token := z.Token()
 
 	//Check if this is really a table row
-	if token.Type != html.StartTagToken && token.Data != "tr" {
-		log.Fatal("Tokenizer passed incorrectly to parseTableRow")
-		return nil
+	for !(token.Type == html.StartTagToken && token.Data == "tr") {
+		tt := z.Next()
+		if tt == html.ErrorToken {
+			return nil, errors.New("Done with parsing")
+		}
+		token = z.Token()
 	}
 
 	//Till the end of the row collect data from each data block
 	for !(token.Data == "tr" && token.Type == html.EndTagToken) {
 
 		if token.Type == html.ErrorToken {
-			break
+			return nil, errors.New("Done with parsing")
 		}
 		if token.Data == "td" && token.Type == html.StartTagToken {
 			str := parseTableData(z)
@@ -178,7 +182,7 @@ func parseTableRow(z *html.Tokenizer) []string {
 		token = z.Token()
 	}
 
-	return retData
+	return retData, nil
 }
 
 func parseHyperLinkTag(z *html.Tokenizer) (string, string) {
