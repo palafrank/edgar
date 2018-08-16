@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type filingType string
 type filingDocType string
 
@@ -32,7 +34,9 @@ func main() {
 	*/
 
 	for _, link := range filingLinks {
-		getFilingPage(link, filingType10Q)
+		filingPages := getFilingPage(link, filingType10Q)
+		finData := getFinancialData(filingPages)
+		fmt.Println(finData)
 		break
 	}
 

@@ -27,6 +27,5 @@ func getBSData(page io.Reader) (*BSData, error) {
 		}
 		data, err = parseTableRow(z, false)
 	}
-
 	return retData, Validate(retData)
 }

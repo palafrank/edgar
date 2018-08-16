@@ -27,6 +27,5 @@ func getOpsData(page io.Reader) (*OpsData, error) {
 		}
 		data, err = parseTableRow(z, false)
 	}
-
 	return retData, Validate(retData)
 }

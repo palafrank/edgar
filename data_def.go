@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"log"
 	"reflect"
 	"strings"
 )
@@ -67,41 +69,70 @@ func getFinDataType(key string) finDataType {
 	return finDataUnknown
 }
 
+type FinancialReport struct {
+	Date   string      `json:"Report date"`
+	Entity *EntityData `json:"Entity Information"`
+	Ops    *OpsData    `json:"Operational Information"`
+	Bs     *BSData     `json:"Balance Sheet Information"`
+	Cf     *CfData     `json:"Cash Flow Information"`
+}
+
 type EntityData struct {
-	ShareCount int64 `finDataType:"Shares Outstanding"`
+	ShareCount int64 `json:"Shares Outstanding"`
 }
 
 type OpsData struct {
-	Revenue     int64 `finDataType:"Revenue"`
-	CostOfSales int64 `finDataType:"Cost Of Revenue"`
-	GrossMargin int64 `finDataType:"Gross Margin"`
-	OpIncome    int64 `finDataType:"Operational Income"`
-	OpExpense   int64 `finDataType:"Operational Expense"`
-	NetIncome   int64 `finDataType:"Net Income"`
+	Revenue     int64 `json:"Revenue"`
+	CostOfSales int64 `json:"Cost Of Revenue"`
+	GrossMargin int64 `json:"Gross Margin"`
+	OpIncome    int64 `json:"Operational Income"`
+	OpExpense   int64 `json:"Operational Expense"`
+	NetIncome   int64 `json:"Net Income"`
 }
 
 type CfData struct {
-	OpCashFlow int64 `finDataType:"Operating Cash Flow"`
-	CapEx      int64 `finDataType:"Capital Expenditure"`
+	OpCashFlow int64 `json:"Operating Cash Flow"`
+	CapEx      int64 `json:"Capital Expenditure"`
 }
 
 type BSData struct {
-	LDebt    int64 `finDataType:"Long-Term debt"`
-	SDebt    int64 `finDataType:"Short-Term debt"`
-	CLiab    int64 `finDataType:"Current Liabilities"`
-	Deferred int64 `finDataType:"Deferred revenue"`
-	Retained int64 `finDataType:"Retained Earnings"`
+	LDebt    int64 `json:"Long-Term debt"`
+	SDebt    int64 `json:"Short-Term debt"`
+	CLiab    int64 `json:"Current Liabilities"`
+	Deferred int64 `json:"Deferred revenue"`
+	Retained int64 `json:"Retained Earnings"`
 }
 
-func (e *EntityData) SetData(d string, t finDataType) error {
-	switch t {
-	case finDataSharesOutstanding:
-		e.ShareCount = normalizeNumber(d)
-		if e.ShareCount <= 0 {
-			return errors.New("Not the share count data")
-		}
+func (f *FinancialReport) String() string {
+	data, err := json.Marshal(f)
+	if err != nil {
+		log.Fatal("Error marshaling financial data")
 	}
-	return nil
+	return string(data)
+}
+
+func (bs *BSData) String() string {
+	data, err := json.Marshal(bs)
+	if err != nil {
+		log.Fatal("Error marshaling balance sheet data")
+	}
+	return string(data)
+}
+
+func (cf *CfData) String() string {
+	data, err := json.Marshal(cf)
+	if err != nil {
+		log.Fatal("Error marshaling cash flow data")
+	}
+	return string(data)
+}
+
+func (ops *OpsData) String() string {
+	data, err := json.Marshal(ops)
+	if err != nil {
+		log.Fatal("Error marshaling Operational information data")
+	}
+	return string(data)
 }
 
 //Validate is a function to check that no field is set to 0 after parsing
@@ -134,7 +165,7 @@ func SetData(data interface{}, finType finDataType, val string) error {
 		v = v.Elem()
 	}
 	for i := 0; i < t.NumField(); i++ {
-		tag, ok := t.Field(i).Tag.Lookup("finDataType")
+		tag, ok := t.Field(i).Tag.Lookup("json")
 		if ok && string(finType) == tag {
 			v.Field(i).SetInt(normalizeNumber(val))
 			return nil

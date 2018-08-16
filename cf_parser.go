@@ -27,6 +27,5 @@ func getCfData(page io.Reader) (*CfData, error) {
 		}
 		data, err = parseTableRow(z, false)
 	}
-
 	return retData, Validate(retData)
 }

@@ -71,8 +71,6 @@ func TestEntityParser(t *testing.T) {
 	entity, err := getEntityData(f)
 	if err != nil {
 		t.Error(err.Error())
-	} else if entity == nil {
-		t.Error("Entity object was not returned")
 	} else if entity.ShareCount != 4829926 {
 		t.Error("Incorrect sharecount value parsed")
 	}
@@ -83,8 +81,6 @@ func TestOpsParser(t *testing.T) {
 	ops, err := getOpsData(f)
 	if err != nil {
 		t.Error(err.Error())
-	} else if ops == nil {
-		t.Error("Operations object was not returned")
 	} else {
 		if ops.Revenue != 53265 {
 			t.Error("Revenue amount did not match")
@@ -112,8 +108,6 @@ func TestCfParser(t *testing.T) {
 	cf, err := getCfData(f)
 	if err != nil {
 		t.Error(err.Error())
-	} else if cf == nil {
-		t.Error("Cash flow object was not returned")
 	} else {
 		if cf.OpCashFlow != 57911 {
 			t.Error("Incorrect cash flow from operations value parsed")
@@ -129,8 +123,6 @@ func TestBSParser(t *testing.T) {
 	bs, err := getBSData(f)
 	if err != nil {
 		t.Error(err.Error())
-	} else if bs == nil {
-		t.Error("Balance sheet object was not returned")
 	} else {
 		if bs.CLiab != 88548 {
 			t.Error("Incorrect current liabilities from balance sheet value parsed")
@@ -144,5 +136,16 @@ func TestBSParser(t *testing.T) {
 		if bs.Retained != 79436 {
 			t.Error("Incorrect retained earningd from balance sheet value parsed")
 		}
+	}
+}
+
+func TestFinReportMarshal(t *testing.T) {
+	var data FinancialReport
+	str := data.String()
+	if !(strings.Contains(str, "Entity Information") &&
+		strings.Contains(str, "Operational Information") &&
+		strings.Contains(str, "Balance Sheet Information") &&
+		strings.Contains(str, "Cash Flow Information")) {
+		t.Error("Error generating the JSON document for financial report")
 	}
 }
