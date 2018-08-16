@@ -14,6 +14,7 @@ type finDataSearchInfo struct {
 }
 
 var (
+	//Types of financial data collected
 	finDataSharesOutstanding finDataType = "Shares Outstanding"
 	finDataRevenue           finDataType = "Revenue"
 	finDataCostOfRevenue     finDataType = "Cost Of Revenue"
@@ -23,8 +24,14 @@ var (
 	finDataNetIncome         finDataType = "Net Income"
 	finDataOpCashFlow        finDataType = "Operating Cash Flow"
 	finDataCapEx             finDataType = "Capital Expenditure"
+	finDataLDebt             finDataType = "Long-Term debt"
+	finDataSDebt             finDataType = "Short-Term debt"
+	finDataCLiab             finDataType = "Current Liabilities"
+	finDataDeferred          finDataType = "Deferred revenue"
+	finDataRetained          finDataType = "Retained Earnings"
 	finDataUnknown           finDataType = "Unknown"
 
+	//Keys to search for financial data in the filings
 	finDataSearchKeys = []finDataSearchInfo{
 		{finDataRevenue, "net revenue"},
 		{finDataRevenue, "net sales"},
@@ -40,6 +47,12 @@ var (
 		{finDataOpCashFlow, "operating activities"},
 		{finDataCapEx, "plant and equipment"},
 		{finDataCapEx, "capital expen"},
+		{finDataSDebt, "current portion of long-term"},
+		{finDataLDebt, "long term debt"},
+		{finDataLDebt, "long-term debt"},
+		{finDataCLiab, "total current liabilities"},
+		{finDataDeferred, "deferred revenue"},
+		{finDataRetained, "retained earnings"},
 	}
 )
 
@@ -70,6 +83,14 @@ type OpsData struct {
 type CfData struct {
 	OpCashFlow int64 `finDataType:"Operating Cash Flow"`
 	CapEx      int64 `finDataType:"Capital Expenditure"`
+}
+
+type BSData struct {
+	LDebt    int64 `finDataType:"Long-Term debt"`
+	SDebt    int64 `finDataType:"Short-Term debt"`
+	CLiab    int64 `finDataType:"Current Liabilities"`
+	Deferred int64 `finDataType:"Deferred revenue"`
+	Retained int64 `finDataType:"Retained Earnings"`
 }
 
 func (e *EntityData) SetData(d string, t finDataType) error {

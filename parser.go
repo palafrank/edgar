@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -92,9 +91,6 @@ func filingPageParser(page io.Reader, fileType filingType) map[filingDocType]str
 	case filingType10K:
 	case filingType10Q:
 		docs := map10QReports(page, filingLinks)
-		for key, val := range docs {
-			fmt.Println("Documents found", key, val)
-		}
 		return docs
 	}
 

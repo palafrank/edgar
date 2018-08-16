@@ -73,3 +73,12 @@ func getCfPage(url string) (*CfData, error) {
 	}
 	return getCfData(resp)
 }
+
+func getBSPage(url string) (*BSData, error) {
+	url = baseURL + url
+	resp := getPage(url)
+	if resp == nil {
+		return nil, errors.New("Could not find the Balance Sheet page " + url)
+	}
+	return getBSData(resp)
+}

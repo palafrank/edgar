@@ -70,3 +70,26 @@ func TestCfParser(t *testing.T) {
 		}
 	}
 }
+
+func TestBSParser(t *testing.T) {
+	f, _ := os.Open("./sample_bs.html")
+	bs, err := getBSData(f)
+	if err != nil {
+		t.Error(err.Error())
+	} else if bs == nil {
+		t.Error("Balance sheet object was not returned")
+	} else {
+		if bs.CLiab != 88548 {
+			t.Error("Incorrect current liabilities from balance sheet value parsed")
+		}
+		if bs.LDebt != 97128 {
+			t.Error("Incorrect long term debt from balance sheet value parsed")
+		}
+		if bs.SDebt != 5498 {
+			t.Error("Incorrect short term debt from balance sheet value parsed")
+		}
+		if bs.Retained != 79436 {
+			t.Error("Incorrect retained earningd from balance sheet value parsed")
+		}
+	}
+}
