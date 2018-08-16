@@ -34,7 +34,7 @@ func getFilingLinks(ticker string, fileType filingType) []string {
 	if resp == nil {
 		return nil
 	}
-	return queryPageParser(resp)
+	return queryPageParser(resp, fileType)
 
 }
 

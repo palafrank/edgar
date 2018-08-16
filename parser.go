@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -21,9 +22,11 @@ var filingButtonId string = "interactiveDataBtn"
   - Since it is a link the tag will be a hyperlink with a button with the id=interactiveDataBtn
   - The actual link is the href attribute in the "a" token just before the id attribute
 */
-func queryPageParser(page io.Reader) []string {
+func queryPageParser(page io.Reader, docType filingType) []string {
 	var filingLinks []string
+
 	z := html.NewTokenizer(page)
+
 	tt := z.Next()
 	for tt != html.ErrorToken {
 		if tt == html.StartTagToken {
@@ -49,7 +52,25 @@ func queryPageParser(page io.Reader) []string {
 	if len(filingLinks) == 0 {
 		log.Fatal("Did not find any valid documents for the given filing")
 	}
+
 	return filingLinks
+}
+
+func getQueryDates(page io.Reader, docType filingType) []string {
+	var filingDates []string
+
+	z := html.NewTokenizer(page)
+
+	data, err := parseTableRow(z)
+	for err == nil {
+		if len(data) == 5 && data[0] == string(docType) {
+			fmt.Println("Found the ", docType, "filing", data[3])
+			filingDates = append(filingDates, data[3])
+		}
+		data, err = parseTableRow(z)
+	}
+	fmt.Println(filingDates)
+	return filingDates
 }
 
 /*
@@ -114,13 +135,14 @@ func parseTableData(z *html.Tokenizer) string {
 		if token.Type == html.TextToken {
 			return token.String()
 		}
+		//Going for the end of the td tag
 		z.Next()
 		token = z.Token()
-
 	}
 	return ""
 }
 
+/*
 func parseTableContents(z *html.Tokenizer) (string, string) {
 
 	var retKey, retVal string
@@ -147,6 +169,7 @@ func parseTableContents(z *html.Tokenizer) (string, string) {
 	}
 	return retKey, retVal
 }
+*/
 
 func parseTableRow(z *html.Tokenizer) ([]string, error) {
 	var retData []string
@@ -181,43 +204,53 @@ func parseTableRow(z *html.Tokenizer) ([]string, error) {
 	return retData, nil
 }
 
-func parseHyperLinkTag(z *html.Tokenizer) (string, string) {
+var reqHyperLinks = map[string]bool{
+	"interactiveDataBtn": true,
+}
+
+func parseHyperLinkTag(z *html.Tokenizer, token html.Token) string {
 	var href string
 	var id string
 	var text string
 
-	token := z.Token()
+	/*
+		cond := (token.Data == "a") &&
+			((token.Type == html.StartTagToken) || (token.Type == html.SelfClosingTagToken))
 
-	cond := (token.Data == "a") &&
-		((token.Type == html.StartTagToken) || (token.Type == html.StartTagToken))
-
-	if !cond {
-		log.Fatal("Tokenizer passed incorrectly to parseHyperLinkTag")
+		if !cond {
+			return ""
+		}
+	*/
+	for _, a := range token.Attr {
+		switch a.Key {
+		case "id":
+			id = a.Val
+		case "href":
+			href = a.Val
+		}
 	}
-
 	for !(token.Data == "a" && token.Type == html.EndTagToken) {
-		if token.Data == "a" {
-			for _, a := range token.Attr {
-				switch a.Key {
-				case "id":
-					id = a.Val
-				case "href":
-					href = a.Val
-				}
-			}
-		} else if token.Type == html.TextToken {
-			text = token.String()
+		if token.Type == html.ErrorToken {
+			log.Fatal("Unexpected table data parsing error")
+			return ""
+		}
+		if token.Type == html.TextToken {
+			text = token.Data
 		}
 		z.Next()
 		token = z.Token()
 	}
 	if len(id) == 0 && len(text) == 0 {
 		log.Fatal("Bad parsing of hyperlink tag")
+		return ""
 	} else {
 		if len(text) == 0 {
 			text = id
 		}
 	}
-
-	return text, href
+	_, ok := reqHyperLinks[text]
+	if ok {
+		return href
+	}
+	return ""
 }

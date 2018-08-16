@@ -5,6 +5,14 @@ import (
 	"testing"
 )
 
+func TestFilingQuery(t *testing.T) {
+	f, _ := os.Open("./sample_query.html")
+	links := queryPageParser(f, filingType10Q)
+	if len(links) != 10 {
+		t.Error("Incorrect number of filing links found")
+	}
+}
+
 func TestFilingParser(t *testing.T) {
 	f, _ := os.Open("./sample_10Q.html")
 	docs := filingPageParser(f, filingType10Q)
