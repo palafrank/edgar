@@ -97,11 +97,9 @@ func parseTableData(z *html.Tokenizer, parseHref bool) string {
 		}
 
 		if token.Type == html.TextToken {
-			//str := token.String()
 			str := strings.TrimSpace(token.String())
 			if len(str) > 0 {
-				//fmt.Println("GETTING OUT WITH TEXT: ", str, len(str))
-				return token.String()
+				return str
 			}
 		}
 		if parseHref {
@@ -116,38 +114,8 @@ func parseTableData(z *html.Tokenizer, parseHref bool) string {
 		z.Next()
 		token = z.Token()
 	}
-	//fmt.Println("ED OF TD")
 	return ""
 }
-
-/*
-func parseTableContents(z *html.Tokenizer) (string, string) {
-
-	var retKey, retVal string
-
-	token := z.Token()
-
-	if token.Type != html.StartTagToken && token.Data != "td" {
-		log.Fatal("Tokenizer passed incorrectly to parseTableData")
-		return "", ""
-	}
-
-	for !(token.Data == "td" && token.Type == html.EndTagToken) {
-		if token.Type == html.ErrorToken {
-			break
-		}
-
-		if token.Type == html.TextToken {
-			retKey, retVal = "text", token.String()
-		} else if token.Data == "a" {
-			retKey, retVal = parseHyperLinkTag(z)
-		}
-		z.Next()
-		token = z.Token()
-	}
-	return retKey, retVal
-}
-*/
 
 func parseTableRow(z *html.Tokenizer, parseHref bool) ([]string, error) {
 	var retData []string
@@ -191,14 +159,6 @@ func parseHyperLinkTag(z *html.Tokenizer, token html.Token) string {
 	var id string
 	var text string
 
-	/*
-		cond := (token.Data == "a") &&
-			((token.Type == html.StartTagToken) || (token.Type == html.SelfClosingTagToken))
-
-		if !cond {
-			return ""
-		}
-	*/
 	for _, a := range token.Attr {
 		switch a.Key {
 		case "id":
