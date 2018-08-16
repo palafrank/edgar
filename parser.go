@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -22,55 +21,20 @@ var filingButtonId string = "interactiveDataBtn"
   - Since it is a link the tag will be a hyperlink with a button with the id=interactiveDataBtn
   - The actual link is the href attribute in the "a" token just before the id attribute
 */
-func queryPageParser(page io.Reader, docType filingType) []string {
-	var filingLinks []string
+func queryPageParser(page io.Reader, docType filingType) map[string]string {
+
+	filingInfo := make(map[string]string)
 
 	z := html.NewTokenizer(page)
 
-	tt := z.Next()
-	for tt != html.ErrorToken {
-		if tt == html.StartTagToken {
-			token := z.Token()
-			if token.Data != "a" {
-				tt = z.Next()
-				continue
-			}
-			for i, a := range token.Attr {
-				if a.Key == "id" && a.Val == "interactiveDataBtn" {
-					//The link is the previous Attr
-					b := token.Attr[i-1]
-					if b.Key == "href" {
-						filingLinks = append(filingLinks, b.Val)
-					}
-				}
-			}
-		}
-		tt = z.Next()
-	}
-
-	//fmt.Println(filingLinks)
-	if len(filingLinks) == 0 {
-		log.Fatal("Did not find any valid documents for the given filing")
-	}
-
-	return filingLinks
-}
-
-func getQueryDates(page io.Reader, docType filingType) []string {
-	var filingDates []string
-
-	z := html.NewTokenizer(page)
-
-	data, err := parseTableRow(z)
+	data, err := parseTableRow(z, true)
 	for err == nil {
 		if len(data) == 5 && data[0] == string(docType) {
-			fmt.Println("Found the ", docType, "filing", data[3])
-			filingDates = append(filingDates, data[3])
+			filingInfo[data[3]] = data[1]
 		}
-		data, err = parseTableRow(z)
+		data, err = parseTableRow(z, true)
 	}
-	fmt.Println(filingDates)
-	return filingDates
+	return filingInfo
 }
 
 /*
@@ -119,7 +83,7 @@ func filingPageParser(page io.Reader, fileType filingType) map[filingDocType]str
 
 }
 
-func parseTableData(z *html.Tokenizer) string {
+func parseTableData(z *html.Tokenizer, parseHref bool) string {
 	token := z.Token()
 
 	if token.Type != html.StartTagToken && token.Data != "td" {
@@ -133,12 +97,26 @@ func parseTableData(z *html.Tokenizer) string {
 		}
 
 		if token.Type == html.TextToken {
-			return token.String()
+			//str := token.String()
+			str := strings.TrimSpace(token.String())
+			if len(str) > 0 {
+				//fmt.Println("GETTING OUT WITH TEXT: ", str, len(str))
+				return token.String()
+			}
+		}
+		if parseHref {
+			if token.Data == "a" && token.Type == html.StartTagToken {
+				str := parseHyperLinkTag(z, token)
+				if len(str) > 0 {
+					return str
+				}
+			}
 		}
 		//Going for the end of the td tag
 		z.Next()
 		token = z.Token()
 	}
+	//fmt.Println("ED OF TD")
 	return ""
 }
 
@@ -171,7 +149,7 @@ func parseTableContents(z *html.Tokenizer) (string, string) {
 }
 */
 
-func parseTableRow(z *html.Tokenizer) ([]string, error) {
+func parseTableRow(z *html.Tokenizer, parseHref bool) ([]string, error) {
 	var retData []string
 	//Get the current token
 	token := z.Token()
@@ -192,7 +170,7 @@ func parseTableRow(z *html.Tokenizer) ([]string, error) {
 			return nil, errors.New("Done with parsing")
 		}
 		if token.Data == "td" && token.Type == html.StartTagToken {
-			str := parseTableData(z)
+			str := parseTableData(z, parseHref)
 			if len(str) > 0 {
 				retData = append(retData, str)
 			}
@@ -244,7 +222,7 @@ func parseHyperLinkTag(z *html.Tokenizer, token html.Token) string {
 		log.Fatal("Bad parsing of hyperlink tag")
 		return ""
 	} else {
-		if len(text) == 0 {
+		if len(id) > 0 {
 			text = id
 		}
 	}

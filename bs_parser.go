@@ -11,7 +11,7 @@ func getBSData(page io.Reader) (*BSData, error) {
 
 	z := html.NewTokenizer(page)
 
-	data, err := parseTableRow(z)
+	data, err := parseTableRow(z, false)
 	for err == nil {
 		if len(data) > 0 {
 			finType := getFinDataType(data[0])
@@ -25,7 +25,7 @@ func getBSData(page io.Reader) (*BSData, error) {
 				}
 			}
 		}
-		data, err = parseTableRow(z)
+		data, err = parseTableRow(z, false)
 	}
 
 	return retData, Validate(retData)

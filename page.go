@@ -28,7 +28,7 @@ func getPage(url string) io.Reader {
 	return resp.Body
 }
 
-func getFilingLinks(ticker string, fileType filingType) []string {
+func getFilingLinks(ticker string, fileType filingType) map[string]string {
 	url := createQueryURL(ticker, fileType)
 	resp := getPage(url)
 	if resp == nil {

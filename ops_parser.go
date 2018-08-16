@@ -11,7 +11,7 @@ func getOpsData(page io.Reader) (*OpsData, error) {
 
 	z := html.NewTokenizer(page)
 
-	data, err := parseTableRow(z)
+	data, err := parseTableRow(z, false)
 	for err == nil {
 		if len(data) > 0 {
 			finType := getFinDataType(data[0])
@@ -25,7 +25,7 @@ func getOpsData(page io.Reader) (*OpsData, error) {
 				}
 			}
 		}
-		data, err = parseTableRow(z)
+		data, err = parseTableRow(z, false)
 	}
 
 	return retData, Validate(retData)
