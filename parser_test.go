@@ -44,7 +44,7 @@ func TestFilingQuery(t *testing.T) {
 		"2016-01-27": "/cgi-bin/viewer?action=view&cik=320193&accession_number=0001193125-16-439878&xbrl_type=v",
 		"2015-07-22": "/cgi-bin/viewer?action=view&cik=320193&accession_number=0001193125-15-259935&xbrl_type=v",
 	}
-	f, _ := os.Open("./sample_query.html")
+	f, _ := os.Open("samples/sample_query.html")
 	links := queryPageParser(f, filingType10Q)
 	if len(links) != 10 {
 		t.Error("Incorrect number of filing links found")
@@ -59,7 +59,7 @@ func TestFilingQuery(t *testing.T) {
 }
 
 func TestFilingParser(t *testing.T) {
-	f, _ := os.Open("./sample_10Q.html")
+	f, _ := os.Open("samples/sample_10Q.html")
 	docs := filingPageParser(f, filingType10Q)
 	if len(docs) != 5 {
 		t.Error("Did not get the expected number of filing document in the 10Q")
@@ -67,7 +67,7 @@ func TestFilingParser(t *testing.T) {
 }
 
 func TestEntityParser(t *testing.T) {
-	f, _ := os.Open("./sample_entity.html")
+	f, _ := os.Open("samples/sample_entity.html")
 	entity, err := getEntityData(f)
 	if err != nil {
 		t.Error(err.Error())
@@ -77,7 +77,7 @@ func TestEntityParser(t *testing.T) {
 }
 
 func TestOpsParser(t *testing.T) {
-	f, _ := os.Open("./sample_ops.html")
+	f, _ := os.Open("samples/sample_ops.html")
 	ops, err := getOpsData(f)
 	if err != nil {
 		t.Error(err.Error())
@@ -104,7 +104,7 @@ func TestOpsParser(t *testing.T) {
 }
 
 func TestCfParser(t *testing.T) {
-	f, _ := os.Open("./sample_cf.html")
+	f, _ := os.Open("samples/sample_cf.html")
 	cf, err := getCfData(f)
 	if err != nil {
 		t.Error(err.Error())
@@ -119,7 +119,7 @@ func TestCfParser(t *testing.T) {
 }
 
 func TestBSParser(t *testing.T) {
-	f, _ := os.Open("./sample_bs.html")
+	f, _ := os.Open("samples/sample_bs.html")
 	bs, err := getBSData(f)
 	if err != nil {
 		t.Error(err.Error())

@@ -24,7 +24,10 @@ func main() {
 	   This will give an array of links to each of the filings.
 	   The number of links depends on the query
 	*/
-	filingLinks := getFilingLinks("AAPL", filingType10Q)
+	filingLinks := getFilingLinks("AAPL", filingType10K)
+	for key, val := range filingLinks {
+		fmt.Println(key, ":", val)
+	}
 
 	/*
 	   Go through each filing
@@ -33,11 +36,12 @@ func main() {
 	   - Go through each of the entries in the map and for each document type get the data needed
 	*/
 
-	for _, link := range filingLinks {
-		filingPages := getFilingPage(link, filingType10Q)
-		finData := getFinancialData(filingPages)
-		fmt.Println(finData)
-		break
-	}
-
+	/*
+		for _, link := range filingLinks {
+			filingPages := getFilingPage(link, filingType10Q)
+			finData := getFinancialData(filingPages)
+			fmt.Println(finData)
+			break
+		}
+	*/
 }
