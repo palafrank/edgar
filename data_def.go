@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"reflect"
 	"strings"
@@ -69,12 +70,22 @@ func getFinDataType(key string) finDataType {
 	return finDataUnknown
 }
 
+type Company struct {
+	Ticker  string    `json:"Company"`
+	Reports []*Filing `json:"Financial Reports"`
+}
+
+type Filing struct {
+	Date    string           `json:"Report date"`
+	FinData *FinancialReport `json:"Financial Data"`
+}
+
 type FinancialReport struct {
-	Date   string      `json:"Report date"`
-	Entity *EntityData `json:"Entity Information"`
-	Ops    *OpsData    `json:"Operational Information"`
-	Bs     *BSData     `json:"Balance Sheet Information"`
-	Cf     *CfData     `json:"Cash Flow Information"`
+	DocType filingType  `json:"Filing Type"`
+	Entity  *EntityData `json:"Entity Information"`
+	Ops     *OpsData    `json:"Operational Information"`
+	Bs      *BSData     `json:"Balance Sheet Information"`
+	Cf      *CfData     `json:"Cash Flow Information"`
 }
 
 type EntityData struct {
@@ -103,7 +114,35 @@ type BSData struct {
 	Retained int64 `json:"Retained Earnings"`
 }
 
-func (f *FinancialReport) String() string {
+/*
+func (c *Company) String() string {
+	data, err := json.MarshalIndent(c, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling Company data")
+	}
+	fmt.Println("COMPANY")
+	return string(data)
+}
+*/
+
+func (c Company) String() string {
+	data, err := json.MarshalIndent(c, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling Company data")
+	}
+	return string(data)
+}
+
+func (f Filing) String() string {
+	data, err := json.MarshalIndent(f, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling Filing data")
+	}
+	fmt.Println("FILING")
+	return string(data)
+}
+
+func (f FinancialReport) String() string {
 	data, err := json.MarshalIndent(f, "", "    ")
 	if err != nil {
 		log.Fatal("Error marshaling financial data")
@@ -111,24 +150,24 @@ func (f *FinancialReport) String() string {
 	return string(data)
 }
 
-func (bs *BSData) String() string {
-	data, err := json.Marshal(bs)
+func (bs BSData) String() string {
+	data, err := json.MarshalIndent(bs, "", "    ")
 	if err != nil {
 		log.Fatal("Error marshaling balance sheet data")
 	}
 	return string(data)
 }
 
-func (cf *CfData) String() string {
-	data, err := json.Marshal(cf)
+func (cf CfData) String() string {
+	data, err := json.MarshalIndent(cf, "", "    ")
 	if err != nil {
 		log.Fatal("Error marshaling cash flow data")
 	}
 	return string(data)
 }
 
-func (ops *OpsData) String() string {
-	data, err := json.Marshal(ops)
+func (ops OpsData) String() string {
+	data, err := json.MarshalIndent(ops, "", "    ")
 	if err != nil {
 		log.Fatal("Error marshaling Operational information data")
 	}

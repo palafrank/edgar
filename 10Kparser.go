@@ -15,7 +15,7 @@ var docs10K = map[string]filingDocType{
 	"CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME": filingDocInc,
 	"CONSOLIDATED BALANCE SHEETS":                     filingDocBS,
 	"CONSOLIDATED STATEMENTS OF CASH FLOWS":           filingDocCF,
-	"Document and Entity Information":                 filingDocEN,
+	"DOCUMENT AND ENTITY INFORMATION":                 filingDocEN,
 }
 
 func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]string {

@@ -222,8 +222,17 @@ func Test10KBSParser(t *testing.T) {
 }
 
 func TestFinReportMarshal(t *testing.T) {
+
+	var company Company
+	var filing Filing
 	var data FinancialReport
-	data.Date = "2018-01-01"
+
+	company.Ticker = "AAPL"
+	company.Reports = append(company.Reports, &filing)
+	filing.Date = "2017-02-1"
+	filing.FinData = &data
+
+	data.DocType = filingType10K
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	data.Bs, _ = getBSData(f)
 	f, _ = os.Open("samples/sample_10K_cf.html")
@@ -233,16 +242,15 @@ func TestFinReportMarshal(t *testing.T) {
 	f, _ = os.Open("samples/sample_10K_entity.html")
 	data.Entity, _ = getEntityData(f)
 	str := data.String()
-
 	if !(strings.Contains(str, "Entity Information") &&
 		strings.Contains(str, "Operational Information") &&
 		strings.Contains(str, "Balance Sheet Information") &&
 		strings.Contains(str, "Cash Flow Information")) {
 		t.Error("Error generating the JSON document for financial report")
 	}
-
 	f, _ = os.Open("samples/sample_10K_marshal.json")
 	b, _ := ioutil.ReadAll(f)
+
 	//There is an extra byte at the end of the save file that needs to be
 	//eliminated to avoid a mismatch
 	if str != string(b[:len(b)-1]) {

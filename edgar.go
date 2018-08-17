@@ -17,31 +17,38 @@ var (
 	filingDocIg  filingDocType = "Ignore"
 )
 
+/*
+	Sequence of extracting financial data:
+	    - Input: Ticker symbol and type of filing
+			- Step 1: Using input get the links available for the query
+			    - The returned map is indexed on date and contains links to the filing
+			- Step 2: For each link
+			    - Get the documents related to that filing ex. Entity, Balance Sheet
+					- For each document get the relevant information and return the data
+					- Collect the data into a report
+					- Add the report under the TICKER and the date in that order
+*/
+
 func main() {
+	ticker := "AAPL"
+	fileType := filingType10K
 
+	var company Company
 	/*
-	   First run the query and get all the links for the filings
-	   This will give an array of links to each of the filings.
-	   The number of links depends on the query
+		   First run the query and get all the links for the filings of a certain type
+			 Return:
+			   Map of filing links indexed by date of filing
 	*/
-	filingLinks := getFilingLinks("AAPL", filingType10K)
+	filingLinks := getFilingLinks(ticker, fileType)
+
+	company.Ticker = ticker
+
 	for key, val := range filingLinks {
-		fmt.Println(key, ":", val)
+		filing := new(Filing)
+		filing.FinData = getFinancialData(val, filingType10K)
+		filing.Date = key
+		company.Reports = append(company.Reports, filing)
+		break
 	}
-
-	/*
-	   Go through each filing
-	   - Get the filing page and find all the links to the associated reports
-	         - This will give a map of document types mapped to the corresponding links
-	   - Go through each of the entries in the map and for each document type get the data needed
-	*/
-
-	/*
-		for _, link := range filingLinks {
-			filingPages := getFilingPage(link, filingType10Q)
-			finData := getFinancialData(filingPages)
-			fmt.Println(finData)
-			break
-		}
-	*/
+	fmt.Println(company)
 }

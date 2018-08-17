@@ -42,7 +42,7 @@ func getFilingLinks(ticker string, fileType filingType) map[string]string {
 //Returns a map:
 // key=Document type ex.Cash flow statement
 // Value = link to that that sheet
-func getFilingPage(url string, fileType filingType) map[filingDocType]string {
+func getFilingDocs(url string, fileType filingType) map[filingDocType]string {
 	url = baseURL + url
 	resp := getPage(url)
 	if resp == nil {
@@ -52,17 +52,23 @@ func getFilingPage(url string, fileType filingType) map[filingDocType]string {
 	return filingPageParser(resp, fileType)
 }
 
-func getFinancialData(db map[filingDocType]string) *FinancialReport {
+func getFinancialData(url string, fileType filingType) *FinancialReport {
 
 	var err error
+
+	docs := getFilingDocs(url, fileType)
+
 	fr := new(FinancialReport)
 
-	for key, val := range db {
+	fr.DocType = fileType
+	for key, val := range docs {
 		url := baseURL + val
 		page := getPage(url)
 		if page == nil {
 			log.Fatal("Did not find the doc page" + val)
 		}
+		defer page.Close()
+
 		switch key {
 		case filingDocBS:
 			fr.Bs, err = getBSData(page)

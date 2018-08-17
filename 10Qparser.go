@@ -15,14 +15,18 @@ var docs10Q = map[string]filingDocType{
 	"CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME": filingDocInc,
 	"CONDENSED CONSOLIDATED BALANCE SHEETS":                     filingDocBS,
 	"CONDENSED CONSOLIDATED STATEMENTS OF CASH FLOWS":           filingDocCF,
-	"Document and Entity Information":                           filingDocEN,
+	"DOCUMENT AND ENTITY INFORMATION":                           filingDocEN,
 }
 
 func getDocType(title string, fileType filingType) filingDocType {
+
 	strs := strings.Split(title, " (")
 	strs[0] = strings.TrimSpace(strs[0])
+	strs[0] = strings.ToUpper(strs[0])
+
 	docType := filingDocIg
 	ok := false
+
 	if fileType == filingType10K {
 		docType, ok = docs10K[strs[0]]
 	} else {
