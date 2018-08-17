@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -58,11 +59,19 @@ func TestFilingQuery(t *testing.T) {
 
 }
 
-func TestFilingParser(t *testing.T) {
+func TestFiling10QParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10Q.html")
 	docs := filingPageParser(f, filingType10Q)
 	if len(docs) != 5 {
 		t.Error("Did not get the expected number of filing document in the 10Q")
+	}
+}
+
+func TestFiling10KParser(t *testing.T) {
+	f, _ := os.Open("samples/sample_10K.html")
+	docs := filingPageParser(f, filingType10K)
+	if len(docs) != 5 {
+		t.Error("Did not get the expected number of filing document in the 10K")
 	}
 }
 
@@ -72,6 +81,16 @@ func TestEntityParser(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	} else if entity.ShareCount != 4829926 {
+		t.Error("Incorrect sharecount value parsed")
+	}
+}
+
+func Test10KEntityParser(t *testing.T) {
+	f, _ := os.Open("samples/sample_10K_entity.html")
+	entity, err := getEntityData(f)
+	if err != nil {
+		t.Error(err.Error())
+	} else if entity.ShareCount != 5575331 {
 		t.Error("Incorrect sharecount value parsed")
 	}
 }
@@ -103,6 +122,33 @@ func TestOpsParser(t *testing.T) {
 	}
 }
 
+func Test10KOpsParser(t *testing.T) {
+	f, _ := os.Open("samples/sample_10K_ops.html")
+	ops, err := getOpsData(f)
+	if err != nil {
+		t.Error(err.Error())
+	} else {
+		if ops.Revenue != 233715 {
+			t.Error("Revenue amount did not match")
+		}
+		if ops.CostOfSales != 140089 {
+			t.Error("Cost of Sales amount did not match")
+		}
+		if ops.GrossMargin != 93626 {
+			t.Error("Gross margin amount did not match")
+		}
+		if ops.OpExpense != 22396 {
+			t.Error("Operational Expense amount did not match")
+		}
+		if ops.OpIncome != 71230 {
+			t.Error("Operational Income amount did not match")
+		}
+		if ops.NetIncome != 53394 {
+			t.Error("Net income amount did not match")
+		}
+	}
+}
+
 func TestCfParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_cf.html")
 	cf, err := getCfData(f)
@@ -113,6 +159,21 @@ func TestCfParser(t *testing.T) {
 			t.Error("Incorrect cash flow from operations value parsed")
 		}
 		if cf.CapEx != int64(-10272) {
+			t.Error("Incorrect capital expenditure value parsed")
+		}
+	}
+}
+
+func Test10KCfParser(t *testing.T) {
+	f, _ := os.Open("samples/sample_10K_cf.html")
+	cf, err := getCfData(f)
+	if err != nil {
+		t.Error(err.Error())
+	} else {
+		if cf.OpCashFlow != 81266 {
+			t.Error("Incorrect cash flow from operations value parsed")
+		}
+		if cf.CapEx != int64(-11247) {
 			t.Error("Incorrect capital expenditure value parsed")
 		}
 	}
@@ -139,13 +200,52 @@ func TestBSParser(t *testing.T) {
 	}
 }
 
+func Test10KBSParser(t *testing.T) {
+	f, _ := os.Open("samples/sample_10K_bs.html")
+	bs, err := getBSData(f)
+	if err != nil {
+		t.Error(err.Error())
+	} else {
+		if bs.CLiab != 80610 {
+			t.Error("Incorrect current liabilities from balance sheet value parsed")
+		}
+		if bs.LDebt != 53463 {
+			t.Error("Incorrect long term debt from balance sheet value parsed")
+		}
+		if bs.SDebt != 2500 {
+			t.Error("Incorrect short term debt from balance sheet value parsed")
+		}
+		if bs.Retained != 92284 {
+			t.Error("Incorrect retained earningd from balance sheet value parsed")
+		}
+	}
+}
+
 func TestFinReportMarshal(t *testing.T) {
 	var data FinancialReport
+	data.Date = "2018-01-01"
+	f, _ := os.Open("samples/sample_10K_bs.html")
+	data.Bs, _ = getBSData(f)
+	f, _ = os.Open("samples/sample_10K_cf.html")
+	data.Cf, _ = getCfData(f)
+	f, _ = os.Open("samples/sample_10K_ops.html")
+	data.Ops, _ = getOpsData(f)
+	f, _ = os.Open("samples/sample_10K_entity.html")
+	data.Entity, _ = getEntityData(f)
 	str := data.String()
+
 	if !(strings.Contains(str, "Entity Information") &&
 		strings.Contains(str, "Operational Information") &&
 		strings.Contains(str, "Balance Sheet Information") &&
 		strings.Contains(str, "Cash Flow Information")) {
 		t.Error("Error generating the JSON document for financial report")
+	}
+
+	f, _ = os.Open("samples/sample_10K_marshal.json")
+	b, _ := ioutil.ReadAll(f)
+	//There is an extra byte at the end of the save file that needs to be
+	//eliminated to avoid a mismatch
+	if str != string(b[:len(b)-1]) {
+		t.Error("Marshaled data doesnot match reference JSON")
 	}
 }

@@ -1,0 +1,25 @@
+{
+    "Report date": "2018-01-01",
+    "Entity Information": {
+        "Shares Outstanding": 5575331
+    },
+    "Operational Information": {
+        "Revenue": 233715,
+        "Cost Of Revenue": 140089,
+        "Gross Margin": 93626,
+        "Operational Income": 71230,
+        "Operational Expense": 22396,
+        "Net Income": 53394
+    },
+    "Balance Sheet Information": {
+        "Long-Term debt": 53463,
+        "Short-Term debt": 2500,
+        "Current Liabilities": 80610,
+        "Deferred revenue": 3624,
+        "Retained Earnings": 92284
+    },
+    "Cash Flow Information": {
+        "Operating Cash Flow": 81266,
+        "Capital Expenditure": -11247
+    }
+}

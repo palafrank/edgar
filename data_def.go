@@ -104,7 +104,7 @@ type BSData struct {
 }
 
 func (f *FinancialReport) String() string {
-	data, err := json.Marshal(f)
+	data, err := json.MarshalIndent(f, "", "    ")
 	if err != nil {
 		log.Fatal("Error marshaling financial data")
 	}

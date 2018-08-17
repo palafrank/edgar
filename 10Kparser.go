@@ -10,32 +10,15 @@ import (
 	"golang.org/x/net/html"
 )
 
-var docs10Q = map[string]filingDocType{
-	"CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS":           filingDocOps,
-	"CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME": filingDocInc,
-	"CONDENSED CONSOLIDATED BALANCE SHEETS":                     filingDocBS,
-	"CONDENSED CONSOLIDATED STATEMENTS OF CASH FLOWS":           filingDocCF,
-	"Document and Entity Information":                           filingDocEN,
+var docs10K = map[string]filingDocType{
+	"CONSOLIDATED STATEMENTS OF OPERATIONS":           filingDocOps,
+	"CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME": filingDocInc,
+	"CONSOLIDATED BALANCE SHEETS":                     filingDocBS,
+	"CONSOLIDATED STATEMENTS OF CASH FLOWS":           filingDocCF,
+	"Document and Entity Information":                 filingDocEN,
 }
 
-func getDocType(title string, fileType filingType) filingDocType {
-	strs := strings.Split(title, " (")
-	strs[0] = strings.TrimSpace(strs[0])
-	docType := filingDocIg
-	ok := false
-	if fileType == filingType10K {
-		docType, ok = docs10K[strs[0]]
-	} else {
-		docType, ok = docs10Q[strs[0]]
-	}
-	if ok && !strings.Contains(title, "Parenthetical") {
-		//Found a wanted document
-		return docType
-	}
-	return filingDocIg
-}
-
-func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]string {
+func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]string {
 	retData := make(map[filingDocType]string)
 
 	z := html.NewTokenizer(page)
@@ -56,7 +39,7 @@ func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 						break
 					}
 					token = z.Token()
-					docType := getDocType(token.String(), filingType10Q)
+					docType := getDocType(token.String(), filingType10K)
 					if docType != filingDocIg {
 						//Get the report number
 						//fmt.Println("Found a wanted doc ", docType, token.String(), reportNum)
