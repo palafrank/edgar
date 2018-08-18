@@ -62,6 +62,7 @@ func getFinancialData(url string, fileType filingType) *FinancialReport {
 
 	fr.DocType = fileType
 	for key, val := range docs {
+		fmt.Println("Getting: ", key, val)
 		url := baseURL + val
 		page := getPage(url)
 		if page == nil {
@@ -73,22 +74,22 @@ func getFinancialData(url string, fileType filingType) *FinancialReport {
 		case filingDocBS:
 			fr.Bs, err = getBSData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the Balance sheet doc")
+				log.Fatal("Failed to ge the Balance sheet doc: ", err)
 			}
 		case filingDocCF:
 			fr.Cf, err = getCfData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the cash flow doc")
+				log.Fatal("Failed to ge the cash flow doc: ", err)
 			}
 		case filingDocEN:
 			fr.Entity, err = getEntityData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the Entity sheet doc")
+				log.Fatal("Failed to ge the Entity sheet doc: ", err)
 			}
 		case filingDocOps:
 			fr.Ops, err = getOpsData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the operations sheet doc")
+				log.Fatal("Failed to ge the operations sheet doc ", err)
 			}
 
 		}

@@ -89,29 +89,29 @@ type FinancialReport struct {
 }
 
 type EntityData struct {
-	ShareCount int64 `json:"Shares Outstanding"`
+	ShareCount int64 `json:"Shares Outstanding" required:"true"`
 }
 
 type OpsData struct {
-	Revenue     int64 `json:"Revenue"`
-	CostOfSales int64 `json:"Cost Of Revenue"`
-	GrossMargin int64 `json:"Gross Margin"`
-	OpIncome    int64 `json:"Operational Income"`
-	OpExpense   int64 `json:"Operational Expense"`
-	NetIncome   int64 `json:"Net Income"`
+	Revenue     int64 `json:"Revenue" required:"true"`
+	CostOfSales int64 `json:"Cost Of Revenue" required:"true"`
+	GrossMargin int64 `json:"Gross Margin" required:"true"`
+	OpIncome    int64 `json:"Operational Income" required:"true"`
+	OpExpense   int64 `json:"Operational Expense" required:"true"`
+	NetIncome   int64 `json:"Net Income" required:"true"`
 }
 
 type CfData struct {
-	OpCashFlow int64 `json:"Operating Cash Flow"`
-	CapEx      int64 `json:"Capital Expenditure"`
+	OpCashFlow int64 `json:"Operating Cash Flow" required:"true"`
+	CapEx      int64 `json:"Capital Expenditure" required:"true"`
 }
 
 type BSData struct {
-	LDebt    int64 `json:"Long-Term debt"`
-	SDebt    int64 `json:"Short-Term debt"`
-	CLiab    int64 `json:"Current Liabilities"`
-	Deferred int64 `json:"Deferred revenue"`
-	Retained int64 `json:"Retained Earnings"`
+	LDebt    int64 `json:"Long-Term debt" required:"true"`
+	SDebt    int64 `json:"Short-Term debt" required:"true"`
+	CLiab    int64 `json:"Current Liabilities" required:"true"`
+	Deferred int64 `json:"Deferred revenue" required:"false"`
+	Retained int64 `json:"Retained Earnings" required:"true"`
 }
 
 /*
@@ -184,8 +184,9 @@ func Validate(data interface{}) error {
 		v = v.Elem()
 	}
 	for i := 0; i < t.NumField(); i++ {
+		tag, ok := t.Field(i).Tag.Lookup("required")
 		val := v.Field(i).Int()
-		if val == 0 {
+		if val == 0 && (ok && tag == "true") {
 			err += t.Field(i).Name + ","
 		}
 	}
@@ -206,7 +207,9 @@ func SetData(data interface{}, finType finDataType, val string) error {
 	for i := 0; i < t.NumField(); i++ {
 		tag, ok := t.Field(i).Tag.Lookup("json")
 		if ok && string(finType) == tag {
-			v.Field(i).SetInt(normalizeNumber(val))
+			if v.Field(i).Int() == 0 {
+				v.Field(i).SetInt(normalizeNumber(val))
+			}
 			return nil
 		}
 	}

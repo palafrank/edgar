@@ -17,7 +17,11 @@ func normalizeNumber(str string) int64 {
 	str = strings.TrimRight(str, " ")
 	str = strings.TrimLeft(str, "(")
 	str = strings.TrimRight(str, ")")
-	s := strings.Split(str, ",")
+
+	//TODO: Ignoring decimals for now
+	s := strings.Split(str, ".")
+	s = strings.Split(s[0], ",")
+
 	if len(s) > 0 {
 		var s1 string
 		for _, data := range s {
