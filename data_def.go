@@ -46,6 +46,8 @@ var (
 		{finDataSharesOutstanding, "shares outstanding"},
 		{finDataOpsExpense, "operating expenses"},
 		{finDataOpsIncome, "operating income"},
+		{finDataOpsIncome, "operating (loss)"},
+		{finDataOpsIncome, "operating loss"},
 		{finDataNetIncome, "net income"},
 		{finDataOpCashFlow, "operating activities"},
 		{finDataCapEx, "plant and equipment"},
@@ -95,7 +97,7 @@ type EntityData struct {
 type OpsData struct {
 	Revenue     int64 `json:"Revenue" required:"true"`
 	CostOfSales int64 `json:"Cost Of Revenue" required:"true"`
-	GrossMargin int64 `json:"Gross Margin" required:"true"`
+	GrossMargin int64 `json:"Gross Margin" required:"true" generate:"true"`
 	OpIncome    int64 `json:"Operational Income" required:"true"`
 	OpExpense   int64 `json:"Operational Expense" required:"true"`
 	NetIncome   int64 `json:"Net Income" required:"true"`
@@ -174,6 +176,17 @@ func (ops OpsData) String() string {
 	return string(data)
 }
 
+func generateData(data interface{}, name string) int64 {
+	switch name {
+	case "GrossMargin":
+		val, ok := data.(*OpsData)
+		if ok {
+			return val.Revenue - val.CostOfSales
+		}
+	}
+	return 0
+}
+
 //Validate is a function to check that no field is set to 0 after parsing
 func Validate(data interface{}) error {
 	var err string
@@ -187,7 +200,17 @@ func Validate(data interface{}) error {
 		tag, ok := t.Field(i).Tag.Lookup("required")
 		val := v.Field(i).Int()
 		if val == 0 && (ok && tag == "true") {
-			err += t.Field(i).Name + ","
+			tag, ok = t.Field(i).Tag.Lookup("generate")
+			if ok && tag == "true" {
+				num := generateData(data, t.Field(i).Name)
+				if num == 0 {
+					err += t.Field(i).Name + ","
+				} else {
+					v.Field(i).SetInt(num)
+				}
+			} else {
+				err += t.Field(i).Name + ","
+			}
 		}
 	}
 	if len(err) > 0 {

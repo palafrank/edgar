@@ -74,9 +74,11 @@ func filingPageParser(page io.Reader, fileType filingType) map[filingDocType]str
 
 	switch fileType {
 	case filingType10K:
+		log.Println("Getting 10K filing documents")
 		docs := map10KReports(page, filingLinks)
 		return docs
 	case filingType10Q:
+		log.Println("Getting 10Q filing documents")
 		docs := map10QReports(page, filingLinks)
 		return docs
 	}

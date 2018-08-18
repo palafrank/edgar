@@ -18,6 +18,19 @@ var docs10Q = map[string]filingDocType{
 	"DOCUMENT AND ENTITY INFORMATION":                           filingDocEN,
 }
 
+func getMissing10QDocs(data map[filingDocType]string) string {
+	var ret string
+	ret = "[ "
+	for key, val := range docs10Q {
+		_, ok := data[val]
+		if !ok {
+			ret = ret + " " + key
+		}
+	}
+	ret += " ]"
+	return ret
+}
+
 func getDocType(title string, fileType filingType) filingDocType {
 
 	strs := strings.Split(title, " (")
@@ -71,8 +84,8 @@ func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 		}
 		tt = z.Next()
 	}
-	if len(retData) <= 0 {
-		log.Fatal("Did not find any documents for the filing requested")
+	if len(retData) != len(docs10Q) {
+		log.Fatal("Did not find following documents: " + getMissing10QDocs(retData))
 	}
 	return retData
 }

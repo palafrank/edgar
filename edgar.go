@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"log"
+)
 
 type filingType string
 type filingDocType string
@@ -30,7 +32,7 @@ var (
 */
 
 func main() {
-	ticker := "AGN"
+	ticker := "AAPL"
 	fileType := filingType10K
 
 	var company Company
@@ -45,11 +47,11 @@ func main() {
 
 	for key, val := range filingLinks {
 		filing := new(Filing)
-		fmt.Println(key, ":", val)
+		log.Println("Geting filing for", ticker, "filed on", key)
 		filing.FinData = getFinancialData(val, filingType10K)
 		filing.Date = key
 		company.Reports = append(company.Reports, filing)
 		break
 	}
-	fmt.Println(company)
+	log.Println(company)
 }

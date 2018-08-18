@@ -30,7 +30,7 @@ func getFilingLinks(ticker string, fileType filingType) map[string]string {
 	url := createQueryURL(ticker, fileType)
 	resp := getPage(url)
 	if resp == nil {
-		fmt.Println("No response on the query for docs")
+		log.Println("No response on the query for docs")
 		return nil
 	}
 	defer resp.Close()
@@ -62,7 +62,7 @@ func getFinancialData(url string, fileType filingType) *FinancialReport {
 
 	fr.DocType = fileType
 	for key, val := range docs {
-		fmt.Println("Getting: ", key, val)
+		log.Println("Getting: ", key, val)
 		url := baseURL + val
 		page := getPage(url)
 		if page == nil {
@@ -74,22 +74,22 @@ func getFinancialData(url string, fileType filingType) *FinancialReport {
 		case filingDocBS:
 			fr.Bs, err = getBSData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the Balance sheet doc: ", err)
+				log.Fatal("Failed to get the Balance sheet doc: ", err)
 			}
 		case filingDocCF:
 			fr.Cf, err = getCfData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the cash flow doc: ", err)
+				log.Fatal("Failed to get the cash flow doc: ", err)
 			}
 		case filingDocEN:
 			fr.Entity, err = getEntityData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the Entity sheet doc: ", err)
+				log.Fatal("Failed to get the Entity sheet doc: ", err)
 			}
 		case filingDocOps:
 			fr.Ops, err = getOpsData(page)
 			if err != nil {
-				log.Fatal("Failed to ge the operations sheet doc ", err)
+				log.Fatal("Failed to get the operations sheet doc ", err)
 			}
 
 		}

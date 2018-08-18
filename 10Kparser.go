@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -18,6 +17,19 @@ var docs10K = map[string]filingDocType{
 	"DOCUMENT AND ENTITY INFORMATION":                 filingDocEN,
 }
 
+func getMissing10KDocs(data map[filingDocType]string) string {
+	var ret string
+	ret = "[ "
+	for key, val := range docs10K {
+		_, ok := data[val]
+		if !ok {
+			ret = ret + " " + key
+		}
+	}
+	ret += " ]"
+	return ret
+}
+
 func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]string {
 	retData := make(map[filingDocType]string)
 
@@ -25,9 +37,6 @@ func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 	tt := z.Next()
 	for tt != html.ErrorToken {
 		token := z.Token()
-		if token.Data == "var" {
-			fmt.Println("Found the var")
-		}
 		if token.Data == "a" {
 			for _, a := range token.Attr {
 				if a.Key == "href" && strings.Contains(a.Val, "loadReport") {
@@ -50,8 +59,9 @@ func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 		}
 		tt = z.Next()
 	}
-	if len(retData) <= 0 {
-		log.Fatal("Did not find any documents for the filing requested")
+	if len(retData) != len(docs10K) {
+		log.Fatal("Did not find the following filing documents: " +
+			getMissing10KDocs(retData))
 	}
 	return retData
 }
