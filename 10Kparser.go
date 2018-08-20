@@ -9,27 +9,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-var docs10K = map[string]filingDocType{
-	"CONSOLIDATED STATEMENTS OF OPERATIONS":           filingDocOps,
-	"CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME": filingDocInc,
-	"CONSOLIDATED BALANCE SHEETS":                     filingDocBS,
-	"CONSOLIDATED STATEMENTS OF CASH FLOWS":           filingDocCF,
-	"DOCUMENT AND ENTITY INFORMATION":                 filingDocEN,
-}
-
-func getMissing10KDocs(data map[filingDocType]string) string {
-	var ret string
-	ret = "[ "
-	for key, val := range docs10K {
-		_, ok := data[val]
-		if !ok {
-			ret = ret + " " + key
-		}
-	}
-	ret += " ]"
-	return ret
-}
-
 func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]string {
 	retData := make(map[filingDocType]string)
 
@@ -48,7 +27,7 @@ func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 						break
 					}
 					token = z.Token()
-					docType := getDocType(token.String(), filingType10K)
+					docType := lookupDocType(token.String())
 					if docType != filingDocIg {
 						//Get the report number
 						//fmt.Println("Found a wanted doc ", docType, token.String(), reportNum)
@@ -59,9 +38,9 @@ func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 		}
 		tt = z.Next()
 	}
-	if len(retData) != len(docs10K) {
+	if len(retData) != len(requiredDocTypes) {
 		log.Fatal("Did not find the following filing documents: " +
-			getMissing10KDocs(retData))
+			getMissingDocs(retData))
 	}
 	return retData
 }

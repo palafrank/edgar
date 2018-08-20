@@ -10,6 +10,8 @@ import (
 )
 
 type finDataType string
+type filingType string
+type filingDocType string
 
 type finDataSearchInfo struct {
 	finDataName finDataType
@@ -17,6 +19,18 @@ type finDataSearchInfo struct {
 }
 
 var (
+	//Filing types
+	filingType10Q filingType = "10-Q"
+	filingType10K filingType = "10-K"
+
+	//Document types
+	filingDocOps filingDocType = "Operations"
+	filingDocInc filingDocType = "Income"
+	filingDocBS  filingDocType = "Assets"
+	filingDocCF  filingDocType = "Cash Flow"
+	filingDocEN  filingDocType = "Entity Info"
+	filingDocIg  filingDocType = "Ignore"
+
 	//Types of financial data collected
 	finDataSharesOutstanding finDataType = "Shares Outstanding"
 	finDataRevenue           finDataType = "Revenue"
@@ -59,7 +73,59 @@ var (
 		{finDataDeferred, "deferred revenue"},
 		{finDataRetained, "retained earnings"},
 	}
+
+	//Required Documents list
+	requiredDocTypes = map[filingDocType]bool{
+		filingDocOps: true,
+		filingDocInc: true,
+		filingDocBS:  true,
+		filingDocCF:  true,
+		filingDocEN:  true,
+	}
 )
+
+func lookupDocType(data string) filingDocType {
+
+	if strings.Contains(data, "PARENTHETICAL") {
+		//skip this doc
+		return filingDocIg
+	}
+
+	data = strings.ToUpper(data)
+
+	if strings.Contains(data, "DOCUMENT") && strings.Contains(data, "ENTITY") {
+		//Entity document
+		return filingDocEN
+	} else if strings.Contains(data, "BALANCE SHEETS") {
+		//Balance sheet
+		return filingDocBS
+	} else if strings.Contains(data, "OPERATIONS") {
+		//Operations statement
+		return filingDocOps
+	} else if strings.Contains(data, "INCOME") {
+		//Income statement
+		return filingDocInc
+	} else if strings.Contains(data, "CASH FLOWS") {
+		//Cash flow statement
+		return filingDocCF
+	}
+	return filingDocIg
+}
+
+func getMissingDocs(data map[filingDocType]string) string {
+	var ret string
+	ret = "[ "
+	for key, val := range requiredDocTypes {
+		if val == true {
+			_, ok := data[key]
+			if !ok {
+				ret = ret + " " + string(key)
+			}
+		}
+	}
+	ret += " ]"
+	return ret
+}
 
 func getFinDataType(key string) finDataType {
 	key = strings.ToLower(key)

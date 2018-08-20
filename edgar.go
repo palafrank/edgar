@@ -4,21 +4,6 @@ import (
 	"log"
 )
 
-type filingType string
-type filingDocType string
-
-var (
-	filingType10Q filingType = "10-Q"
-	filingType10K filingType = "10-K"
-
-	filingDocOps filingDocType = "Operations"
-	filingDocInc filingDocType = "Income"
-	filingDocBS  filingDocType = "Assets"
-	filingDocCF  filingDocType = "Cash Flow"
-	filingDocEN  filingDocType = "Entity Info"
-	filingDocIg  filingDocType = "Ignore"
-)
-
 /*
 	Sequence of extracting financial data:
 	    - Input: Ticker symbol and type of filing
@@ -32,7 +17,7 @@ var (
 */
 
 func main() {
-	ticker := "AAPL"
+	ticker := "AGN"
 	fileType := filingType10K
 
 	var company Company

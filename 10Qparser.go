@@ -10,48 +10,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-var docs10Q = map[string]filingDocType{
-	"CONDENSED CONSOLIDATED STATEMENTS OF OPERATIONS":           filingDocOps,
-	"CONDENSED CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME": filingDocInc,
-	"CONDENSED CONSOLIDATED BALANCE SHEETS":                     filingDocBS,
-	"CONDENSED CONSOLIDATED STATEMENTS OF CASH FLOWS":           filingDocCF,
-	"DOCUMENT AND ENTITY INFORMATION":                           filingDocEN,
-}
-
-func getMissing10QDocs(data map[filingDocType]string) string {
-	var ret string
-	ret = "[ "
-	for key, val := range docs10Q {
-		_, ok := data[val]
-		if !ok {
-			ret = ret + " " + key
-		}
-	}
-	ret += " ]"
-	return ret
-}
-
-func getDocType(title string, fileType filingType) filingDocType {
-
-	strs := strings.Split(title, " (")
-	strs[0] = strings.TrimSpace(strs[0])
-	strs[0] = strings.ToUpper(strs[0])
-
-	docType := filingDocIg
-	ok := false
-
-	if fileType == filingType10K {
-		docType, ok = docs10K[strs[0]]
-	} else {
-		docType, ok = docs10Q[strs[0]]
-	}
-	if ok && !strings.Contains(title, "Parenthetical") {
-		//Found a wanted document
-		return docType
-	}
-	return filingDocIg
-}
-
 func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]string {
 	retData := make(map[filingDocType]string)
 
@@ -73,7 +31,7 @@ func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 						break
 					}
 					token = z.Token()
-					docType := getDocType(token.String(), filingType10Q)
+					docType := lookupDocType(token.String())
 					if docType != filingDocIg {
 						//Get the report number
 						//fmt.Println("Found a wanted doc ", docType, token.String(), reportNum)
@@ -84,8 +42,8 @@ func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 		}
 		tt = z.Next()
 	}
-	if len(retData) != len(docs10Q) {
-		log.Fatal("Did not find following documents: " + getMissing10QDocs(retData))
+	if len(retData) != len(requiredDocTypes) {
+		log.Fatal("Did not find following documents: " + getMissingDocs(retData))
 	}
 	return retData
 }
