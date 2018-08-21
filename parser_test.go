@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -117,7 +118,7 @@ func TestOpsParser(t *testing.T) {
 			t.Error("Operational Income amount did not match")
 		}
 		if ops.NetIncome != 11519 {
-			t.Error("Net income amount did not match")
+			t.Error("Net income amount did not match " + strconv.Itoa(int(ops.NetIncome)))
 		}
 	}
 }

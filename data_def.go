@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"regexp"
 	"strings"
 )
 
@@ -15,7 +16,7 @@ type filingDocType string
 
 type finDataSearchInfo struct {
 	finDataName finDataType
-	finDataStr  string
+	finDataStr  []string
 }
 
 var (
@@ -49,29 +50,35 @@ var (
 	finDataUnknown           finDataType = "Unknown"
 
 	//Keys to search for financial data in the filings
-	finDataSearchKeys = []finDataSearchInfo{
-		{finDataRevenue, "net revenue"},
-		{finDataRevenue, "net sales"},
-		{finDataRevenue, "total revenue"},
-		{finDataRevenue, "total sales"},
-		{finDataCostOfRevenue, "cost of sales"},
-		{finDataCostOfRevenue, "cost of revenue"},
-		{finDataGrossMargin, "gross margin"},
-		{finDataSharesOutstanding, "shares outstanding"},
-		{finDataOpsExpense, "operating expenses"},
-		{finDataOpsIncome, "operating income"},
-		{finDataOpsIncome, "operating (loss)"},
-		{finDataOpsIncome, "operating loss"},
-		{finDataNetIncome, "net income"},
-		{finDataOpCashFlow, "operating activities"},
-		{finDataCapEx, "plant and equipment"},
-		{finDataCapEx, "capital expen"},
-		{finDataSDebt, "current portion of long-term"},
-		{finDataLDebt, "long term debt"},
-		{finDataLDebt, "long-term debt"},
-		{finDataCLiab, "total current liabilities"},
-		{finDataDeferred, "deferred revenue"},
-		{finDataRetained, "retained earnings"},
+	finDataSearchKeys = map[filingDocType][]finDataSearchInfo{
+		filingDocOps: {
+			{finDataRevenue, []string{"net(?s)(.*)revenue"}},
+			{finDataRevenue, []string{"net(?s)(.*)sales"}},
+			{finDataRevenue, []string{"total(?s)(.*)revenue"}},
+			{finDataRevenue, []string{"total(?s)(.*)sales"}},
+			{finDataCostOfRevenue, []string{"cost(?s)(.*)sales"}},
+			{finDataCostOfRevenue, []string{"cost(?s)(.*)revenue"}},
+			{finDataGrossMargin, []string{"gross(?s)(.*)margin"}},
+			{finDataOpsExpense, []string{"operating(?s)(.*)expenses"}},
+			{finDataOpsIncome, []string{"operating(?s)(.*)income"}},
+			{finDataOpsIncome, []string{"operating(?s)(.*)loss"}},
+			{finDataNetIncome, []string{"net(?s)(.*)income"}},
+		},
+		filingDocCF: {
+			{finDataOpCashFlow, []string{"operating(?s)(.*)activities"}},
+			{finDataCapEx, []string{"plant(?s)(.*)equipment"}},
+			{finDataCapEx, []string{"capital(?s)(.*)expense"}},
+		},
+		filingDocBS: {
+			{finDataSDebt, []string{"current portion(?s)(.*)long-term debt"}},
+			{finDataLDebt, []string{"long-term debt"}},
+			{finDataCLiab, []string{"total(?s)(.*)current(?s)(.*)liabilities"}},
+			{finDataDeferred, []string{"deferred(?s)(.*)revenue"}},
+			{finDataRetained, []string{"retained(?s)(.*)earnings"}},
+		},
+		filingDocEN: {
+			{finDataSharesOutstanding, []string{"^(?s)(.*)shares outstanding"}},
+		},
 	}
 
 	//Required Documents list
@@ -86,28 +93,30 @@ var (
 
 func lookupDocType(data string) filingDocType {
 
+	data = strings.ToUpper(data)
+
 	if strings.Contains(data, "PARENTHETICAL") {
 		//skip this doc
 		return filingDocIg
 	}
 
-	data = strings.ToUpper(data)
-
 	if strings.Contains(data, "DOCUMENT") && strings.Contains(data, "ENTITY") {
 		//Entity document
 		return filingDocEN
-	} else if strings.Contains(data, "BALANCE SHEETS") {
-		//Balance sheet
-		return filingDocBS
-	} else if strings.Contains(data, "OPERATIONS") {
-		//Operations statement
-		return filingDocOps
-	} else if strings.Contains(data, "INCOME") {
-		//Income statement
-		return filingDocInc
-	} else if strings.Contains(data, "CASH FLOWS") {
-		//Cash flow statement
-		return filingDocCF
+	} else if strings.Contains(data, "CONSOLIDATED") {
+		if strings.Contains(data, "BALANCE SHEETS") {
+			//Balance sheet
+			return filingDocBS
+		} else if strings.Contains(data, "OPERATIONS") {
+			//Operations statement
+			return filingDocOps
+		} else if strings.Contains(data, "INCOME") {
+			//Income statement
+			return filingDocInc
+		} else if strings.Contains(data, "CASH FLOWS") {
+			//Cash flow statement
+			return filingDocCF
+		}
 	}
 	return filingDocIg
 }
@@ -127,12 +136,18 @@ func getMissingDocs(data map[filingDocType]string) string {
 	return ret
 }
 
-func getFinDataType(key string) finDataType {
+func getFinDataType(key string, docType filingDocType) finDataType {
+	db, ok := finDataSearchKeys[docType]
+	if !ok {
+		return finDataUnknown
+	}
 	key = strings.ToLower(key)
-	for _, val := range finDataSearchKeys {
-		lup := strings.ToLower(val.finDataStr)
-		if strings.Contains(key, lup) {
-			return val.finDataName
+	for _, val := range db {
+		for _, str := range val.finDataStr {
+			match, _ := regexp.MatchString(str, key)
+			if match {
+				return val.finDataName
+			}
 		}
 	}
 	return finDataUnknown
@@ -181,17 +196,6 @@ type BSData struct {
 	Deferred int64 `json:"Deferred revenue" required:"false"`
 	Retained int64 `json:"Retained Earnings" required:"true"`
 }
-
-/*
-func (c *Company) String() string {
-	data, err := json.MarshalIndent(c, "", "    ")
-	if err != nil {
-		log.Fatal("Error marshaling Company data")
-	}
-	fmt.Println("COMPANY")
-	return string(data)
-}
-*/
 
 func (c Company) String() string {
 	data, err := json.MarshalIndent(c, "", "    ")
@@ -247,7 +251,10 @@ func generateData(data interface{}, name string) int64 {
 	case "GrossMargin":
 		val, ok := data.(*OpsData)
 		if ok {
-			return val.Revenue - val.CostOfSales
+			//Do this only when the parsing is complete for required fields
+			if val.Revenue != 0 && val.CostOfSales != 0 {
+				return val.Revenue - val.CostOfSales
+			}
 		}
 	}
 	return 0
