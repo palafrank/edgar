@@ -61,10 +61,19 @@ func TestFilingQuery(t *testing.T) {
 }
 
 func TestFiling10QParser(t *testing.T) {
+	var check = map[filingDocType]string{
+		filingDocCF:  "/Archives/edgar/data/320193/000032019318000100/R7.htm",
+		filingDocInc: "/Archives/edgar/data/320193/000032019318000100/R3.htm",
+		filingDocEN:  "/Archives/edgar/data/320193/000032019318000100/R1.htm",
+		filingDocOps: "/Archives/edgar/data/320193/000032019318000100/R2.htm",
+		filingDocBS:  "/Archives/edgar/data/320193/000032019318000100/R5.htm",
+	}
 	f, _ := os.Open("samples/sample_10Q.html")
 	docs := filingPageParser(f, filingType10Q)
-	if len(docs) != 5 {
-		t.Error("Did not get the expected number of filing document in the 10Q")
+	for key, val := range check {
+		if docs[key] != val {
+			t.Error("Did not get the expected number of filing document in the 10K")
+		}
 	}
 }
 
@@ -78,8 +87,8 @@ func TestFiling10KParser(t *testing.T) {
 	}
 	f, _ := os.Open("samples/sample_10K.html")
 	docs := filingPageParser(f, filingType10K)
-	for key, val := range docs {
-		if check[key] != val {
+	for key, val := range check {
+		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
 		}
 	}
@@ -95,8 +104,8 @@ func TestFiling10KParser1(t *testing.T) {
 	}
 	f, _ := os.Open("samples/sample_10K_1.html")
 	docs := filingPageParser(f, filingType10K)
-	for key, val := range docs {
-		if check[key] != val {
+	for key, val := range check {
+		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
 		}
 	}

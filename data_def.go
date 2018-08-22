@@ -20,6 +20,8 @@ type finDataSearchInfo struct {
 }
 
 var (
+	// Threshold year is the earliest year for which we will collect data
+	thresholdYear int = 2011
 	//Filing types
 	filingType10Q filingType = "10-Q"
 	filingType10K filingType = "10-K"
@@ -196,7 +198,7 @@ type CfData struct {
 }
 
 type BSData struct {
-	LDebt    int64 `json:"Long-Term debt" required:"true"`
+	LDebt    int64 `json:"Long-Term debt" required:"false"`
 	SDebt    int64 `json:"Short-Term debt" required:"false"`
 	CLiab    int64 `json:"Current Liabilities" required:"true"`
 	Deferred int64 `json:"Deferred revenue" required:"false"`

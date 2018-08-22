@@ -29,8 +29,13 @@ func queryPageParser(page io.Reader, docType filingType) map[string]string {
 
 	data, err := parseTableRow(z, true)
 	for err == nil {
+		//This check for filing type will drop AMEND filings
 		if len(data) == 5 && data[0] == string(docType) {
-			filingInfo[data[3]] = data[1]
+			//Drop filings before 2010
+			year := getYear(data[3])
+			if year >= thresholdYear {
+				filingInfo[data[3]] = data[1]
+			}
 		}
 		data, err = parseTableRow(z, true)
 	}

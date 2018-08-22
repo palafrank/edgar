@@ -17,7 +17,7 @@ import (
 */
 
 func main() {
-	ticker := "AAPL"
+	ticker := "AGN"
 	fileType := filingType10K
 
 	var company Company

@@ -39,6 +39,9 @@ func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 							return retData
 						}
 					}
+				} else if a.Key == "id" && a.Val == "menu_cat3" {
+					//Gone too fat. Menu category 3 is beynd consolidated statements. Stop parsing
+					break
 				}
 			}
 		}

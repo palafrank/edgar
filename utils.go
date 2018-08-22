@@ -34,3 +34,12 @@ func normalizeNumber(str string) int64 {
 	}
 	return 0
 }
+
+func getYear(date string) int {
+	strs := strings.Split(date, "-")
+	if len(strs) != 3 {
+		return 0
+	}
+	year, _ := strconv.Atoi(strs[0])
+	return year
+}
