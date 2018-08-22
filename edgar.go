@@ -1,8 +1,4 @@
-package main
-
-import (
-	"log"
-)
+package edgar_parser
 
 /*
 	Sequence of extracting financial data:
@@ -14,18 +10,14 @@ import (
 					- For each document get the relevant information and return the data
 					- Collect the data into a report
 					- Add the report under the TICKER and the date in that order
-*/
+
 
 func main() {
 	ticker := "AGN"
 	fileType := filingType10K
 
 	var company Company
-	/*
-		   First run the query and get all the links for the filings of a certain type
-			 Return:
-			   Map of filing links indexed by date of filing
-	*/
+
 	filingLinks := getFilingLinks(ticker, fileType)
 
 	company.Ticker = ticker
@@ -39,3 +31,4 @@ func main() {
 	}
 	log.Println(company)
 }
+*/

@@ -1,4 +1,4 @@
-package main
+package edgar_parser
 
 import (
 	"encoding/json"
