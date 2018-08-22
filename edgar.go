@@ -17,7 +17,7 @@ import (
 */
 
 func main() {
-	ticker := "AGN"
+	ticker := "AAPL"
 	fileType := filingType10K
 
 	var company Company
@@ -36,7 +36,6 @@ func main() {
 		filing.FinData = getFinancialData(val, filingType10K)
 		filing.Date = key
 		company.Reports = append(company.Reports, filing)
-		break
 	}
 	log.Println(company)
 }

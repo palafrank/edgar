@@ -36,6 +36,9 @@ func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 						//Get the report number
 						//fmt.Println("Found a wanted doc ", docType, token.String(), reportNum)
 						retData[docType] = filingLinks[reportNum-1]
+						if len(retData) == len(requiredDocTypes) {
+							return retData
+						}
 					}
 				}
 			}

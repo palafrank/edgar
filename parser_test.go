@@ -69,11 +69,38 @@ func TestFiling10QParser(t *testing.T) {
 }
 
 func TestFiling10KParser(t *testing.T) {
+	var check = map[filingDocType]string{
+		filingDocCF:  "/Archives/edgar/data/320193/000119312515356351/R8.htm",
+		filingDocInc: "/Archives/edgar/data/320193/000119312515356351/R3.htm",
+		filingDocEN:  "/Archives/edgar/data/320193/000119312515356351/R1.htm",
+		filingDocOps: "/Archives/edgar/data/320193/000119312515356351/R2.htm",
+		filingDocBS:  "/Archives/edgar/data/320193/000119312515356351/R5.htm",
+	}
 	f, _ := os.Open("samples/sample_10K.html")
 	docs := filingPageParser(f, filingType10K)
-	if len(docs) != 5 {
-		t.Error("Did not get the expected number of filing document in the 10K")
+	for key, val := range docs {
+		if check[key] != val {
+			t.Error("Did not get the expected number of filing document in the 10K")
+		}
 	}
+}
+
+func TestFiling10KParser1(t *testing.T) {
+	var check = map[filingDocType]string{
+		filingDocCF:  "/Archives/edgar/data/320193/000119312511282113/R6.htm",
+		filingDocInc: "/Archives/edgar/data/320193/000119312511282113/R54.htm",
+		filingDocEN:  "/Archives/edgar/data/320193/000119312511282113/R1.htm",
+		filingDocOps: "/Archives/edgar/data/320193/000119312511282113/R2.htm",
+		filingDocBS:  "/Archives/edgar/data/320193/000119312511282113/R3.htm",
+	}
+	f, _ := os.Open("samples/sample_10K_1.html")
+	docs := filingPageParser(f, filingType10K)
+	for key, val := range docs {
+		if check[key] != val {
+			t.Error("Did not get the expected number of filing document in the 10K")
+		}
+	}
+
 }
 
 func TestEntityParser(t *testing.T) {

@@ -103,7 +103,13 @@ func lookupDocType(data string) filingDocType {
 	if strings.Contains(data, "DOCUMENT") && strings.Contains(data, "ENTITY") {
 		//Entity document
 		return filingDocEN
-	} else if strings.Contains(data, "CONSOLIDATED") {
+		//} else if strings.Contains(data, "CONSOLIDATED") {
+	} else {
+		match, _ := regexp.MatchString("^(?s)(.*)CONSOLIDATED.*$", data)
+		if !match {
+			//fmt.Println("PASSING ON :", data)
+			return filingDocIg
+		}
 		if strings.Contains(data, "BALANCE SHEETS") {
 			//Balance sheet
 			return filingDocBS
@@ -191,7 +197,7 @@ type CfData struct {
 
 type BSData struct {
 	LDebt    int64 `json:"Long-Term debt" required:"true"`
-	SDebt    int64 `json:"Short-Term debt" required:"true"`
+	SDebt    int64 `json:"Short-Term debt" required:"false"`
 	CLiab    int64 `json:"Current Liabilities" required:"true"`
 	Deferred int64 `json:"Deferred revenue" required:"false"`
 	Retained int64 `json:"Retained Earnings" required:"true"`
