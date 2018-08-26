@@ -1,4 +1,4 @@
-package edgar_parser
+package edgar
 
 import (
 	"bufio"
@@ -21,7 +21,7 @@ var filingButtonId string = "interactiveDataBtn"
   - Since it is a link the tag will be a hyperlink with a button with the id=interactiveDataBtn
   - The actual link is the href attribute in the "a" token just before the id attribute
 */
-func queryPageParser(page io.Reader, docType filingType) map[string]string {
+func queryPageParser(page io.Reader, docType FilingType) map[string]string {
 
 	filingInfo := make(map[string]string)
 
@@ -50,7 +50,7 @@ func queryPageParser(page io.Reader, docType filingType) map[string]string {
   - Get the text of the accordian and map the type of the report to the report
   - Create a map of the report to report link
 */
-func filingPageParser(page io.Reader, fileType filingType) map[filingDocType]string {
+func filingPageParser(page io.Reader, fileType FilingType) map[filingDocType]string {
 	var filingLinks []string
 	r := bufio.NewReader(page)
 	s, e := r.ReadString('\n')
@@ -78,11 +78,11 @@ func filingPageParser(page io.Reader, fileType filingType) map[filingDocType]str
 	}
 
 	switch fileType {
-	case filingType10K:
+	case FilingType10K:
 		log.Println("Getting 10K filing documents")
 		docs := map10KReports(page, filingLinks)
 		return docs
-	case filingType10Q:
+	case FilingType10Q:
 		log.Println("Getting 10Q filing documents")
 		docs := map10QReports(page, filingLinks)
 		return docs

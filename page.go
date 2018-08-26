@@ -1,4 +1,4 @@
-package edgar_parser
+package edgar
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ var (
 	searchURL string = baseURL + queryURL
 )
 
-func createQueryURL(symbol string, docType filingType) string {
+func createQueryURL(symbol string, docType FilingType) string {
 	return fmt.Sprintf(searchURL, symbol, docType)
 }
 
@@ -26,7 +26,7 @@ func getPage(url string) io.ReadCloser {
 	return resp.Body
 }
 
-func getFilingLinks(ticker string, fileType filingType) map[string]string {
+func getFilingLinks(ticker string, fileType FilingType) map[string]string {
 	url := createQueryURL(ticker, fileType)
 	resp := getPage(url)
 	if resp == nil {
@@ -42,7 +42,7 @@ func getFilingLinks(ticker string, fileType filingType) map[string]string {
 //Returns a map:
 // key=Document type ex.Cash flow statement
 // Value = link to that that sheet
-func getFilingDocs(url string, fileType filingType) map[filingDocType]string {
+func getFilingDocs(url string, fileType FilingType) map[filingDocType]string {
 	url = baseURL + url
 	resp := getPage(url)
 	if resp == nil {
@@ -52,13 +52,13 @@ func getFilingDocs(url string, fileType filingType) map[filingDocType]string {
 	return filingPageParser(resp, fileType)
 }
 
-func getFinancialData(url string, fileType filingType) *FinancialReport {
+func getFinancialData(url string, fileType FilingType) *financialReport {
 
 	var err error
 
 	docs := getFilingDocs(url, fileType)
 
-	fr := new(FinancialReport)
+	fr := new(financialReport)
 
 	fr.DocType = fileType
 	for key, val := range docs {

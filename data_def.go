@@ -1,4 +1,4 @@
-package edgar_parser
+package edgar
 
 import (
 	"encoding/json"
@@ -7,11 +7,11 @@ import (
 	"log"
 	"reflect"
 	"regexp"
+	"sort"
 	"strings"
 )
 
 type finDataType string
-type filingType string
 type filingDocType string
 
 type finDataSearchInfo struct {
@@ -20,11 +20,9 @@ type finDataSearchInfo struct {
 }
 
 var (
+	filingErrorString string = "Filing information has not been collected"
 	// Threshold year is the earliest year for which we will collect data
 	thresholdYear int = 2011
-	//Filing types
-	filingType10Q filingType = "10-Q"
-	filingType10K filingType = "10-K"
 
 	//Document types
 	filingDocOps filingDocType = "Operations"
@@ -92,6 +90,298 @@ var (
 		filingDocEN:  true,
 	}
 )
+
+type date struct {
+	day   int
+	month int
+	year  int
+}
+
+func (d date) Day() int {
+	return d.day
+}
+
+func (d date) Month() int {
+	return d.month
+}
+
+func (d date) Year() int {
+	return d.year
+}
+
+func (d date) String() string {
+	return fmt.Sprintf("%04d-%02d-%02d", d.year, d.month, d.day)
+}
+
+type company struct {
+	Company     string                            `json:"Company"`
+	FilingLinks map[FilingType]map[string]string  `json:"-"`
+	Reports     map[FilingType]map[string]*filing `json:"Financial Reports"`
+}
+
+func newCompany(ticker string) *company {
+	return &company{
+		Company:     ticker,
+		FilingLinks: make(map[FilingType]map[string]string),
+		Reports:     make(map[FilingType]map[string]*filing),
+	}
+}
+
+func (c *company) Ticker() string {
+	return c.Company
+}
+
+func (c *company) AvailableFilings(filingType FilingType) []Date {
+	var d []Date
+	links := c.FilingLinks[filingType]
+	for key, _ := range links {
+		d = append(d, getDate(key))
+	}
+	sort.Slice(d, func(i, j int) bool {
+		return d[i].String() > d[j].String()
+	})
+	return d
+}
+
+func (c *company) Filing(fileType FilingType, key Date) (Filing, error) {
+	file, ok := c.Reports[fileType][key.String()]
+	if !ok {
+		link, ok1 := c.FilingLinks[fileType][key.String()]
+		if !ok1 {
+			fmt.Println(c.FilingLinks[fileType])
+			return nil, errors.New("No filing available for given date " + key.String())
+		}
+		file := new(filing)
+		file.FinData = getFinancialData(link, fileType)
+		file.Date = key.String()
+		file.Company = c.Ticker()
+		c.AddReport(file)
+		return file, nil
+	}
+	return file, nil
+}
+
+func (c *company) AddReport(file *filing) {
+	t, err := file.Type()
+	if err != nil {
+		log.Fatal("Adding invalid report")
+		return
+	}
+	if c.Reports[t] == nil {
+		c.Reports[t] = make(map[string]*filing)
+	}
+	c.Reports[t][file.Date] = file
+}
+
+type filing struct {
+	Company string           `json:"Company"`
+	Date    string           `json:"Report date"`
+	FinData *financialReport `json:"Financial Data"`
+}
+
+func (f *filing) Ticker() string {
+	return f.Company
+}
+
+func (f *filing) Year() int {
+	return getYear(f.Date)
+}
+
+func (f *filing) Month() int {
+	return getMonth(f.Date)
+}
+
+func (f *filing) Type() (FilingType, error) {
+	if f.FinData != nil {
+		return f.FinData.DocType, nil
+	}
+	return "", errors.New(filingErrorString)
+}
+
+func (f *filing) ShareCount() (int64, error) {
+	if f.FinData != nil && f.FinData.Entity != nil {
+		return f.FinData.Entity.ShareCount, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) Revenue() (int64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.Revenue, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) CostOfRevenue() (int64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.CostOfSales, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) GrossMargin() (int64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.GrossMargin, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) OperatingIncome() (int64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.OpIncome, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) OperatingExpense() (int64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.OpExpense, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) NetIncome() (int64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.NetIncome, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) TotalEquity() (int64, error) {
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) ShortTermDebt() (int64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		return f.FinData.Bs.SDebt, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) LongTermDebt() (int64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		return f.FinData.Bs.LDebt, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) CurrentLiabilities() (int64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		return f.FinData.Bs.CLiab, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) DeferredRevenue() (int64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		return f.FinData.Bs.Deferred, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) RetainedEarnings() (int64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		return f.FinData.Bs.Retained, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) OperatingCashFlow() (int64, error) {
+	if f.FinData != nil && f.FinData.Cf != nil {
+		return f.FinData.Cf.OpCashFlow, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) CapitalExpenditure() (int64, error) {
+	if f.FinData != nil && f.FinData.Cf != nil {
+		return f.FinData.Cf.CapEx, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+type financialReport struct {
+	DocType FilingType  `json:"Filing Type"`
+	Entity  *entityData `json:"Entity Information"`
+	Ops     *opsData    `json:"Operational Information"`
+	Bs      *bsData     `json:"Balance Sheet Information"`
+	Cf      *cfData     `json:"Cash Flow Information"`
+}
+
+type entityData struct {
+	ShareCount int64 `json:"Shares Outstanding" required:"true"`
+}
+
+type opsData struct {
+	Revenue     int64 `json:"Revenue" required:"true"`
+	CostOfSales int64 `json:"Cost Of Revenue" required:"true"`
+	GrossMargin int64 `json:"Gross Margin" required:"true" generate:"true"`
+	OpIncome    int64 `json:"Operational Income" required:"true"`
+	OpExpense   int64 `json:"Operational Expense" required:"true"`
+	NetIncome   int64 `json:"Net Income" required:"true"`
+}
+
+type cfData struct {
+	OpCashFlow int64 `json:"Operating Cash Flow" required:"true"`
+	CapEx      int64 `json:"Capital Expenditure" required:"true"`
+}
+
+type bsData struct {
+	LDebt    int64 `json:"Long-Term debt" required:"false"`
+	SDebt    int64 `json:"Short-Term debt" required:"false"`
+	CLiab    int64 `json:"Current Liabilities" required:"true"`
+	Deferred int64 `json:"Deferred revenue" required:"false"`
+	Retained int64 `json:"Retained Earnings" required:"true"`
+}
+
+func (c company) String() string {
+	data, err := json.MarshalIndent(c, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling Company data")
+	}
+	return string(data)
+}
+
+func (f filing) String() string {
+	data, err := json.MarshalIndent(f, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling Filing data")
+	}
+	fmt.Println("FILING")
+	return string(data)
+}
+
+func (f financialReport) String() string {
+	data, err := json.MarshalIndent(f, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling financial data")
+	}
+	return string(data)
+}
+
+func (bs bsData) String() string {
+	data, err := json.MarshalIndent(bs, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling balance sheet data")
+	}
+	return string(data)
+}
+
+func (cf cfData) String() string {
+	data, err := json.MarshalIndent(cf, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling cash flow data")
+	}
+	return string(data)
+}
+
+func (ops opsData) String() string {
+	data, err := json.MarshalIndent(ops, "", "    ")
+	if err != nil {
+		log.Fatal("Error marshaling Operational information data")
+	}
+	return string(data)
+}
 
 func lookupDocType(data string) filingDocType {
 
@@ -161,103 +451,10 @@ func getFinDataType(key string, docType filingDocType) finDataType {
 	return finDataUnknown
 }
 
-type Company struct {
-	Ticker  string    `json:"Company"`
-	Reports []*Filing `json:"Financial Reports"`
-}
-
-type Filing struct {
-	Date    string           `json:"Report date"`
-	FinData *FinancialReport `json:"Financial Data"`
-}
-
-type FinancialReport struct {
-	DocType filingType  `json:"Filing Type"`
-	Entity  *EntityData `json:"Entity Information"`
-	Ops     *OpsData    `json:"Operational Information"`
-	Bs      *BSData     `json:"Balance Sheet Information"`
-	Cf      *CfData     `json:"Cash Flow Information"`
-}
-
-type EntityData struct {
-	ShareCount int64 `json:"Shares Outstanding" required:"true"`
-}
-
-type OpsData struct {
-	Revenue     int64 `json:"Revenue" required:"true"`
-	CostOfSales int64 `json:"Cost Of Revenue" required:"true"`
-	GrossMargin int64 `json:"Gross Margin" required:"true" generate:"true"`
-	OpIncome    int64 `json:"Operational Income" required:"true"`
-	OpExpense   int64 `json:"Operational Expense" required:"true"`
-	NetIncome   int64 `json:"Net Income" required:"true"`
-}
-
-type CfData struct {
-	OpCashFlow int64 `json:"Operating Cash Flow" required:"true"`
-	CapEx      int64 `json:"Capital Expenditure" required:"true"`
-}
-
-type BSData struct {
-	LDebt    int64 `json:"Long-Term debt" required:"false"`
-	SDebt    int64 `json:"Short-Term debt" required:"false"`
-	CLiab    int64 `json:"Current Liabilities" required:"true"`
-	Deferred int64 `json:"Deferred revenue" required:"false"`
-	Retained int64 `json:"Retained Earnings" required:"true"`
-}
-
-func (c Company) String() string {
-	data, err := json.MarshalIndent(c, "", "    ")
-	if err != nil {
-		log.Fatal("Error marshaling Company data")
-	}
-	return string(data)
-}
-
-func (f Filing) String() string {
-	data, err := json.MarshalIndent(f, "", "    ")
-	if err != nil {
-		log.Fatal("Error marshaling Filing data")
-	}
-	fmt.Println("FILING")
-	return string(data)
-}
-
-func (f FinancialReport) String() string {
-	data, err := json.MarshalIndent(f, "", "    ")
-	if err != nil {
-		log.Fatal("Error marshaling financial data")
-	}
-	return string(data)
-}
-
-func (bs BSData) String() string {
-	data, err := json.MarshalIndent(bs, "", "    ")
-	if err != nil {
-		log.Fatal("Error marshaling balance sheet data")
-	}
-	return string(data)
-}
-
-func (cf CfData) String() string {
-	data, err := json.MarshalIndent(cf, "", "    ")
-	if err != nil {
-		log.Fatal("Error marshaling cash flow data")
-	}
-	return string(data)
-}
-
-func (ops OpsData) String() string {
-	data, err := json.MarshalIndent(ops, "", "    ")
-	if err != nil {
-		log.Fatal("Error marshaling Operational information data")
-	}
-	return string(data)
-}
-
 func generateData(data interface{}, name string) int64 {
 	switch name {
 	case "GrossMargin":
-		val, ok := data.(*OpsData)
+		val, ok := data.(*opsData)
 		if ok {
 			//Do this only when the parsing is complete for required fields
 			if val.Revenue != 0 && val.CostOfSales != 0 {
@@ -269,7 +466,7 @@ func generateData(data interface{}, name string) int64 {
 }
 
 //Validate is a function to check that no field is set to 0 after parsing
-func Validate(data interface{}) error {
+func validate(data interface{}) error {
 	var err string
 	t := reflect.TypeOf(data)
 	v := reflect.ValueOf(data)
@@ -300,7 +497,7 @@ func Validate(data interface{}) error {
 	return nil
 }
 
-func SetData(data interface{}, finType finDataType, val string) error {
+func setData(data interface{}, finType finDataType, val string) error {
 
 	t := reflect.TypeOf(data)
 	v := reflect.ValueOf(data)

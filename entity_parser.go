@@ -1,4 +1,4 @@
-package edgar_parser
+package edgar
 
 import (
 	"io"
@@ -10,9 +10,9 @@ var reqEntityData = map[string]finDataType{
 	"Entity Common Stock, Shares Outstanding": finDataSharesOutstanding,
 }
 
-func getEntityData(page io.Reader) (*EntityData, error) {
+func getEntityData(page io.Reader) (*entityData, error) {
 
-	retData := new(EntityData)
+	retData := new(entityData)
 	z := html.NewTokenizer(page)
 
 	data, err := parseTableRow(z, false)
@@ -22,7 +22,7 @@ func getEntityData(page io.Reader) (*EntityData, error) {
 			if finType != finDataUnknown {
 				for _, str := range data[1:] {
 					if normalizeNumber(str) > 0 {
-						err := SetData(retData, finType, str)
+						err := setData(retData, finType, str)
 						if err != nil {
 							return nil, err
 						}
@@ -32,10 +32,10 @@ func getEntityData(page io.Reader) (*EntityData, error) {
 			}
 		}
 		//Early break out if all required data is collected
-		if Validate(retData) == nil {
+		if validate(retData) == nil {
 			break
 		}
 		data, err = parseTableRow(z, false)
 	}
-	return retData, Validate(retData)
+	return retData, validate(retData)
 }

@@ -1,4 +1,4 @@
-package edgar_parser
+package edgar
 
 import (
 	"io"

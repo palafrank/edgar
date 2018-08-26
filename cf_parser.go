@@ -1,4 +1,4 @@
-package edgar_parser
+package edgar
 
 import (
 	"io"
@@ -6,8 +6,8 @@ import (
 	"golang.org/x/net/html"
 )
 
-func getCfData(page io.Reader) (*CfData, error) {
-	retData := new(CfData)
+func getCfData(page io.Reader) (*cfData, error) {
+	retData := new(cfData)
 
 	z := html.NewTokenizer(page)
 
@@ -18,7 +18,7 @@ func getCfData(page io.Reader) (*CfData, error) {
 			if finType != finDataUnknown {
 				for _, str := range data[1:] {
 					if len(str) > 0 {
-						if SetData(retData, finType, str) == nil {
+						if setData(retData, finType, str) == nil {
 							break
 						}
 					}
@@ -26,10 +26,10 @@ func getCfData(page io.Reader) (*CfData, error) {
 			}
 		}
 		//Early break out if all required data is collected
-		if Validate(retData) == nil {
+		if validate(retData) == nil {
 			break
 		}
 		data, err = parseTableRow(z, false)
 	}
-	return retData, Validate(retData)
+	return retData, validate(retData)
 }

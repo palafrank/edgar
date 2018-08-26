@@ -1,4 +1,4 @@
-package edgar_parser
+package edgar
 
 import (
 	"io/ioutil"
@@ -47,7 +47,7 @@ func TestFilingQuery(t *testing.T) {
 		"2015-07-22": "/cgi-bin/viewer?action=view&cik=320193&accession_number=0001193125-15-259935&xbrl_type=v",
 	}
 	f, _ := os.Open("samples/sample_query.html")
-	links := queryPageParser(f, filingType10Q)
+	links := queryPageParser(f, FilingType10Q)
 	if len(links) != 10 {
 		t.Error("Incorrect number of filing links found")
 	}
@@ -69,7 +69,7 @@ func TestFiling10QParser(t *testing.T) {
 		filingDocBS:  "/Archives/edgar/data/320193/000032019318000100/R5.htm",
 	}
 	f, _ := os.Open("samples/sample_10Q.html")
-	docs := filingPageParser(f, filingType10Q)
+	docs := filingPageParser(f, FilingType10Q)
 	for key, val := range check {
 		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
@@ -86,7 +86,7 @@ func TestFiling10KParser(t *testing.T) {
 		filingDocBS:  "/Archives/edgar/data/320193/000119312515356351/R5.htm",
 	}
 	f, _ := os.Open("samples/sample_10K.html")
-	docs := filingPageParser(f, filingType10K)
+	docs := filingPageParser(f, FilingType10K)
 	for key, val := range check {
 		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
@@ -103,7 +103,7 @@ func TestFiling10KParser1(t *testing.T) {
 		filingDocBS:  "/Archives/edgar/data/320193/000119312511282113/R3.htm",
 	}
 	f, _ := os.Open("samples/sample_10K_1.html")
-	docs := filingPageParser(f, filingType10K)
+	docs := filingPageParser(f, FilingType10K)
 	for key, val := range check {
 		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
@@ -260,16 +260,17 @@ func Test10KBSParser(t *testing.T) {
 
 func TestFinReportMarshal(t *testing.T) {
 
-	var company Company
-	var filing Filing
-	var data FinancialReport
+	var file filing
+	var data financialReport
 
-	company.Ticker = "AAPL"
-	company.Reports = append(company.Reports, &filing)
-	filing.Date = "2017-02-1"
-	filing.FinData = &data
+	file.Date = "2017-02-1"
+	file.Company = "AAPL"
+	file.FinData = &data
 
-	data.DocType = filingType10K
+	comp := newCompany("AAPL")
+	comp.AddReport(&file)
+
+	data.DocType = FilingType10K
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	data.Bs, _ = getBSData(f)
 	f, _ = os.Open("samples/sample_10K_cf.html")
@@ -294,3 +295,10 @@ func TestFinReportMarshal(t *testing.T) {
 		t.Error("Marshaled data doesnot match reference JSON")
 	}
 }
+
+/*
+func TestLiveParsing(t *testing.T) {
+	c := GetFiling("AGN", filingType10K)
+	fmt.Println(c)
+}
+*/
