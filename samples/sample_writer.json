@@ -1,0 +1,65 @@
+{
+    "Company": "AGN",
+    "Financial Reports": {
+        "10-K": {
+            "2017-02-24": {
+                "Company": "AGN",
+                "Report date": "2017-02-24",
+                "Financial Data": {
+                    "Filing Type": "10-K",
+                    "Entity Information": {
+                        "Shares Outstanding": 335224713
+                    },
+                    "Operational Information": {
+                        "Revenue": 14570,
+                        "Cost Of Revenue": 1860,
+                        "Gross Margin": 12710,
+                        "Operational Income": -1825,
+                        "Operational Expense": 16396,
+                        "Net Income": 14979
+                    },
+                    "Balance Sheet Information": {
+                        "Long-Term debt": 29970,
+                        "Short-Term debt": 2797,
+                        "Current Liabilities": 7874,
+                        "Deferred revenue": 0,
+                        "Retained Earnings": 18342
+                    },
+                    "Cash Flow Information": {
+                        "Operating Cash Flow": 1425,
+                        "Capital Expenditure": -331
+                    }
+                }
+            },
+            "2018-02-16": {
+                "Company": "AGN",
+                "Report date": "2018-02-16",
+                "Financial Data": {
+                    "Filing Type": "10-K",
+                    "Entity Information": {
+                        "Shares Outstanding": 330320420
+                    },
+                    "Operational Information": {
+                        "Revenue": 15940,
+                        "Cost Of Revenue": 2168,
+                        "Gross Margin": 13772,
+                        "Operational Income": -5921,
+                        "Operational Expense": 21861,
+                        "Net Income": -3716
+                    },
+                    "Balance Sheet Information": {
+                        "Long-Term debt": 25843,
+                        "Short-Term debt": 4231,
+                        "Current Liabilities": 9848,
+                        "Deferred revenue": 0,
+                        "Retained Earnings": 12957
+                    },
+                    "Cash Flow Information": {
+                        "Operating Cash Flow": 5873,
+                        "Capital Expenditure": -349
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,8 +1,7 @@
 package edgar
 
 import (
-	"errors"
-	"log"
+	"io"
 )
 
 type FilingType string
@@ -14,6 +13,7 @@ var (
 )
 
 // Date defines an interface for filing date
+// This is mainly to validate the date being passed into the package.
 type Date interface {
 	Day() int
 	Month() int
@@ -24,8 +24,7 @@ type Date interface {
 // Filing interface for fetching financial data
 type Filing interface {
 	Ticker() string
-	Year() int
-	Month() int
+	FiledOn() Date
 	Type() (FilingType, error)
 	ShareCount() (int64, error)
 	Revenue() (int64, error)
@@ -50,11 +49,20 @@ type CompanyFolder interface {
 	// GetTicker gets the ticker of this company
 	Ticker() string
 
-	//AvailableFilings gets the list of keys to the filing available
+	//AvailableFilings gets the list of dates of available filings
 	AvailableFilings(FilingType) []Date
 
-	// GetFiling gets a filing given a Company.
+	// Filing gets a filing given a filing type and date of filing.
 	Filing(FilingType, Date) (Filing, error)
+
+	// SaveFolder persists the data from the company folder into a writer
+	// provided by the user. This stored info can be presented back to
+	// the fetcher (using CreateFolder API in fetcher) to recreate the
+	// company folder with already parsed data
+	SaveFolder(w io.Writer) error
+
+	// String is a dump routine to view the contents of the folder
+	String() string
 }
 
 // FilingFetcher fetches the filing requested
@@ -65,55 +73,11 @@ type FilingFetcher interface {
 	// of the interface can selectively pull financial data into the
 	// folder using the CompanyFolder interface
 	CompanyFolder(string, ...FilingType) (CompanyFolder, error)
-}
 
-type fetcher struct {
-}
-
-/*
-	Sequence of extracting financial data:
-	    - Input: Ticker symbol and type of filing
-			- Step 1: Using input get the links available for the query
-			    - The returned map is indexed on date and contains links to the filing
-			- Step 2: For each link
-			    - Get the documents related to that filing ex. Entity, Balance Sheet
-					- For each document get the relevant information and return the data
-					- Collect the data into a report
-					- Add the report under the TICKER and the date in that order
-
-*/
-func (f *fetcher) CompanyFolder(
-	ticker string,
-	fileTypes ...FilingType) (CompanyFolder, error) {
-
-	comp := newCompany(ticker)
-
-	for _, t := range fileTypes {
-		comp.FilingLinks[t] = getFilingLinks(ticker, t)
-	}
-	return comp, nil
-}
-
-func (f *fetcher) CompanyFiling(
-	ticker string,
-	fileType FilingType,
-	d Date) (Filing, error) {
-
-	filingLinks := getFilingLinks(ticker, fileType)
-	for key, val := range filingLinks {
-		if key != d.String() {
-			continue
-		}
-		log.Println("Geting filing for", ticker, "filed on", key)
-		file := new(filing)
-		file.FinData = getFinancialData(val, fileType)
-		file.Date = key
-		file.Company = ticker
-		return file, nil
-	}
-	return nil, errors.New("Could not find the requested filing")
-}
-
-func NewFilingFetcher() FilingFetcher {
-	return &fetcher{}
+	// CreateFolder creates a company folder using a Reader
+	// User can provoder a store of edgar data previous stored
+	// by this package (using the Store function of the Company Folder)
+	// This function is used to avoid reparsing edgar data and reusing
+	// already parsed and stored information.
+	CreateFolder(io.Reader, ...FilingType) (CompanyFolder, error)
 }

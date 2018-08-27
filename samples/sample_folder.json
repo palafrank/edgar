@@ -1,0 +1,152 @@
+{
+    "Company": "AGN",
+    "Financial Reports": {
+        "10-K": {
+            "2014-02-25": {
+                "Company": "AGN",
+                "Report date": "2014-02-25",
+                "Financial Data": {
+                    "Filing Type": "10-K",
+                    "Entity Information": {
+                        "Shares Outstanding": 174199744
+                    },
+                    "Operational Information": {
+                        "Revenue": 8677,
+                        "Cost Of Revenue": 4690,
+                        "Gross Margin": 3987,
+                        "Operational Income": -423,
+                        "Operational Expense": 9100,
+                        "Net Income": -751
+                    },
+                    "Balance Sheet Information": {
+                        "Long-Term debt": 8517,
+                        "Short-Term debt": 534,
+                        "Current Liabilities": 3294,
+                        "Deferred revenue": 38,
+                        "Retained Earnings": 1432
+                    },
+                    "Cash Flow Information": {
+                        "Operating Cash Flow": 1213,
+                        "Capital Expenditure": -177
+                    }
+                }
+            },
+            "2015-02-18": {
+                "Company": "AGN",
+                "Report date": "2015-02-18",
+                "Financial Data": {
+                    "Filing Type": "10-K",
+                    "Entity Information": {
+                        "Shares Outstanding": 266252295
+                    },
+                    "Operational Information": {
+                        "Revenue": 13062,
+                        "Cost Of Revenue": 6303,
+                        "Gross Margin": 6759,
+                        "Operational Income": -1267,
+                        "Operational Expense": 14330,
+                        "Net Income": -1630
+                    },
+                    "Balance Sheet Information": {
+                        "Long-Term debt": 14846,
+                        "Short-Term debt": 697,
+                        "Current Liabilities": 5018,
+                        "Deferred revenue": 27,
+                        "Retained Earnings": -198
+                    },
+                    "Cash Flow Information": {
+                        "Operating Cash Flow": 2243,
+                        "Capital Expenditure": -238
+                    }
+                }
+            },
+            "2016-02-26": {
+                "Company": "AGN",
+                "Report date": "2016-02-26",
+                "Financial Data": {
+                    "Filing Type": "10-K",
+                    "Entity Information": {
+                        "Shares Outstanding": 394687384
+                    },
+                    "Operational Information": {
+                        "Revenue": 15071,
+                        "Cost Of Revenue": 4810,
+                        "Gross Margin": 10261,
+                        "Operational Income": -3014,
+                        "Operational Expense": 18085,
+                        "Net Income": 3919
+                    },
+                    "Balance Sheet Information": {
+                        "Long-Term debt": 40293,
+                        "Short-Term debt": 2432,
+                        "Current Liabilities": 8328,
+                        "Deferred revenue": 0,
+                        "Retained Earnings": 3647
+                    },
+                    "Cash Flow Information": {
+                        "Operating Cash Flow": 4530,
+                        "Capital Expenditure": -454
+                    }
+                }
+            },
+            "2017-02-24": {
+                "Company": "AGN",
+                "Report date": "2017-02-24",
+                "Financial Data": {
+                    "Filing Type": "10-K",
+                    "Entity Information": {
+                        "Shares Outstanding": 335224713
+                    },
+                    "Operational Information": {
+                        "Revenue": 14570,
+                        "Cost Of Revenue": 1860,
+                        "Gross Margin": 12710,
+                        "Operational Income": -1825,
+                        "Operational Expense": 16396,
+                        "Net Income": 14979
+                    },
+                    "Balance Sheet Information": {
+                        "Long-Term debt": 29970,
+                        "Short-Term debt": 2797,
+                        "Current Liabilities": 7874,
+                        "Deferred revenue": 0,
+                        "Retained Earnings": 18342
+                    },
+                    "Cash Flow Information": {
+                        "Operating Cash Flow": 1425,
+                        "Capital Expenditure": -331
+                    }
+                }
+            },
+            "2018-02-16": {
+                "Company": "AGN",
+                "Report date": "2018-02-16",
+                "Financial Data": {
+                    "Filing Type": "10-K",
+                    "Entity Information": {
+                        "Shares Outstanding": 330320420
+                    },
+                    "Operational Information": {
+                        "Revenue": 15940,
+                        "Cost Of Revenue": 2168,
+                        "Gross Margin": 13772,
+                        "Operational Income": -5921,
+                        "Operational Expense": 21861,
+                        "Net Income": -3716
+                    },
+                    "Balance Sheet Information": {
+                        "Long-Term debt": 25843,
+                        "Short-Term debt": 4231,
+                        "Current Liabilities": 9848,
+                        "Deferred revenue": 0,
+                        "Retained Earnings": 12957
+                    },
+                    "Cash Flow Information": {
+                        "Operating Cash Flow": 5873,
+                        "Capital Expenditure": -349
+                    }
+                }
+            }
+        }
+    }
+}

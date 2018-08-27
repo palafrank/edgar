@@ -48,6 +48,7 @@ func TestFilingQuery(t *testing.T) {
 	}
 	f, _ := os.Open("samples/sample_query.html")
 	links := queryPageParser(f, FilingType10Q)
+	f.Close()
 	if len(links) != 10 {
 		t.Error("Incorrect number of filing links found")
 	}
@@ -70,6 +71,7 @@ func TestFiling10QParser(t *testing.T) {
 	}
 	f, _ := os.Open("samples/sample_10Q.html")
 	docs := filingPageParser(f, FilingType10Q)
+	f.Close()
 	for key, val := range check {
 		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
@@ -87,6 +89,7 @@ func TestFiling10KParser(t *testing.T) {
 	}
 	f, _ := os.Open("samples/sample_10K.html")
 	docs := filingPageParser(f, FilingType10K)
+	f.Close()
 	for key, val := range check {
 		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
@@ -104,6 +107,7 @@ func TestFiling10KParser1(t *testing.T) {
 	}
 	f, _ := os.Open("samples/sample_10K_1.html")
 	docs := filingPageParser(f, FilingType10K)
+	f.Close()
 	for key, val := range check {
 		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
@@ -115,6 +119,7 @@ func TestFiling10KParser1(t *testing.T) {
 func TestEntityParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_entity.html")
 	entity, err := getEntityData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else if entity.ShareCount != 4829926 {
@@ -125,6 +130,7 @@ func TestEntityParser(t *testing.T) {
 func Test10KEntityParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_entity.html")
 	entity, err := getEntityData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else if entity.ShareCount != 5575331 {
@@ -135,6 +141,7 @@ func Test10KEntityParser(t *testing.T) {
 func TestOpsParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_ops.html")
 	ops, err := getOpsData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
@@ -162,6 +169,7 @@ func TestOpsParser(t *testing.T) {
 func Test10KOpsParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_ops.html")
 	ops, err := getOpsData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
@@ -189,6 +197,7 @@ func Test10KOpsParser(t *testing.T) {
 func TestCfParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_cf.html")
 	cf, err := getCfData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
@@ -204,6 +213,7 @@ func TestCfParser(t *testing.T) {
 func Test10KCfParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_cf.html")
 	cf, err := getCfData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
@@ -219,6 +229,7 @@ func Test10KCfParser(t *testing.T) {
 func TestBSParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_bs.html")
 	bs, err := getBSData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
@@ -240,6 +251,7 @@ func TestBSParser(t *testing.T) {
 func Test10KBSParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	bs, err := getBSData(f)
+	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
@@ -273,12 +285,16 @@ func TestFinReportMarshal(t *testing.T) {
 	data.DocType = FilingType10K
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	data.Bs, _ = getBSData(f)
+	f.Close()
 	f, _ = os.Open("samples/sample_10K_cf.html")
 	data.Cf, _ = getCfData(f)
+	f.Close()
 	f, _ = os.Open("samples/sample_10K_ops.html")
 	data.Ops, _ = getOpsData(f)
+	f.Close()
 	f, _ = os.Open("samples/sample_10K_entity.html")
 	data.Entity, _ = getEntityData(f)
+	f.Close()
 	str := data.String()
 	if !(strings.Contains(str, "Entity Information") &&
 		strings.Contains(str, "Operational Information") &&
@@ -288,6 +304,7 @@ func TestFinReportMarshal(t *testing.T) {
 	}
 	f, _ = os.Open("samples/sample_10K_marshal.json")
 	b, _ := ioutil.ReadAll(f)
+	f.Close()
 
 	//There is an extra byte at the end of the save file that needs to be
 	//eliminated to avoid a mismatch
@@ -296,9 +313,66 @@ func TestFinReportMarshal(t *testing.T) {
 	}
 }
 
+func TestFolderReader(t *testing.T) {
+	f, _ := os.Open("samples/sample_folder.json")
+	fetcher := NewFilingFetcher()
+	c, err := fetcher.CreateFolder(f)
+	if err != nil {
+		t.Error(err)
+	}
+	f.Close()
+	f, _ = os.Open("samples/sample_folder.json")
+	b, _ := ioutil.ReadAll(f)
+	f.Close()
+	//There is an extra byte at the end of the save file that needs to be
+	//eliminated to avoid a mismatch
+	if c.String() != string(b[:len(b)-1]) {
+		t.Error("Created folder does not match sample stored folder")
+	}
+}
+
+// LIVE TESTS:
+//     These tests are run live against EDGAR website. They are commented out
+//     to avoid hitting the site during repeated unit testing.
+//     Uncomment them when a live test is needed to verify something that is
+//     not covered in the samples.
+
 /*
+func TestFolderWriter(t *testing.T) {
+	fetcher := NewFilingFetcher()
+	c, err := fetcher.CompanyFolder("AGN", FilingType10K)
+	if err != nil {
+		t.Error(err)
+	}
+	files := c.AvailableFilings(FilingType10K)
+	for _, val := range files {
+		if val.Year() == 2018 || val.Year() == 2017 {
+			c.Filing(FilingType10K, val)
+		}
+	}
+	f, _ := os.Open("samples/sample_writer.json")
+	b, _ := ioutil.ReadAll(f)
+	f.Close()
+	//There is an extra byte at the end of the save file that needs to be
+	//eliminated to avoid a mismatch
+	if c.String() != string(b[:len(b)-1]) {
+		t.Error("Created folder does not match sample stored folder")
+	}
+}
+
 func TestLiveParsing(t *testing.T) {
-	c := GetFiling("AGN", filingType10K)
-	fmt.Println(c)
+	fetcher := NewFilingFetcher()
+	c, err := fetcher.CompanyFolder("AGN", FilingType10K)
+	if err != nil {
+		t.Error(err)
+	}
+	files := c.AvailableFilings(FilingType10K)
+	for _, val := range files {
+		_, err := c.Filing(FilingType10K, val)
+		if err != nil {
+			t.Error("Failed to get filing " + val.String())
+		}
+	}
+	fmt.Println(c.String())
 }
 */
