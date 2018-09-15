@@ -35,6 +35,20 @@ func normalizeNumber(str string) int64 {
 	return 0
 }
 
+func filingScale(strs []string) map[scaleEntity]scaleFactor {
+	ret := make(map[scaleEntity]scaleFactor)
+
+	for _, str := range strs {
+		for key, val := range filingScales {
+			if strings.Contains(strings.ToLower(str), strings.ToLower(key)) {
+				//Some scale available in this line
+				ret[val.entity] = val.scale
+			}
+		}
+	}
+	return ret
+}
+
 func getYear(date string) int {
 	strs := strings.Split(date, "-")
 	if len(strs) != 3 {

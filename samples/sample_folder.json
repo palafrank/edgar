@@ -23,7 +23,8 @@
                         "Short-Term debt": 534,
                         "Current Liabilities": 3294,
                         "Deferred revenue": 38,
-                        "Retained Earnings": 1432
+                        "Retained Earnings": 1432,
+                        "Total Shareholder Equity": 12345
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 1213,
@@ -52,7 +53,8 @@
                         "Short-Term debt": 697,
                         "Current Liabilities": 5018,
                         "Deferred revenue": 27,
-                        "Retained Earnings": -198
+                        "Retained Earnings": -198,
+                        "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 2243,
@@ -81,7 +83,8 @@
                         "Short-Term debt": 2432,
                         "Current Liabilities": 8328,
                         "Deferred revenue": 0,
-                        "Retained Earnings": 3647
+                        "Retained Earnings": 3647,
+                        "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 4530,
@@ -110,7 +113,8 @@
                         "Short-Term debt": 2797,
                         "Current Liabilities": 7874,
                         "Deferred revenue": 0,
-                        "Retained Earnings": 18342
+                        "Retained Earnings": 18342,
+                        "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 1425,
@@ -139,7 +143,8 @@
                         "Short-Term debt": 4231,
                         "Current Liabilities": 9848,
                         "Deferred revenue": 0,
-                        "Retained Earnings": 12957
+                        "Retained Earnings": 12957,
+                        "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 5873,

@@ -14,29 +14,30 @@ type financialReport struct {
 }
 
 type entityData struct {
-	ShareCount int64 `json:"Shares Outstanding" required:"true"`
+	ShareCount int64 `json:"Shares Outstanding" required:"true" entity:"Shares"`
 }
 
 type opsData struct {
-	Revenue     int64 `json:"Revenue" required:"true"`
-	CostOfSales int64 `json:"Cost Of Revenue" required:"true"`
-	GrossMargin int64 `json:"Gross Margin" required:"true" generate:"true"`
-	OpIncome    int64 `json:"Operational Income" required:"true"`
-	OpExpense   int64 `json:"Operational Expense" required:"true"`
-	NetIncome   int64 `json:"Net Income" required:"true"`
+	Revenue     int64 `json:"Revenue" required:"true" entity:"Money"`
+	CostOfSales int64 `json:"Cost Of Revenue" required:"true" entity:"Money"`
+	GrossMargin int64 `json:"Gross Margin" required:"true" generate:"true" entity:"Money"`
+	OpIncome    int64 `json:"Operational Income" required:"true" entity:"Money"`
+	OpExpense   int64 `json:"Operational Expense" required:"true" entity:"Money"`
+	NetIncome   int64 `json:"Net Income" required:"true" entity:"Money"`
 }
 
 type cfData struct {
-	OpCashFlow int64 `json:"Operating Cash Flow" required:"true"`
-	CapEx      int64 `json:"Capital Expenditure" required:"true"`
+	OpCashFlow int64 `json:"Operating Cash Flow" required:"true" entity:"Money"`
+	CapEx      int64 `json:"Capital Expenditure" required:"true" entity:"Money"`
 }
 
 type bsData struct {
-	LDebt    int64 `json:"Long-Term debt" required:"false"`
-	SDebt    int64 `json:"Short-Term debt" required:"false"`
-	CLiab    int64 `json:"Current Liabilities" required:"true"`
-	Deferred int64 `json:"Deferred revenue" required:"false"`
-	Retained int64 `json:"Retained Earnings" required:"true"`
+	LDebt    int64 `json:"Long-Term debt" required:"false" entity:"Money"`
+	SDebt    int64 `json:"Short-Term debt" required:"false" entity:"Money"`
+	CLiab    int64 `json:"Current Liabilities" required:"true" entity:"Money"`
+	Deferred int64 `json:"Deferred revenue" required:"false" entity:"Money"`
+	Retained int64 `json:"Retained Earnings" required:"true" entity:"Money"`
+	Equity   int64 `json:"Total Shareholder Equity" required:"true" entity:"Money"`
 }
 
 func (f financialReport) String() string {

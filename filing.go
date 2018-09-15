@@ -91,7 +91,7 @@ func (f *filing) NetIncome() (int64, error) {
 }
 
 func (f *filing) TotalEquity() (int64, error) {
-	return 0, errors.New(filingErrorString)
+	return f.FinData.Bs.Equity, nil
 }
 
 func (f *filing) ShortTermDebt() (int64, error) {

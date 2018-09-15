@@ -11,6 +11,7 @@ func getOpsData(page io.Reader) (*opsData, error) {
 
 	z := html.NewTokenizer(page)
 
+	scales := parseFilingScale(z)
 	data, err := parseTableRow(z, false)
 	for err == nil {
 		if len(data) > 0 {
@@ -18,7 +19,7 @@ func getOpsData(page io.Reader) (*opsData, error) {
 			if finType != finDataUnknown {
 				for _, str := range data[1:] {
 					if len(str) > 0 {
-						if setData(retData, finType, str) == nil {
+						if setData(retData, finType, str, scales) == nil {
 							break
 						}
 					}

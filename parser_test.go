@@ -122,7 +122,7 @@ func TestEntityParser(t *testing.T) {
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
-	} else if entity.ShareCount != 4829926 {
+	} else if entity.ShareCount != 4829926000 {
 		t.Error("Incorrect sharecount value parsed")
 	}
 }
@@ -133,7 +133,7 @@ func Test10KEntityParser(t *testing.T) {
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
-	} else if entity.ShareCount != 5575331 {
+	} else if entity.ShareCount != 5575331000 {
 		t.Error("Incorrect sharecount value parsed")
 	}
 }
@@ -145,22 +145,22 @@ func TestOpsParser(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if ops.Revenue != 53265 {
+		if ops.Revenue != 53265000000 {
 			t.Error("Revenue amount did not match")
 		}
-		if ops.CostOfSales != 32844 {
+		if ops.CostOfSales != 32844000000 {
 			t.Error("Cost of Sales amount did not match")
 		}
-		if ops.GrossMargin != 20421 {
+		if ops.GrossMargin != 20421000000 {
 			t.Error("Gross margin amount did not match")
 		}
-		if ops.OpExpense != 7809 {
+		if ops.OpExpense != 7809000000 {
 			t.Error("Operational Expense amount did not match")
 		}
-		if ops.OpIncome != 12612 {
+		if ops.OpIncome != 12612000000 {
 			t.Error("Operational Income amount did not match")
 		}
-		if ops.NetIncome != 11519 {
+		if ops.NetIncome != 11519000000 {
 			t.Error("Net income amount did not match " + strconv.Itoa(int(ops.NetIncome)))
 		}
 	}
@@ -173,22 +173,22 @@ func Test10KOpsParser(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if ops.Revenue != 233715 {
+		if ops.Revenue != 233715000000 {
 			t.Error("Revenue amount did not match")
 		}
-		if ops.CostOfSales != 140089 {
+		if ops.CostOfSales != 140089000000 {
 			t.Error("Cost of Sales amount did not match")
 		}
-		if ops.GrossMargin != 93626 {
+		if ops.GrossMargin != 93626000000 {
 			t.Error("Gross margin amount did not match")
 		}
-		if ops.OpExpense != 22396 {
+		if ops.OpExpense != 22396000000 {
 			t.Error("Operational Expense amount did not match")
 		}
-		if ops.OpIncome != 71230 {
+		if ops.OpIncome != 71230000000 {
 			t.Error("Operational Income amount did not match")
 		}
-		if ops.NetIncome != 53394 {
+		if ops.NetIncome != 53394000000 {
 			t.Error("Net income amount did not match")
 		}
 	}
@@ -201,10 +201,10 @@ func TestCfParser(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if cf.OpCashFlow != 57911 {
+		if cf.OpCashFlow != 57911000000 {
 			t.Error("Incorrect cash flow from operations value parsed")
 		}
-		if cf.CapEx != int64(-10272) {
+		if cf.CapEx != int64(-10272000000) {
 			t.Error("Incorrect capital expenditure value parsed")
 		}
 	}
@@ -217,10 +217,10 @@ func Test10KCfParser(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if cf.OpCashFlow != 81266 {
+		if cf.OpCashFlow != 81266000000 {
 			t.Error("Incorrect cash flow from operations value parsed")
 		}
-		if cf.CapEx != int64(-11247) {
+		if cf.CapEx != int64(-11247000000) {
 			t.Error("Incorrect capital expenditure value parsed")
 		}
 	}
@@ -233,16 +233,16 @@ func TestBSParser(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if bs.CLiab != 88548 {
+		if bs.CLiab != 88548000000 {
 			t.Error("Incorrect current liabilities from balance sheet value parsed")
 		}
-		if bs.LDebt != 97128 {
+		if bs.LDebt != 97128000000 {
 			t.Error("Incorrect long term debt from balance sheet value parsed")
 		}
-		if bs.SDebt != 5498 {
+		if bs.SDebt != 5498000000 {
 			t.Error("Incorrect short term debt from balance sheet value parsed")
 		}
-		if bs.Retained != 79436 {
+		if bs.Retained != 79436000000 {
 			t.Error("Incorrect retained earningd from balance sheet value parsed")
 		}
 	}
@@ -255,16 +255,16 @@ func Test10KBSParser(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if bs.CLiab != 80610 {
+		if bs.CLiab != 80610000000 {
 			t.Error("Incorrect current liabilities from balance sheet value parsed")
 		}
-		if bs.LDebt != 53463 {
+		if bs.LDebt != 53463000000 {
 			t.Error("Incorrect long term debt from balance sheet value parsed")
 		}
-		if bs.SDebt != 2500 {
+		if bs.SDebt != 2500000000 {
 			t.Error("Incorrect short term debt from balance sheet value parsed")
 		}
-		if bs.Retained != 92284 {
+		if bs.Retained != 92284000000 {
 			t.Error("Incorrect retained earningd from balance sheet value parsed")
 		}
 	}
@@ -309,7 +309,7 @@ func TestFinReportMarshal(t *testing.T) {
 	//There is an extra byte at the end of the save file that needs to be
 	//eliminated to avoid a mismatch
 	if str != string(b[:len(b)-1]) {
-		t.Error("Marshaled data doesnot match reference JSON")
+		t.Error("Marshaled data doesnot match reference JSON\n", str)
 	}
 }
 
@@ -327,7 +327,7 @@ func TestFolderReader(t *testing.T) {
 	//There is an extra byte at the end of the save file that needs to be
 	//eliminated to avoid a mismatch
 	if c.String() != string(b[:len(b)-1]) {
-		t.Error("Created folder does not match sample stored folder")
+		t.Error("Created folder does not match sample stored folder\n", c.String())
 	}
 }
 

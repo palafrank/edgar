@@ -126,6 +126,78 @@ func parseTableData(z *html.Tokenizer, parseHref bool) string {
 	return ""
 }
 
+func parseTableTitle(z *html.Tokenizer) []string {
+
+	var strs []string
+	token := z.Token()
+
+	if token.Type != html.StartTagToken && token.Data != "th" {
+		log.Fatal("Tokenizer passed incorrectly to parseTableData")
+		return strs
+	}
+
+	for !(token.Data == "th" && token.Type == html.EndTagToken) {
+		if token.Type == html.ErrorToken {
+			break
+		}
+
+		if token.Type == html.TextToken {
+			str := strings.TrimSpace(token.String())
+			if len(str) > 0 {
+				strs = append(strs, str)
+			}
+		}
+		//Going for the end of the td tag
+		z.Next()
+		token = z.Token()
+	}
+	return strs
+}
+
+func parseTableHeading(z *html.Tokenizer) ([]string, error) {
+	var retData []string
+	//Get the current token
+	token := z.Token()
+
+	//Check if this is really a table row
+	for !(token.Type == html.StartTagToken && token.Data == "tr") {
+		tt := z.Next()
+		if tt == html.ErrorToken {
+			return nil, errors.New("Done with parsing")
+		}
+		token = z.Token()
+	}
+
+	//Till the end of the row collect data from each data block
+	for !(token.Data == "tr" && token.Type == html.EndTagToken) {
+
+		if token.Type == html.ErrorToken {
+			return nil, errors.New("Done with parsing")
+		}
+		if token.Data == "th" && token.Type == html.StartTagToken {
+			str := parseTableTitle(z)
+			if len(str) > 0 {
+				retData = append(retData, str...)
+			}
+		}
+		z.Next()
+		token = z.Token()
+	}
+
+	return retData, nil
+}
+
+func parseFilingScale(z *html.Tokenizer) map[scaleEntity]scaleFactor {
+	scales := make(map[scaleEntity]scaleFactor)
+	data, err := parseTableHeading(z)
+	if err == nil {
+		if len(data) > 0 {
+			scales = filingScale(data)
+		}
+	}
+	return scales
+}
+
 func parseTableRow(z *html.Tokenizer, parseHref bool) ([]string, error) {
 	var retData []string
 	//Get the current token

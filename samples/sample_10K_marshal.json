@@ -1,25 +1,26 @@
 {
     "Filing Type": "10-K",
     "Entity Information": {
-        "Shares Outstanding": 5575331
+        "Shares Outstanding": 5575331000
     },
     "Operational Information": {
-        "Revenue": 233715,
-        "Cost Of Revenue": 140089,
-        "Gross Margin": 93626,
-        "Operational Income": 71230,
-        "Operational Expense": 22396,
-        "Net Income": 53394
+        "Revenue": 233715000000,
+        "Cost Of Revenue": 140089000000,
+        "Gross Margin": 93626000000,
+        "Operational Income": 71230000000,
+        "Operational Expense": 22396000000,
+        "Net Income": 53394000000
     },
     "Balance Sheet Information": {
-        "Long-Term debt": 53463,
-        "Short-Term debt": 2500,
-        "Current Liabilities": 80610,
-        "Deferred revenue": 8940,
-        "Retained Earnings": 92284
+        "Long-Term debt": 53463000000,
+        "Short-Term debt": 2500000000,
+        "Current Liabilities": 80610000000,
+        "Deferred revenue": 8940000000,
+        "Retained Earnings": 92284000000,
+        "Total Shareholder Equity": 119355000000
     },
     "Cash Flow Information": {
-        "Operating Cash Flow": 81266,
-        "Capital Expenditure": -11247
+        "Operating Cash Flow": 81266000000,
+        "Capital Expenditure": -11247000000
     }
 }

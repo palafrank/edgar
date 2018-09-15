@@ -15,6 +15,7 @@ func getEntityData(page io.Reader) (*entityData, error) {
 	retData := new(entityData)
 	z := html.NewTokenizer(page)
 
+	scales := parseFilingScale(z)
 	data, err := parseTableRow(z, false)
 	for err == nil {
 		if len(data) > 0 {
@@ -22,7 +23,7 @@ func getEntityData(page io.Reader) (*entityData, error) {
 			if finType != finDataUnknown {
 				for _, str := range data[1:] {
 					if normalizeNumber(str) > 0 {
-						err := setData(retData, finType, str)
+						err := setData(retData, finType, str, scales)
 						if err != nil {
 							return nil, err
 						}

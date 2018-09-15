@@ -10,10 +10,17 @@ import (
 
 type finDataType string
 type filingDocType string
+type scaleFactor int64
+type scaleEntity string
 
 type finDataSearchInfo struct {
 	finDataName finDataType
 	finDataStr  []string
+}
+
+type scaleInfo struct {
+	scale  scaleFactor
+	entity scaleEntity
 }
 
 var (
@@ -28,6 +35,16 @@ var (
 	filingDocCF  filingDocType = "Cash Flow"
 	filingDocEN  filingDocType = "Entity Info"
 	filingDocIg  filingDocType = "Ignore"
+
+	//Scale of the money in the filing
+	scaleNone     scaleFactor = 1
+	scaleThousand scaleFactor = 1000 * scaleNone
+	scaleMillion  scaleFactor = 1000 * scaleThousand
+	scaleBillion  scaleFactor = 1000 * scaleMillion
+
+	// Scaling entities in filings
+	scaleEntityShares scaleEntity = "Shares"
+	scaleEntityMoney  scaleEntity = "Money"
 
 	//Types of financial data collected
 	finDataSharesOutstanding finDataType = "Shares Outstanding"
@@ -44,6 +61,7 @@ var (
 	finDataCLiab             finDataType = "Current Liabilities"
 	finDataDeferred          finDataType = "Deferred revenue"
 	finDataRetained          finDataType = "Retained Earnings"
+	finDataTotalEquity       finDataType = "Total Shareholder Equity"
 	finDataUnknown           finDataType = "Unknown"
 
 	//Keys to search for financial data in the filings
@@ -72,6 +90,8 @@ var (
 			{finDataCLiab, []string{"total(?s)(.*)current(?s)(.*)liabilities"}},
 			{finDataDeferred, []string{"deferred(?s)(.*)revenue"}},
 			{finDataRetained, []string{"retained(?s)(.*)earnings"}},
+			{finDataRetained, []string{"accumulated(?s)(.*)deficit"}},
+			{finDataTotalEquity, []string{"total share(?s)(.*)equity"}},
 		},
 		filingDocEN: {
 			{finDataSharesOutstanding, []string{"^(?s)(.*)shares outstanding"}},
@@ -85,6 +105,13 @@ var (
 		filingDocBS:  true,
 		filingDocCF:  true,
 		filingDocEN:  true,
+	}
+
+	filingScales = map[string]scaleInfo{
+		"shares in thousand": scaleInfo{scale: scaleThousand, entity: scaleEntityShares},
+		"shares in million":  scaleInfo{scale: scaleMillion, entity: scaleEntityShares},
+		"$ in million":       scaleInfo{scale: scaleMillion, entity: scaleEntityMoney},
+		"$ in billion":       scaleInfo{scale: scaleBillion, entity: scaleEntityMoney},
 	}
 )
 
@@ -224,7 +251,10 @@ func validate(data interface{}) error {
 	return nil
 }
 
-func setData(data interface{}, finType finDataType, val string) error {
+func setData(data interface{},
+	finType finDataType,
+	val string,
+	scale map[scaleEntity]scaleFactor) error {
 
 	t := reflect.TypeOf(data)
 	v := reflect.ValueOf(data)
@@ -236,7 +266,15 @@ func setData(data interface{}, finType finDataType, val string) error {
 		tag, ok := t.Field(i).Tag.Lookup("json")
 		if ok && string(finType) == tag {
 			if v.Field(i).Int() == 0 {
-				v.Field(i).SetInt(normalizeNumber(val))
+				num := normalizeNumber(val)
+				tag, ok := t.Field(i).Tag.Lookup("entity")
+				if ok {
+					factor, o := scale[scaleEntity(tag)]
+					if o {
+						num = num * int64(factor)
+					}
+				}
+				v.Field(i).SetInt(num)
 			}
 			return nil
 		}
