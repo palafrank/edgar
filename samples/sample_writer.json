@@ -11,23 +11,24 @@
                         "Shares Outstanding": 335224713
                     },
                     "Operational Information": {
-                        "Revenue": 14570,
-                        "Cost Of Revenue": 1860,
-                        "Gross Margin": 12710,
-                        "Operational Income": -1825,
-                        "Operational Expense": 16396,
-                        "Net Income": 14979
+                        "Revenue": 14570000000,
+                        "Cost Of Revenue": 1860000000,
+                        "Gross Margin": 12710000000,
+                        "Operational Income": -1825000000,
+                        "Operational Expense": 16396000000,
+                        "Net Income": 14979000000
                     },
                     "Balance Sheet Information": {
-                        "Long-Term debt": 29970,
-                        "Short-Term debt": 2797,
-                        "Current Liabilities": 7874,
+                        "Long-Term debt": 29970000000,
+                        "Short-Term debt": 2797000000,
+                        "Current Liabilities": 7874000000,
                         "Deferred revenue": 0,
-                        "Retained Earnings": 18342
+                        "Retained Earnings": 18342000000,
+                        "Total Shareholder Equity": 76192000000
                     },
                     "Cash Flow Information": {
-                        "Operating Cash Flow": 1425,
-                        "Capital Expenditure": -331
+                        "Operating Cash Flow": 1425000000,
+                        "Capital Expenditure": -331000000
                     }
                 }
             },
@@ -40,23 +41,24 @@
                         "Shares Outstanding": 330320420
                     },
                     "Operational Information": {
-                        "Revenue": 15940,
-                        "Cost Of Revenue": 2168,
-                        "Gross Margin": 13772,
-                        "Operational Income": -5921,
-                        "Operational Expense": 21861,
-                        "Net Income": -3716
+                        "Revenue": 15940000000,
+                        "Cost Of Revenue": 2168000000,
+                        "Gross Margin": 13772000000,
+                        "Operational Income": -5921000000,
+                        "Operational Expense": 21861000000,
+                        "Net Income": -3716000000
                     },
                     "Balance Sheet Information": {
-                        "Long-Term debt": 25843,
-                        "Short-Term debt": 4231,
-                        "Current Liabilities": 9848,
+                        "Long-Term debt": 25843000000,
+                        "Short-Term debt": 4231000000,
+                        "Current Liabilities": 9848000000,
                         "Deferred revenue": 0,
-                        "Retained Earnings": 12957
+                        "Retained Earnings": 12957000000,
+                        "Total Shareholder Equity": 73821000000
                     },
                     "Cash Flow Information": {
-                        "Operating Cash Flow": 5873,
-                        "Capital Expenditure": -349
+                        "Operating Cash Flow": 5873000000,
+                        "Capital Expenditure": -349000000
                     }
                 }
             }

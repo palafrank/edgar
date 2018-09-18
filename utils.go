@@ -5,11 +5,11 @@ import (
 	"strings"
 )
 
-func normalizeNumber(str string) int64 {
-	negative := int64(1)
+func normalizeNumber(str string) float64 {
+	negative := float64(1)
 	//Remove any leading spaces or $ signs
 	if strings.Contains(str, "(") && strings.Contains(str, ")") {
-		negative = -1
+		negative *= -1
 	}
 	str = strings.TrimLeft(str, " ")
 	str = strings.TrimLeft(str, "$")
@@ -27,9 +27,9 @@ func normalizeNumber(str string) int64 {
 		for _, data := range s {
 			s1 += data
 		}
-		num, err := strconv.Atoi(s1)
+		num, err := strconv.ParseFloat(s1, 64)
 		if err == nil {
-			return int64(num) * negative
+			return num * negative
 		}
 	}
 	return 0

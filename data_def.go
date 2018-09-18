@@ -205,7 +205,7 @@ func getFinDataType(key string, docType filingDocType) finDataType {
 	return finDataUnknown
 }
 
-func generateData(data interface{}, name string) int64 {
+func generateData(data interface{}, name string) float64 {
 	switch name {
 	case "GrossMargin":
 		val, ok := data.(*opsData)
@@ -230,7 +230,7 @@ func validate(data interface{}) error {
 	}
 	for i := 0; i < t.NumField(); i++ {
 		tag, ok := t.Field(i).Tag.Lookup("required")
-		val := v.Field(i).Int()
+		val := v.Field(i).Float()
 		if val == 0 && (ok && tag == "true") {
 			tag, ok = t.Field(i).Tag.Lookup("generate")
 			if ok && tag == "true" {
@@ -238,7 +238,7 @@ func validate(data interface{}) error {
 				if num == 0 {
 					err += t.Field(i).Name + ","
 				} else {
-					v.Field(i).SetInt(num)
+					v.Field(i).SetFloat(num)
 				}
 			} else {
 				err += t.Field(i).Name + ","
@@ -265,16 +265,16 @@ func setData(data interface{},
 	for i := 0; i < t.NumField(); i++ {
 		tag, ok := t.Field(i).Tag.Lookup("json")
 		if ok && string(finType) == tag {
-			if v.Field(i).Int() == 0 {
+			if v.Field(i).Float() == 0 {
 				num := normalizeNumber(val)
 				tag, ok := t.Field(i).Tag.Lookup("entity")
 				if ok {
 					factor, o := scale[scaleEntity(tag)]
 					if o {
-						num = num * int64(factor)
+						num *= float64(factor)
 					}
 				}
-				v.Field(i).SetInt(num)
+				v.Field(i).SetFloat(num)
 			}
 			return nil
 		}

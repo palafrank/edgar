@@ -41,102 +41,102 @@ func (f *filing) Type() (FilingType, error) {
 	return "", errors.New(filingErrorString)
 }
 
-func (f *filing) ShareCount() (int64, error) {
+func (f *filing) ShareCount() (float64, error) {
 	if f.FinData != nil && f.FinData.Entity != nil {
 		return f.FinData.Entity.ShareCount, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) Revenue() (int64, error) {
+func (f *filing) Revenue() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
 		return f.FinData.Ops.Revenue, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) CostOfRevenue() (int64, error) {
+func (f *filing) CostOfRevenue() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
 		return f.FinData.Ops.CostOfSales, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) GrossMargin() (int64, error) {
+func (f *filing) GrossMargin() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
 		return f.FinData.Ops.GrossMargin, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) OperatingIncome() (int64, error) {
+func (f *filing) OperatingIncome() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
 		return f.FinData.Ops.OpIncome, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) OperatingExpense() (int64, error) {
+func (f *filing) OperatingExpense() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
 		return f.FinData.Ops.OpExpense, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) NetIncome() (int64, error) {
+func (f *filing) NetIncome() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
 		return f.FinData.Ops.NetIncome, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) TotalEquity() (int64, error) {
+func (f *filing) TotalEquity() (float64, error) {
 	return f.FinData.Bs.Equity, nil
 }
 
-func (f *filing) ShortTermDebt() (int64, error) {
+func (f *filing) ShortTermDebt() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
 		return f.FinData.Bs.SDebt, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) LongTermDebt() (int64, error) {
+func (f *filing) LongTermDebt() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
 		return f.FinData.Bs.LDebt, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) CurrentLiabilities() (int64, error) {
+func (f *filing) CurrentLiabilities() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
 		return f.FinData.Bs.CLiab, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) DeferredRevenue() (int64, error) {
+func (f *filing) DeferredRevenue() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
 		return f.FinData.Bs.Deferred, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) RetainedEarnings() (int64, error) {
+func (f *filing) RetainedEarnings() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
 		return f.FinData.Bs.Retained, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) OperatingCashFlow() (int64, error) {
+func (f *filing) OperatingCashFlow() (float64, error) {
 	if f.FinData != nil && f.FinData.Cf != nil {
 		return f.FinData.Cf.OpCashFlow, nil
 	}
 	return 0, errors.New(filingErrorString)
 }
 
-func (f *filing) CapitalExpenditure() (int64, error) {
+func (f *filing) CapitalExpenditure() (float64, error) {
 	if f.FinData != nil && f.FinData.Cf != nil {
 		return f.FinData.Cf.CapEx, nil
 	}

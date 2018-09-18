@@ -204,7 +204,7 @@ func TestCfParser(t *testing.T) {
 		if cf.OpCashFlow != 57911000000 {
 			t.Error("Incorrect cash flow from operations value parsed")
 		}
-		if cf.CapEx != int64(-10272000000) {
+		if cf.CapEx != float64(-10272000000) {
 			t.Error("Incorrect capital expenditure value parsed")
 		}
 	}
@@ -220,8 +220,8 @@ func Test10KCfParser(t *testing.T) {
 		if cf.OpCashFlow != 81266000000 {
 			t.Error("Incorrect cash flow from operations value parsed")
 		}
-		if cf.CapEx != int64(-11247000000) {
-			t.Error("Incorrect capital expenditure value parsed")
+		if cf.CapEx != float64(-11247000000) {
+			t.Error("Incorrect capital expenditure value parsed ", cf.CapEx)
 		}
 	}
 }
@@ -336,7 +336,6 @@ func TestFolderReader(t *testing.T) {
 //     to avoid hitting the site during repeated unit testing.
 //     Uncomment them when a live test is needed to verify something that is
 //     not covered in the samples.
-
 /*
 func TestFolderWriter(t *testing.T) {
 	fetcher := NewFilingFetcher()
@@ -356,9 +355,10 @@ func TestFolderWriter(t *testing.T) {
 	//There is an extra byte at the end of the save file that needs to be
 	//eliminated to avoid a mismatch
 	if c.String() != string(b[:len(b)-1]) {
-		t.Error("Created folder does not match sample stored folder")
+		t.Error("Created folder does not match sample stored folder ", c.String())
 	}
 }
+
 
 func TestLiveParsing(t *testing.T) {
 	fetcher := NewFilingFetcher()
