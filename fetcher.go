@@ -7,16 +7,20 @@ import (
 )
 
 type fetcher struct {
+	folders map[string]*company
 }
 
 func (f *fetcher) CompanyFolder(
 	ticker string,
 	fileTypes ...FilingType) (CompanyFolder, error) {
 
-	comp := newCompany(ticker)
-
-	for _, t := range fileTypes {
-		comp.FilingLinks[t] = getFilingLinks(ticker, t)
+	comp, ok := f.folders[ticker]
+	if !ok {
+		comp = newCompany(ticker)
+		f.folders[ticker] = comp
+		for _, t := range fileTypes {
+			comp.FilingLinks[t] = getFilingLinks(ticker, t)
+		}
 	}
 	return comp, nil
 }
@@ -29,11 +33,12 @@ func (f *fetcher) CreateFolder(
 	if err != nil {
 		return nil, err
 	}
-	c := new(company)
+	c := newCompany("")
 	err = json.Unmarshal(b, c)
 	if err != nil {
 		return nil, err
 	}
+	f.folders[c.Ticker()] = c
 	// Get all the latest links for all the filing types
 	for _, key := range fileTypes {
 		c.FilingLinks[key] = getFilingLinks(c.Ticker(), key)
@@ -42,5 +47,5 @@ func (f *fetcher) CreateFolder(
 }
 
 func NewFilingFetcher() FilingFetcher {
-	return &fetcher{}
+	return &fetcher{folders: make(map[string]*company)}
 }

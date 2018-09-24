@@ -79,6 +79,10 @@ func (c *company) AddReport(file *filing) {
 
 // Save the Company folder into the writer in JSON format
 func (c *company) SaveFolder(w io.Writer) error {
-	w.Write([]byte(c.String()))
+	_, err := w.Write([]byte(c.String()))
+	if err != nil {
+		log.Println("Failed to save data")
+		return err
+	}
 	return nil
 }
