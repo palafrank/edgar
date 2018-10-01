@@ -37,7 +37,8 @@ func normalizeNumber(str string) float64 {
 
 func filingScale(strs []string) map[scaleEntity]scaleFactor {
 	ret := make(map[scaleEntity]scaleFactor)
-
+	ret[scaleEntityShares] = scaleNone
+	ret[scaleEntityMoney] = scaleMillion
 	for _, str := range strs {
 		for key, val := range filingScales {
 			if strings.Contains(strings.ToLower(str), strings.ToLower(key)) {

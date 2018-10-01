@@ -24,7 +24,7 @@ type Date interface {
 // Filing interface for fetching financial data
 type Filing interface {
 	Ticker() string
-	FiledOn() Date
+	FiledOn() string
 	Type() (FilingType, error)
 	ShareCount() (float64, error)
 	Revenue() (float64, error)

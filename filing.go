@@ -26,8 +26,8 @@ func (f *filing) Ticker() string {
 	return f.Company
 }
 
-func (f *filing) FiledOn() Date {
-	return getDate(f.Date)
+func (f *filing) FiledOn() string {
+	return getDate(f.Date).String()
 }
 
 func (f *filing) Month() int {
