@@ -1,6 +1,7 @@
 package edgar
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -83,4 +84,16 @@ func getDate(dateStr string) Date {
 	d.month = getMonth(dateStr)
 	d.day = getDay(dateStr)
 	return d
+}
+
+func getFinDataXBRLTag(onclick string) (string, error) {
+	if strings.Contains(onclick, "showAR") {
+		d := strings.Split(onclick, `'`)
+		if len(d) == 3 {
+			if strings.Contains(d[1], "defref") {
+				return d[1], nil
+			}
+		}
+	}
+	return "", errors.New("Not a financial tag")
 }

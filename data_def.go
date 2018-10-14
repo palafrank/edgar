@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"regexp"
 	"strings"
 )
 
@@ -64,40 +63,6 @@ var (
 	finDataTotalEquity       finDataType = "Total Shareholder Equity"
 	finDataUnknown           finDataType = "Unknown"
 
-	//Keys to search for financial data in the filings
-	finDataSearchKeys = map[filingDocType][]finDataSearchInfo{
-		filingDocOps: {
-			{finDataRevenue, []string{"net(?s)(.*)revenue"}},
-			{finDataRevenue, []string{"net(?s)(.*)sales"}},
-			{finDataRevenue, []string{"total(?s)(.*)revenue"}},
-			{finDataRevenue, []string{"total(?s)(.*)sales"}},
-			{finDataCostOfRevenue, []string{"cost(?s)(.*)sales"}},
-			{finDataCostOfRevenue, []string{"cost(?s)(.*)revenue"}},
-			{finDataGrossMargin, []string{"gross(?s)(.*)margin"}},
-			{finDataOpsExpense, []string{"operating(?s)(.*)expenses"}},
-			{finDataOpsIncome, []string{"operating(?s)(.*)income"}},
-			{finDataOpsIncome, []string{"operating(?s)(.*)loss"}},
-			{finDataNetIncome, []string{"net(?s)(.*)income"}},
-		},
-		filingDocCF: {
-			{finDataOpCashFlow, []string{"operating(?s)(.*)activities"}},
-			{finDataCapEx, []string{"plant(?s)(.*)equipment"}},
-			{finDataCapEx, []string{"capital(?s)(.*)expense"}},
-		},
-		filingDocBS: {
-			{finDataSDebt, []string{"current portion(?s)(.*)long-term debt"}},
-			{finDataLDebt, []string{"long-term debt"}},
-			{finDataCLiab, []string{"total(?s)(.*)current(?s)(.*)liabilities"}},
-			{finDataDeferred, []string{"deferred(?s)(.*)revenue"}},
-			{finDataRetained, []string{"retained(?s)(.*)earnings"}},
-			{finDataRetained, []string{"accumulated(?s)(.*)deficit"}},
-			{finDataTotalEquity, []string{"total share(?s)(.*)equity"}},
-		},
-		filingDocEN: {
-			{finDataSharesOutstanding, []string{"^(?s)(.*)shares outstanding"}},
-		},
-	}
-
 	//Required Documents list
 	requiredDocTypes = map[filingDocType]bool{
 		filingDocOps: true,
@@ -112,6 +77,32 @@ var (
 		"shares in million":  scaleInfo{scale: scaleMillion, entity: scaleEntityShares},
 		"$ in million":       scaleInfo{scale: scaleMillion, entity: scaleEntityMoney},
 		"$ in billion":       scaleInfo{scale: scaleBillion, entity: scaleEntityMoney},
+	}
+
+	xbrlTags = map[string]finDataType{
+		//Balance Sheet info
+		"defref_us-gaap_StockholdersEquity":                 finDataTotalEquity,
+		"defref_us-gaap_RetainedEarningsAccumulatedDeficit": finDataRetained,
+		"defref_us-gaap_LiabilitiesCurrent":                 finDataCLiab,
+		"defref_us-gaap_LongTermDebtNoncurrent":             finDataLDebt,
+		"defref_us-gaap_ShortTermBorrowings":                finDataSDebt,
+		"defref_us-gaap_DeferredRevenueCurrent":             finDataDeferred,
+
+		//Operations Sheet info
+		"defref_us-gaap_SalesRevenueNet":            finDataRevenue,
+		"defref_us-gaap_CostOfGoodsAndServicesSold": finDataCostOfRevenue,
+		"defref_us-gaap_GrossProfit":                finDataGrossMargin,
+		"defref_us-gaap_OperatingExpenses":          finDataOpsExpense,
+		"defref_us-gaap_OperatingIncomeLoss":        finDataOpsIncome,
+		"defref_us-gaap_NetIncomeLoss":              finDataNetIncome,
+
+		//Cash Flow Sheet info
+		"defref_us-gaap_NetCashProvidedByUsedInOperatingActivities":                     finDataOpCashFlow,
+		"defref_us-gaap_NetCashProvidedByUsedInOperatingActivitiesContinuingOperations": finDataOpCashFlow,
+		"defref_us-gaap_PaymentsToAcquirePropertyPlantAndEquipment":                     finDataCapEx,
+		"defref_us-gaap_PaymentsToAcquireProductiveAssets":                              finDataCapEx,
+		//Entity sheet information
+		"defref_dei_EntityCommonStockSharesOutstanding": finDataSharesOutstanding,
 	}
 )
 
@@ -139,6 +130,7 @@ func (d date) String() string {
 
 func lookupDocType(data string) filingDocType {
 
+	//fmt.Println("Looking up: ", data)
 	data = strings.ToUpper(data)
 
 	if strings.Contains(data, "PARENTHETICAL") {
@@ -151,11 +143,13 @@ func lookupDocType(data string) filingDocType {
 		return filingDocEN
 		//} else if strings.Contains(data, "CONSOLIDATED") {
 	} else {
-		match, _ := regexp.MatchString("^(?s)(.*)CONSOLIDATED.*$", data)
-		if !match {
-			//fmt.Println("PASSING ON :", data)
-			return filingDocIg
-		}
+		/*
+			match, _ := regexp.MatchString("^(?s)(.*)CONSOLIDATED.*$", data)
+			if !match {
+				//fmt.Println("PASSING ON :", data)
+				return filingDocIg
+			}
+		*/
 		if strings.Contains(data, "BALANCE SHEETS") {
 			//Balance sheet
 			return filingDocBS
@@ -189,20 +183,11 @@ func getMissingDocs(data map[filingDocType]string) string {
 }
 
 func getFinDataType(key string, docType filingDocType) finDataType {
-	db, ok := finDataSearchKeys[docType]
+	data, ok := xbrlTags[key]
 	if !ok {
 		return finDataUnknown
 	}
-	key = strings.ToLower(key)
-	for _, val := range db {
-		for _, str := range val.finDataStr {
-			match, _ := regexp.MatchString(str, key)
-			if match {
-				return val.finDataName
-			}
-		}
-	}
-	return finDataUnknown
+	return data
 }
 
 func generateData(data interface{}, name string) float64 {

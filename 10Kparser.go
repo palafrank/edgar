@@ -14,6 +14,7 @@ func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 
 	z := html.NewTokenizer(page)
 	tt := z.Next()
+loop:
 	for tt != html.ErrorToken {
 		token := z.Token()
 		if token.Data == "a" {
@@ -42,14 +43,14 @@ func map10KReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 				} else if a.Key == "id" && a.Val == "menu_cat3" {
 					//Gone too far. Menu category 3 is beyond consolidated statements.
 					//Stop parsing
-					break
+					break loop
 				}
 			}
 		}
 		tt = z.Next()
 	}
 	if len(retData) != len(requiredDocTypes) {
-		log.Fatal("Did not find the following filing documents: " +
+		log.Println("Did not find the following filing documents: " +
 			getMissingDocs(retData))
 	}
 	return retData

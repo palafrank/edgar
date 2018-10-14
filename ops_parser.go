@@ -12,7 +12,7 @@ func getOpsData(page io.Reader) (*opsData, error) {
 	z := html.NewTokenizer(page)
 
 	scales := parseFilingScale(z)
-	data, err := parseTableRow(z, false)
+	data, err := parseTableRow(z, true)
 	for err == nil {
 		if len(data) > 0 {
 			finType := getFinDataType(data[0], filingDocOps)
@@ -30,7 +30,7 @@ func getOpsData(page io.Reader) (*opsData, error) {
 		if validate(retData) == nil {
 			break
 		}
-		data, err = parseTableRow(z, false)
+		data, err = parseTableRow(z, true)
 	}
 	return retData, validate(retData)
 }

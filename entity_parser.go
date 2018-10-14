@@ -16,7 +16,7 @@ func getEntityData(page io.Reader) (*entityData, error) {
 	z := html.NewTokenizer(page)
 
 	scales := parseFilingScale(z)
-	data, err := parseTableRow(z, false)
+	data, err := parseTableRow(z, true)
 	for err == nil {
 		if len(data) > 0 {
 			finType := getFinDataType(data[0], filingDocEN)
@@ -36,7 +36,7 @@ func getEntityData(page io.Reader) (*entityData, error) {
 		if validate(retData) == nil {
 			break
 		}
-		data, err = parseTableRow(z, false)
+		data, err = parseTableRow(z, true)
 	}
 	return retData, validate(retData)
 }

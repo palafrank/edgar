@@ -14,7 +14,7 @@ func getBSData(page io.Reader) (*bsData, error) {
 
 	scales := parseFilingScale(z)
 
-	data, err := parseTableRow(z, false)
+	data, err := parseTableRow(z, true)
 	for err == nil {
 		if len(data) > 0 {
 			finType := getFinDataType(data[0], filingDocBS)
@@ -32,7 +32,7 @@ func getBSData(page io.Reader) (*bsData, error) {
 		if validate(retData) == nil {
 			break
 		}
-		data, err = parseTableRow(z, false)
+		data, err = parseTableRow(z, true)
 	}
 	return retData, validate(retData)
 }

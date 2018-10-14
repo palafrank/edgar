@@ -79,7 +79,7 @@ func filingPageParser(page io.Reader, fileType FilingType) map[filingDocType]str
 
 	switch fileType {
 	case FilingType10K:
-		log.Println("Getting 10K filing documents")
+		log.Println("Getting 10K filing documents: ")
 		docs := map10KReports(page, filingLinks)
 		return docs
 	case FilingType10Q:
@@ -104,7 +104,6 @@ func parseTableData(z *html.Tokenizer, parseHref bool) string {
 		if token.Type == html.ErrorToken {
 			break
 		}
-
 		if token.Type == html.TextToken {
 			str := strings.TrimSpace(token.String())
 			if len(str) > 0 {
@@ -237,6 +236,7 @@ var reqHyperLinks = map[string]bool{
 
 func parseHyperLinkTag(z *html.Tokenizer, token html.Token) string {
 	var href string
+	var onclick string
 	var id string
 	var text string
 
@@ -246,6 +246,11 @@ func parseHyperLinkTag(z *html.Tokenizer, token html.Token) string {
 			id = a.Val
 		case "href":
 			href = a.Val
+		case "onclick":
+			onclick = a.Val
+			if str, err := getFinDataXBRLTag(onclick); err == nil {
+				return str
+			}
 		}
 	}
 	for !(token.Data == "a" && token.Type == html.EndTagToken) {
