@@ -89,18 +89,23 @@ var (
 		"defref_us-gaap_DeferredRevenueCurrent":             finDataDeferred,
 
 		//Operations Sheet info
-		"defref_us-gaap_SalesRevenueNet":            finDataRevenue,
-		"defref_us-gaap_CostOfGoodsAndServicesSold": finDataCostOfRevenue,
-		"defref_us-gaap_GrossProfit":                finDataGrossMargin,
-		"defref_us-gaap_OperatingExpenses":          finDataOpsExpense,
-		"defref_us-gaap_OperatingIncomeLoss":        finDataOpsIncome,
-		"defref_us-gaap_NetIncomeLoss":              finDataNetIncome,
+		"defref_us-gaap_SalesRevenueNet":                                                                             finDataRevenue,
+		"defref_us-gaap_Revenues":                                                                                    finDataRevenue,
+		"defref_us-gaap_CostOfGoodsAndServicesSold":                                                                  finDataCostOfRevenue,
+		"defref_us-gaap_CostOfGoodsSold":                                                                             finDataCostOfRevenue,
+		"defref_us-gaap_GrossProfit":                                                                                 finDataGrossMargin,
+		"defref_us-gaap_IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": finDataGrossMargin,
+		"defref_us-gaap_OperatingExpenses":                                                                           finDataOpsExpense,
+		"defref_us-gaap_CostsAndExpenses":                                                                            finDataOpsExpense,
+		"defref_us-gaap_OperatingIncomeLoss":                                                                         finDataOpsIncome,
+		"defref_us-gaap_NetIncomeLoss":                                                                               finDataNetIncome,
 
 		//Cash Flow Sheet info
 		"defref_us-gaap_NetCashProvidedByUsedInOperatingActivities":                     finDataOpCashFlow,
 		"defref_us-gaap_NetCashProvidedByUsedInOperatingActivitiesContinuingOperations": finDataOpCashFlow,
 		"defref_us-gaap_PaymentsToAcquirePropertyPlantAndEquipment":                     finDataCapEx,
 		"defref_us-gaap_PaymentsToAcquireProductiveAssets":                              finDataCapEx,
+
 		//Entity sheet information
 		"defref_dei_EntityCommonStockSharesOutstanding": finDataSharesOutstanding,
 	}

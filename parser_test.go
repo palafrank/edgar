@@ -15,6 +15,14 @@ var sampleTableRow = `<tr><td nowrap="nowrap">10-Q</td><td nowrap="nowrap"><a hr
 var sampleRowWithXBRL = `<tr class="reu"><td class="pl " style="border-bottom: 0px;" valign="top"><a class="a" href="javascript:void(0);" onclick="top.Show.showAR( this, 'defref_us-gaap_StockholdersEquity', window );">Total shareholders&#8217; equity</a></td><td class="nump">134,047<span></span>
 </td><td class="nump">128,249<span></span></td></tr>`
 
+var sampleRowWithNumInLink = `<tr class="re">
+        <td class="pl " style="border-bottom: 0px;" valign="top"><a class="a" href="javascript:void(0);" onclick="top.Show.showAR( this, 'defref_dei_EntityCommonStockSharesOutstanding', window );">Entity Common Stock, Shares Outstanding</a></td>
+        <td class="text">&#xA0;<span></span></td>
+        <td class="nump"><a title="dei_EntityCommonStockSharesOutstanding" onclick="toggleNextSibling(this);">266,252,295</a><span style="display:none;white-space:normal;text-align:left;">dei_EntityCommonStockSharesOutstanding</span><span></span></td>
+        <td class="text">&#xA0;<span></span></td>
+      </tr>
+`
+
 func TestParsingTableRow(t *testing.T) {
 	page := strings.NewReader(sampleTableRow)
 	z := html.NewTokenizer(page)
@@ -59,6 +67,26 @@ func TestParsingXBRLDef(t *testing.T) {
 	}
 }
 
+func TestParsingNumInLink(t *testing.T) {
+	page := strings.NewReader(sampleRowWithNumInLink)
+	z := html.NewTokenizer(page)
+	data, err := parseTableRow(z, true)
+	if err != nil {
+		t.Error("Parser returned error while parsing XBRL: " + err.Error())
+		return
+	}
+	if len(data) != 2 {
+		t.Error("Parser returned unexpected number of data items: " + string(len(data)))
+		return
+	}
+	if data[0] != "defref_dei_EntityCommonStockSharesOutstanding" {
+		t.Error("Did not get the expected financial data tag: ", data[0])
+	}
+	if data[1] != "266,252,295" {
+		t.Error("Did not get the righ value from the table: ", data[1])
+	}
+}
+
 func TestFilingQuery(t *testing.T) {
 	valid := map[string]string{
 		"2018-08-01": "/cgi-bin/viewer?action=view&cik=320193&accession_number=0000320193-18-000100&xbrl_type=v",
@@ -76,12 +104,12 @@ func TestFilingQuery(t *testing.T) {
 	links := queryPageParser(f, FilingType10Q)
 	f.Close()
 	if len(links) != 10 {
-		t.Error("Incorrect number of filing links found")
+		t.Error("Incorrect number of filing links found ", len(links))
 	}
 
 	for key, val := range links {
 		if val != valid[key] {
-			t.Error("Incorrect link parsed from the query document")
+			t.Error("Incorrect: ", key, val)
 		}
 	}
 
@@ -149,6 +177,17 @@ func TestEntityParser(t *testing.T) {
 		t.Error(err.Error())
 	} else if entity.ShareCount != 4829926000 {
 		t.Error("Incorrect sharecount value parsed")
+	}
+}
+
+func TestEntity1Parser(t *testing.T) {
+	f, _ := os.Open("samples/sample_entity1.html")
+	entity, err := getEntityData(f)
+	f.Close()
+	if err != nil {
+		t.Error(err.Error())
+	} else if entity.ShareCount != 266252295 {
+		t.Error("Incorrect sharecount value parsed: ", entity.ShareCount)
 	}
 }
 
@@ -275,6 +314,34 @@ func TestBSParser(t *testing.T) {
 	}
 }
 
+func TestBS1Parser(t *testing.T) {
+	f, _ := os.Open("samples/sample_bs1.html")
+	bs, err := getBSData(f)
+	f.Close()
+	if err != nil {
+		t.Error(err.Error())
+	} else {
+		if bs.CLiab != 5018000000 {
+			t.Error("Incorrect current liabilities: ", bs.CLiab)
+		}
+		if bs.LDebt != 0 {
+			t.Error("Incorrect long term debt ", bs.LDebt)
+		}
+
+		if bs.Deferred != 27000000 {
+			t.Error("Incorrect Deferred ", bs.Deferred)
+		}
+
+		if bs.Equity != 28331000000 {
+			t.Error("Incorrect equity ", bs.Equity)
+		}
+
+		if bs.Retained != -198000000 {
+			t.Error("Incorrect retained earningd ", bs.Retained)
+		}
+	}
+}
+
 func Test10KBSParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	bs, err := getBSData(f)
@@ -387,7 +454,6 @@ func TestFolderWriter(t *testing.T) {
 		t.Error("Created folder does not match sample stored folder ", c.String())
 	}
 }
-
 func TestLiveParsing(t *testing.T) {
 	fetcher := NewFilingFetcher()
 	c, err := fetcher.CompanyFolder("AAPL", FilingType10K)

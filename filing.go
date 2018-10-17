@@ -3,7 +3,6 @@ package edgar
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 )
 
@@ -18,7 +17,6 @@ func (f filing) String() string {
 	if err != nil {
 		log.Fatal("Error marshaling Filing data")
 	}
-	fmt.Println("FILING")
 	return string(data)
 }
 

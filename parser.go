@@ -104,15 +104,15 @@ func parseTableData(z *html.Tokenizer, parseHref bool) string {
 		if token.Type == html.ErrorToken {
 			break
 		}
-		if token.Type == html.TextToken {
-			str := strings.TrimSpace(token.String())
+
+		if parseHref && token.Data == "a" && token.Type == html.StartTagToken {
+			str := parseHyperLinkTag(z, token)
 			if len(str) > 0 {
 				return str
 			}
-		}
-		if parseHref {
-			if token.Data == "a" && token.Type == html.StartTagToken {
-				str := parseHyperLinkTag(z, token)
+		} else {
+			if token.Type == html.TextToken {
+				str := strings.TrimSpace(token.String())
 				if len(str) > 0 {
 					return str
 				}
@@ -123,6 +123,90 @@ func parseTableData(z *html.Tokenizer, parseHref bool) string {
 		token = z.Token()
 	}
 	return ""
+}
+
+func parseTableRow(z *html.Tokenizer, parseHref bool) ([]string, error) {
+	var retData []string
+	//Get the current token
+	token := z.Token()
+
+	//Check if this is really a table row
+	for !(token.Type == html.StartTagToken && token.Data == "tr") {
+		tt := z.Next()
+		if tt == html.ErrorToken {
+			return nil, errors.New("Done with parsing")
+		}
+		token = z.Token()
+	}
+	//Till the end of the row collect data from each data block
+	for !(token.Data == "tr" && token.Type == html.EndTagToken) {
+
+		if token.Type == html.ErrorToken {
+			return nil, errors.New("Done with parsing")
+		}
+		if token.Data == "td" && token.Type == html.StartTagToken {
+			parseFlag := parseHref
+			//If the data is a number class just get the text = number
+			for _, a := range token.Attr {
+				if a.Key == "class" && (a.Val == "nump" || a.Val == "num") {
+					parseFlag = false
+				}
+			}
+			str := parseTableData(z, parseFlag)
+			if len(str) > 0 {
+				retData = append(retData, str)
+			}
+		}
+		z.Next()
+		token = z.Token()
+	}
+
+	return retData, nil
+}
+
+var reqHyperLinks = map[string]bool{
+	"interactiveDataBtn": true,
+}
+
+func parseHyperLinkTag(z *html.Tokenizer, token html.Token) string {
+	var href string
+	var onclick string
+	var id string
+
+	for _, a := range token.Attr {
+		switch a.Key {
+		case "id":
+			id = a.Val
+		case "href":
+			href = a.Val
+		case "onclick":
+			onclick = a.Val
+			if str, err := getFinDataXBRLTag(onclick); err == nil {
+				return str
+			}
+		}
+	}
+
+	text := ""
+	//Finish up the hyperlink
+	for !(token.Data == "a" && token.Type == html.EndTagToken) {
+		/*
+			if token.Type == html.TextToken {
+				str := strings.TrimSpace(token.String())
+				if len(str) > 0 {
+					text = str
+				}
+			}
+		*/
+		z.Next()
+		token = z.Token()
+	}
+
+	if _, ok := reqHyperLinks[id]; ok {
+		return href
+	}
+
+	return text
 }
 
 func parseTableTitle(z *html.Tokenizer) []string {
@@ -195,86 +279,4 @@ func parseFilingScale(z *html.Tokenizer) map[scaleEntity]scaleFactor {
 		}
 	}
 	return scales
-}
-
-func parseTableRow(z *html.Tokenizer, parseHref bool) ([]string, error) {
-	var retData []string
-	//Get the current token
-	token := z.Token()
-
-	//Check if this is really a table row
-	for !(token.Type == html.StartTagToken && token.Data == "tr") {
-		tt := z.Next()
-		if tt == html.ErrorToken {
-			return nil, errors.New("Done with parsing")
-		}
-		token = z.Token()
-	}
-
-	//Till the end of the row collect data from each data block
-	for !(token.Data == "tr" && token.Type == html.EndTagToken) {
-
-		if token.Type == html.ErrorToken {
-			return nil, errors.New("Done with parsing")
-		}
-		if token.Data == "td" && token.Type == html.StartTagToken {
-			str := parseTableData(z, parseHref)
-			if len(str) > 0 {
-				retData = append(retData, str)
-			}
-		}
-		z.Next()
-		token = z.Token()
-	}
-
-	return retData, nil
-}
-
-var reqHyperLinks = map[string]bool{
-	"interactiveDataBtn": true,
-}
-
-func parseHyperLinkTag(z *html.Tokenizer, token html.Token) string {
-	var href string
-	var onclick string
-	var id string
-	var text string
-
-	for _, a := range token.Attr {
-		switch a.Key {
-		case "id":
-			id = a.Val
-		case "href":
-			href = a.Val
-		case "onclick":
-			onclick = a.Val
-			if str, err := getFinDataXBRLTag(onclick); err == nil {
-				return str
-			}
-		}
-	}
-	for !(token.Data == "a" && token.Type == html.EndTagToken) {
-		if token.Type == html.ErrorToken {
-			log.Fatal("Unexpected table data parsing error")
-			return ""
-		}
-		if token.Type == html.TextToken {
-			text = token.Data
-		}
-		z.Next()
-		token = z.Token()
-	}
-	if len(id) == 0 && len(text) == 0 {
-		log.Fatal("Bad parsing of hyperlink tag")
-		return ""
-	} else {
-		if len(id) > 0 {
-			text = id
-		}
-	}
-	_, ok := reqHyperLinks[text]
-	if ok {
-		return href
-	}
-	return ""
 }
