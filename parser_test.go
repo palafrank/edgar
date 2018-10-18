@@ -1,7 +1,6 @@
 package edgar
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -325,7 +324,7 @@ func TestBS1Parser(t *testing.T) {
 		if bs.CLiab != 5018000000 {
 			t.Error("Incorrect current liabilities: ", bs.CLiab)
 		}
-		if bs.LDebt != 0 {
+		if bs.LDebt != 14846000000 {
 			t.Error("Incorrect long term debt ", bs.LDebt)
 		}
 
@@ -433,7 +432,7 @@ func TestFolderReader(t *testing.T) {
 //     to avoid hitting the site during repeated unit testing.
 //     Uncomment them when a live test is needed to verify something that is
 //     not covered in the samples.
-/*
+
 func TestFolderWriter(t *testing.T) {
 	fetcher := NewFilingFetcher()
 	c, err := fetcher.CompanyFolder("AGN", FilingType10K)
@@ -455,8 +454,8 @@ func TestFolderWriter(t *testing.T) {
 		t.Error("Created folder does not match sample stored folder ", c.String())
 	}
 }
-*/
-func TestLiveParsing(t *testing.T) {
+
+func TestLiveMSFTParsing(t *testing.T) {
 	fetcher := NewFilingFetcher()
 	c, err := fetcher.CompanyFolder("MSFT", FilingType10K)
 	if err != nil {
@@ -464,10 +463,59 @@ func TestLiveParsing(t *testing.T) {
 	}
 	files := c.AvailableFilings(FilingType10K)
 	for _, val := range files {
-		_, err := c.Filing(FilingType10K, val)
-		if err != nil {
-			t.Error("Failed to get filing " + val.String())
+		if val.Year() == 2018 || val.Year() == 2015 || val.Year() == 2011 {
+			fs, err := c.Filing(FilingType10K, val)
+			if err != nil {
+				t.Error("Failed to get filing " + val.String())
+			}
+			if val.Year() == 2018 {
+				if val, _ := fs.LongTermDebt(); val != 72242000000 {
+					t.Error("Incorrect Long term debt-2018: ", val)
+				}
+				if val, _ := fs.RetainedEarnings(); val != 13682000000 {
+					t.Error("Incorrect retained earnings-2018: ", val)
+				}
+				if val, _ := fs.ShareCount(); val != 7668217316 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+				if val, _ := fs.OperatingCashFlow(); val != 43884000000 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+			}
+			if val.Year() == 2011 {
+				if val, _ := fs.LongTermDebt(); val != 11921000000 {
+					t.Error("Incorrect Long term debt-2018: ", val)
+				}
+				if val, _ := fs.RetainedEarnings(); val != -6332000000 {
+					t.Error("Incorrect retained earnings-2018: ", val)
+				}
+				if val, _ := fs.ShareCount(); val != 8378265782 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+				if val, _ := fs.OperatingCashFlow(); val != 26994000000 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+				if val, _ := fs.CapitalExpenditure(); val != -2355000000 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+			}
+			if val.Year() == 2015 {
+				if val, _ := fs.LongTermDebt(); val != 27808000000 {
+					t.Error("Incorrect Long term debt-2018: ", val)
+				}
+				if val, _ := fs.RetainedEarnings(); val != 9096000000 {
+					t.Error("Incorrect retained earnings-2018: ", val)
+				}
+				if val, _ := fs.ShareCount(); val != 7997980969 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+				if val, _ := fs.OperatingCashFlow(); val != 29080000000 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+				if val, _ := fs.CapitalExpenditure(); val != -5944000000 {
+					t.Error("Incorrect share count-2018: ", val)
+				}
+			}
 		}
 	}
-	fmt.Println(c.String())
 }

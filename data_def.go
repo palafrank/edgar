@@ -79,36 +79,65 @@ var (
 		"$ in billion":       scaleInfo{scale: scaleBillion, entity: scaleEntityMoney},
 	}
 
+	// A Map of XBRL tags to financial data type
+	// This map contains the corresponding GAAP tag and a version of the tag
+	// without the GAAP keyword in case the company has only file non-gaap
 	xbrlTags = map[string]finDataType{
 		//Balance Sheet info
-		"defref_us-gaap_StockholdersEquity":                                                    finDataTotalEquity,
-		"defref_us-gaap_RetainedEarningsAccumulatedDeficit":                                    finDataRetained,
-		"RetainedEarningsAccumulatedDeficitAndAccumulatedOtherComprehensiveIncomeLossNetOfTax": finDataRetained,
-		"defref_us-gaap_LiabilitiesCurrent":                                                    finDataCLiab,
-		"defref_us-gaap_LongTermDebtNoncurrent":                                                finDataLDebt,
-		"defref_us-gaap_ShortTermBorrowings":                                                   finDataSDebt,
-		"defref_us-gaap_DeferredRevenueCurrent":                                                finDataDeferred,
+		"defref_us-gaap_StockholdersEquity":                            finDataTotalEquity,
+		"StockholdersEquity":                                           finDataTotalEquity,
+		"defref_us-gaap_RetainedEarningsAccumulatedDeficit":            finDataRetained,
+		"RetainedEarningsAccumulatedDeficit":                           finDataRetained,
+		"defref_us-gaap_LiabilitiesCurrent":                            finDataCLiab,
+		"LiabilitiesCurrent":                                           finDataCLiab,
+		"defref_us-gaap_LongTermDebtNoncurrent":                        finDataLDebt,
+		"LongTermDebtNoncurrent":                                       finDataLDebt,
+		"defref_us-gaap_LongTermDebtAndCapitalLeaseObligations":        finDataLDebt,
+		"LongTermDebtAndCapitalLeaseObligations":                       finDataLDebt,
+		"defref_us-gaap_ShortTermBorrowings":                           finDataSDebt,
+		"ShortTermBorrowings":                                          finDataSDebt,
+		"defref_us-gaap_LongTermDebtAndCapitalLeaseObligationsCurrent": finDataSDebt,
+		"LongTermDebtAndCapitalLeaseObligationsCurrent":                finDataSDebt,
+		"defref_us-gaap_DeferredRevenueCurrent":                        finDataDeferred,
+		"DeferredRevenueCurrent":                                       finDataDeferred,
+		"defref_us-gaap_RetainedEarningsAccumulatedDeficitAndAccumulatedOtherComprehensiveIncomeLossNetOfTax": finDataRetained,
+		"RetainedEarningsAccumulatedDeficitAndAccumulatedOtherComprehensiveIncomeLossNetOfTax":                finDataRetained,
 
 		//Operations Sheet info
-		"defref_us-gaap_SalesRevenueNet":                                                                             finDataRevenue,
-		"defref_us-gaap_Revenues":                                                                                    finDataRevenue,
-		"defref_us-gaap_CostOfGoodsAndServicesSold":                                                                  finDataCostOfRevenue,
-		"defref_us-gaap_CostOfGoodsSold":                                                                             finDataCostOfRevenue,
-		"defref_us-gaap_GrossProfit":                                                                                 finDataGrossMargin,
+		"defref_us-gaap_SalesRevenueNet": finDataRevenue,
+		"SalesRevenueNet":                finDataRevenue,
+		"defref_us-gaap_Revenues":        finDataRevenue,
+		"Revenues":                       finDataRevenue,
+		"defref_us-gaap_CostOfGoodsAndServicesSold": finDataCostOfRevenue,
+		"CostOfGoodsAndServicesSold":                finDataCostOfRevenue,
+		"defref_us-gaap_CostOfGoodsSold":            finDataCostOfRevenue,
+		"CostOfGoodsSold":                           finDataCostOfRevenue,
+		"defref_us-gaap_GrossProfit":                finDataGrossMargin,
+		"GrossProfit":                               finDataGrossMargin,
+		"defref_us-gaap_OperatingExpenses":          finDataOpsExpense,
+		"OperatingExpenses":                         finDataOpsExpense,
+		"defref_us-gaap_CostsAndExpenses":           finDataOpsExpense,
+		"CostsAndExpenses":                          finDataOpsExpense,
+		"defref_us-gaap_OperatingIncomeLoss":        finDataOpsIncome,
+		"OperatingIncomeLoss":                       finDataOpsIncome,
+		"defref_us-gaap_NetIncomeLoss":              finDataNetIncome,
+		"NetIncomeLoss":                             finDataNetIncome,
 		"defref_us-gaap_IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": finDataGrossMargin,
-		"defref_us-gaap_OperatingExpenses":                                                                           finDataOpsExpense,
-		"defref_us-gaap_CostsAndExpenses":                                                                            finDataOpsExpense,
-		"defref_us-gaap_OperatingIncomeLoss":                                                                         finDataOpsIncome,
-		"defref_us-gaap_NetIncomeLoss":                                                                               finDataNetIncome,
+		"IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest":                finDataGrossMargin,
 
 		//Cash Flow Sheet info
 		"defref_us-gaap_NetCashProvidedByUsedInOperatingActivities":                     finDataOpCashFlow,
+		"NetCashProvidedByUsedInOperatingActivities":                                    finDataOpCashFlow,
 		"defref_us-gaap_NetCashProvidedByUsedInOperatingActivitiesContinuingOperations": finDataOpCashFlow,
+		"NetCashProvidedByUsedInOperatingActivitiesContinuingOperations":                finDataOpCashFlow,
 		"defref_us-gaap_PaymentsToAcquirePropertyPlantAndEquipment":                     finDataCapEx,
+		"PaymentsToAcquirePropertyPlantAndEquipment":                                    finDataCapEx,
 		"defref_us-gaap_PaymentsToAcquireProductiveAssets":                              finDataCapEx,
+		"PaymentsToAcquireProductiveAssets":                                             finDataCapEx,
 
 		//Entity sheet information
 		"defref_dei_EntityCommonStockSharesOutstanding": finDataSharesOutstanding,
+		"EntityCommonStockSharesOutstanding":            finDataSharesOutstanding,
 	}
 )
 
