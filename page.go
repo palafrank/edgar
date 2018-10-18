@@ -52,7 +52,7 @@ func getFilingDocs(url string, fileType FilingType) map[filingDocType]string {
 	return filingPageParser(resp, fileType)
 }
 
-func getFinancialData(url string, fileType FilingType) *financialReport {
+func getFinancialData(url string, fileType FilingType) (*financialReport, error) {
 
 	var err error
 
@@ -74,25 +74,28 @@ func getFinancialData(url string, fileType FilingType) *financialReport {
 		case filingDocBS:
 			fr.Bs, err = getBSData(page)
 			if err != nil {
-				log.Fatal("Failed to get the Balance sheet doc: ", err)
+				log.Println("Failed to get the Balance sheet doc: ", err)
+				return nil, err
 			}
 		case filingDocCF:
 			fr.Cf, err = getCfData(page)
 			if err != nil {
-				log.Fatal("Failed to get the cash flow doc: ", err)
+				log.Println("Failed to get the cash flow doc: ", err)
+				return nil, err
 			}
 		case filingDocEN:
 			fr.Entity, err = getEntityData(page)
 			if err != nil {
-				log.Fatal("Failed to get the Entity sheet doc: ", err)
+				log.Println("Failed to get the Entity sheet doc: ", err)
+				return nil, err
 			}
 		case filingDocOps:
 			fr.Ops, err = getOpsData(page)
 			if err != nil {
-				log.Fatal("Failed to get the operations sheet doc ", err)
+				log.Println("Failed to get the operations sheet doc ", err)
+				return nil, err
 			}
-
 		}
 	}
-	return fr
+	return fr, nil
 }

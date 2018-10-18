@@ -1,6 +1,7 @@
 package edgar
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -454,9 +455,10 @@ func TestFolderWriter(t *testing.T) {
 		t.Error("Created folder does not match sample stored folder ", c.String())
 	}
 }
+*/
 func TestLiveParsing(t *testing.T) {
 	fetcher := NewFilingFetcher()
-	c, err := fetcher.CompanyFolder("AAPL", FilingType10K)
+	c, err := fetcher.CompanyFolder("MSFT", FilingType10K)
 	if err != nil {
 		t.Error(err)
 	}
@@ -469,4 +471,3 @@ func TestLiveParsing(t *testing.T) {
 	}
 	fmt.Println(c.String())
 }
-*/

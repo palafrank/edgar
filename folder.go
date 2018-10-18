@@ -56,11 +56,16 @@ func (c *company) Filing(fileType FilingType, key Date) (Filing, error) {
 			return nil, errors.New("No filing available for given date " + key.String())
 		}
 		file := new(filing)
-		file.FinData = getFinancialData(link, fileType)
-		file.Date = key.String()
-		file.Company = c.Ticker()
-		c.AddReport(file)
-		return file, nil
+		var err error
+		file.FinData, err = getFinancialData(link, fileType)
+		if file.FinData != nil {
+			file.Date = key.String()
+			file.Company = c.Ticker()
+			c.AddReport(file)
+			return file, nil
+		} else {
+			return nil, err
+		}
 	}
 	return file, nil
 }

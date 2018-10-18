@@ -68,7 +68,16 @@ func filingPageParser(page io.Reader, fileType FilingType) map[filingDocType]str
 				s1 := strings.Split(s, " = ")
 				s2 := strings.Split(s1[1], ";")
 				s3 := strings.Trim(s2[0], "\"")
-				filingLinks = append(filingLinks, s3)
+				s4 := strings.Split(s3, ".")
+				s5 := s3
+				//Sometimes the report is listed as an xml file??
+				if s4[1] == "xml" {
+					s5 = s4[0] + ".htm"
+				}
+				if !strings.Contains(s5, "htm") {
+					panic("Dont know this type of report")
+				}
+				filingLinks = append(filingLinks, s5)
 			}
 
 			break
