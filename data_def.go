@@ -81,12 +81,13 @@ var (
 
 	xbrlTags = map[string]finDataType{
 		//Balance Sheet info
-		"defref_us-gaap_StockholdersEquity":                 finDataTotalEquity,
-		"defref_us-gaap_RetainedEarningsAccumulatedDeficit": finDataRetained,
-		"defref_us-gaap_LiabilitiesCurrent":                 finDataCLiab,
-		"defref_us-gaap_LongTermDebtNoncurrent":             finDataLDebt,
-		"defref_us-gaap_ShortTermBorrowings":                finDataSDebt,
-		"defref_us-gaap_DeferredRevenueCurrent":             finDataDeferred,
+		"defref_us-gaap_StockholdersEquity":                                                    finDataTotalEquity,
+		"defref_us-gaap_RetainedEarningsAccumulatedDeficit":                                    finDataRetained,
+		"RetainedEarningsAccumulatedDeficitAndAccumulatedOtherComprehensiveIncomeLossNetOfTax": finDataRetained,
+		"defref_us-gaap_LiabilitiesCurrent":                                                    finDataCLiab,
+		"defref_us-gaap_LongTermDebtNoncurrent":                                                finDataLDebt,
+		"defref_us-gaap_ShortTermBorrowings":                                                   finDataSDebt,
+		"defref_us-gaap_DeferredRevenueCurrent":                                                finDataDeferred,
 
 		//Operations Sheet info
 		"defref_us-gaap_SalesRevenueNet":                                                                             finDataRevenue,
@@ -190,6 +191,16 @@ func getMissingDocs(data map[filingDocType]string) string {
 func getFinDataType(key string, docType filingDocType) finDataType {
 	data, ok := xbrlTags[key]
 	if !ok {
+		// Now look for non-gaap filing
+		// defref_us-gaap_XXX could be filed company specific
+		// as defref_msft_XXX
+		splits := strings.Split(key, "_")
+		if len(splits) == 3 {
+			data, ok := xbrlTags[splits[2]]
+			if ok {
+				return data
+			}
+		}
 		return finDataUnknown
 	}
 	return data
