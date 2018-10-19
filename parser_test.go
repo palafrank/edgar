@@ -115,6 +115,14 @@ func TestFilingQuery(t *testing.T) {
 
 }
 
+func TestParseCIKAndDocID(t *testing.T) {
+	str1 := "/cgi-bin/viewer?action=view&cik=320193&accession_number=0001193125-15-259935&xbrl_type=v"
+	s1, s2 := parseCikAndDocId(str1)
+	if s1 != "320193" || s2 != "000119312515259935" {
+		t.Error("Error in parsing CIK and doc id ", s1, s2)
+	}
+}
+
 func TestFiling10QParser(t *testing.T) {
 	var check = map[filingDocType]string{
 		filingDocCF:  "/Archives/edgar/data/320193/000032019318000100/R7.htm",

@@ -3,6 +3,7 @@ package edgar
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -11,7 +12,14 @@ import (
 	"golang.org/x/net/html"
 )
 
-var filingButtonId string = "interactiveDataBtn"
+func parseCikAndDocId(url string) (string, string) {
+	var s1 string
+	var d1, d2, d3, d4 int
+	fmt.Sscanf(url, "/cgi-bin/viewer?action=view&cik=%d&accession_number=%d-%d-%d%s", &d1, &d2, &d3, &d4, &s1)
+	cik := fmt.Sprintf("%d", d1)
+	an := fmt.Sprintf("%010d%d%d", d2, d3, d4)
+	return cik, an
+}
 
 /*
   This is the parsing of query page where we get the list of filings of a given types
@@ -290,6 +298,13 @@ func parseFilingScale(z *html.Tokenizer) map[scaleEntity]scaleFactor {
 	return scales
 }
 
+/*
+	This function takes any report filed under a company and looks
+	for XBRL tags that Filing is interested in to gather and store.
+	XBRL tag is mapped to a finDataType which is then used to lookup
+	the passed in interface fields to see if there is a match and set
+	that field
+*/
 func reportParser(page io.Reader, retData interface{}) (interface{}, error) {
 
 	z := html.NewTokenizer(page)
