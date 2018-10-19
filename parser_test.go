@@ -171,7 +171,8 @@ func TestFiling10KParser1(t *testing.T) {
 
 func TestEntityParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_entity.html")
-	entity, err := getEntityData(f)
+	entity := new(entityData)
+	_, err := reportParser(f, entity)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -182,7 +183,8 @@ func TestEntityParser(t *testing.T) {
 
 func TestEntity1Parser(t *testing.T) {
 	f, _ := os.Open("samples/sample_entity1.html")
-	entity, err := getEntityData(f)
+	entity := new(entityData)
+	_, err := reportParser(f, entity)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -193,7 +195,8 @@ func TestEntity1Parser(t *testing.T) {
 
 func Test10KEntityParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_entity.html")
-	entity, err := getEntityData(f)
+	entity := new(entityData)
+	_, err := reportParser(f, entity)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -204,7 +207,8 @@ func Test10KEntityParser(t *testing.T) {
 
 func TestOpsParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_ops.html")
-	ops, err := getOpsData(f)
+	ops := new(opsData)
+	_, err := reportParser(f, ops)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -232,7 +236,8 @@ func TestOpsParser(t *testing.T) {
 
 func Test10KOpsParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_ops.html")
-	ops, err := getOpsData(f)
+	ops := new(opsData)
+	_, err := reportParser(f, ops)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -260,7 +265,8 @@ func Test10KOpsParser(t *testing.T) {
 
 func TestCfParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_cf.html")
-	cf, err := getCfData(f)
+	cf := new(cfData)
+	_, err := reportParser(f, cf)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -276,7 +282,8 @@ func TestCfParser(t *testing.T) {
 
 func Test10KCfParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_cf.html")
-	cf, err := getCfData(f)
+	cf := new(cfData)
+	_, err := reportParser(f, cf)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -292,7 +299,8 @@ func Test10KCfParser(t *testing.T) {
 
 func TestBSParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_bs.html")
-	bs, err := getBSData(f)
+	bs := new(bsData)
+	_, err := reportParser(f, bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -316,7 +324,8 @@ func TestBSParser(t *testing.T) {
 
 func TestBS1Parser(t *testing.T) {
 	f, _ := os.Open("samples/sample_bs1.html")
-	bs, err := getBSData(f)
+	bs := new(bsData)
+	_, err := reportParser(f, bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -344,7 +353,8 @@ func TestBS1Parser(t *testing.T) {
 
 func Test10KBSParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_bs.html")
-	bs, err := getBSData(f)
+	bs := new(bsData)
+	_, err := reportParser(f, bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -380,16 +390,20 @@ func TestFinReportMarshal(t *testing.T) {
 
 	data.DocType = FilingType10K
 	f, _ := os.Open("samples/sample_10K_bs.html")
-	data.Bs, _ = getBSData(f)
+	data.Bs = new(bsData)
+	_, _ = reportParser(f, data.Bs)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_cf.html")
-	data.Cf, _ = getCfData(f)
+	data.Cf = new(cfData)
+	_, _ = reportParser(f, data.Cf)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_ops.html")
-	data.Ops, _ = getOpsData(f)
+	data.Ops = new(opsData)
+	_, _ = reportParser(f, data.Ops)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_entity.html")
-	data.Entity, _ = getEntityData(f)
+	data.Entity = new(entityData)
+	_, _ = reportParser(f, data.Entity)
 	f.Close()
 	str := data.String()
 	if !(strings.Contains(str, "Entity Information") &&

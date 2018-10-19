@@ -72,25 +72,29 @@ func getFinancialData(url string, fileType FilingType) (*financialReport, error)
 
 		switch key {
 		case filingDocBS:
-			fr.Bs, err = getBSData(page)
+			fr.Bs = new(bsData)
+			_, err = reportParser(page, fr.Bs)
 			if err != nil {
 				log.Println("Failed to get the Balance sheet doc: ", err)
 				return nil, err
 			}
 		case filingDocCF:
-			fr.Cf, err = getCfData(page)
+			fr.Cf = new(cfData)
+			_, err = reportParser(page, fr.Cf)
 			if err != nil {
 				log.Println("Failed to get the cash flow doc: ", err)
 				return nil, err
 			}
 		case filingDocEN:
-			fr.Entity, err = getEntityData(page)
+			fr.Entity = new(entityData)
+			_, err = reportParser(page, fr.Entity)
 			if err != nil {
 				log.Println("Failed to get the Entity sheet doc: ", err)
 				return nil, err
 			}
 		case filingDocOps:
-			fr.Ops, err = getOpsData(page)
+			fr.Ops = new(opsData)
+			_, err = reportParser(page, fr.Ops)
 			if err != nil {
 				log.Println("Failed to get the operations sheet doc ", err)
 				return nil, err
