@@ -50,6 +50,29 @@ func queryPageParser(page io.Reader, docType FilingType) map[string]string {
 	return filingInfo
 }
 
+func cikPageParser(page io.Reader) (string, error) {
+	z := html.NewTokenizer(page)
+	token := z.Token()
+	for !(token.Data == "cik" && token.Type == html.StartTagToken) {
+		tt := z.Next()
+		if tt == html.ErrorToken {
+			return "", errors.New("Could not find the CIK")
+		}
+		token = z.Token()
+	}
+	for !(token.Data == "cik" && token.Type == html.EndTagToken) {
+		if token.Type == html.TextToken {
+			str := strings.TrimSpace(token.String())
+			if len(str) > 0 {
+				return str, nil
+			}
+		}
+		z.Next()
+		token = z.Token()
+	}
+	return "", errors.New("Could not find the CIK")
+}
+
 /*
   The filing page parser
   - The top of the page has a list of reports.

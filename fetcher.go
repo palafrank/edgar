@@ -2,6 +2,7 @@ package edgar
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"io/ioutil"
 )
@@ -17,6 +18,9 @@ func (f *fetcher) CompanyFolder(
 	comp, ok := f.folders[ticker]
 	if !ok {
 		comp = newCompany(ticker)
+		if comp.CIK == "" {
+			return nil, errors.New("Could not find the CIK for the given ticker")
+		}
 		f.folders[ticker] = comp
 		for _, t := range fileTypes {
 			comp.FilingLinks[t] = getFilingLinks(ticker, t)
@@ -34,10 +38,17 @@ func (f *fetcher) CreateFolder(
 		return nil, err
 	}
 	c := newCompany("")
+
 	err = json.Unmarshal(b, c)
 	if err != nil {
 		return nil, err
 	}
+	// Populate the CIK
+	c.CIK = getCompanyCIK(c.Ticker())
+	if c.CIK == "" {
+		return nil, errors.New("Could not find the CIK for the given ticker")
+	}
+
 	f.folders[c.Ticker()] = c
 	// Get all the latest links for all the filing types
 	for _, key := range fileTypes {

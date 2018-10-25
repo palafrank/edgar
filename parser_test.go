@@ -87,6 +87,17 @@ func TestParsingNumInLink(t *testing.T) {
 	}
 }
 
+func TestGetCIK(t *testing.T) {
+	cik := getCompanyCIK("MSFT")
+	if cik != "0000789019" {
+		t.Error("Incorrect CIK parser for MSFT - ", cik)
+	}
+	cik = getCompanyCIK("GE")
+	if cik != "0000040545" {
+		t.Error("Incorrect CIK parser for MSFT - ", cik)
+	}
+}
+
 func TestFilingQuery(t *testing.T) {
 	valid := map[string]string{
 		"2018-08-01": "/cgi-bin/viewer?action=view&cik=320193&accession_number=0000320193-18-000100&xbrl_type=v",
@@ -437,6 +448,7 @@ func TestFolderReader(t *testing.T) {
 	c, err := fetcher.CreateFolder(f)
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	f.Close()
 	f, _ = os.Open("samples/sample_folder.json")

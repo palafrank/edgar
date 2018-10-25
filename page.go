@@ -9,6 +9,7 @@ import (
 
 var (
 	baseURL   string = "https://www.sec.gov/"
+	cikURL    string = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&output=xml&CIK=%s"
 	queryURL  string = "cgi-bin/browse-edgar?action=getcompany&CIK=%s&type=%s&dateb=&owner=exclude&count=10"
 	searchURL string = baseURL + queryURL
 )
@@ -24,6 +25,17 @@ func getPage(url string) io.ReadCloser {
 		return nil
 	}
 	return resp.Body
+}
+
+func getCompanyCIK(ticker string) string {
+	url := fmt.Sprintf(cikURL, ticker)
+	r := getPage(url)
+	if r != nil {
+		if cik, err := cikPageParser(r); err == nil {
+			return cik
+		}
+	}
+	return ""
 }
 
 func getFilingLinks(ticker string, fileType FilingType) map[string]string {

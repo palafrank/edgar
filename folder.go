@@ -11,6 +11,7 @@ import (
 
 type company struct {
 	Company     string                            `json:"Company"`
+	CIK         string                            `json:"-"`
 	FilingLinks map[FilingType]map[string]string  `json:"-"`
 	Reports     map[FilingType]map[string]*filing `json:"Financial Reports"`
 }
@@ -26,6 +27,7 @@ func (c company) String() string {
 func newCompany(ticker string) *company {
 	return &company{
 		Company:     ticker,
+		CIK:         getCompanyCIK(ticker),
 		FilingLinks: make(map[FilingType]map[string]string),
 		Reports:     make(map[FilingType]map[string]*filing),
 	}
