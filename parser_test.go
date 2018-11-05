@@ -1,6 +1,7 @@
 package edgar
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -152,6 +153,20 @@ func TestFiling10QParser(t *testing.T) {
 	}
 }
 
+func TestEquityParser(t *testing.T) {
+	for i := 0; i < 1; i++ {
+		filingDoc := "/Archives/edgar/data/789019/000119312513310206/R5.htm"
+		r := getPage("http://sec.gov" + filingDoc)
+		fd := new(finData)
+		finReportParser(r, fd)
+		fmt.Println(fd)
+		if fd.Equity != 78944000000 {
+			t.Error("Equity arsing failed")
+		}
+	}
+
+}
+
 func TestFiling10KParser(t *testing.T) {
 	var check = map[filingDocType]string{
 		filingDocCF:  "/Archives/edgar/data/320193/000119312515356351/R8.htm",
@@ -167,6 +182,63 @@ func TestFiling10KParser(t *testing.T) {
 		if docs[key] != val {
 			t.Error("Did not get the expected number of filing document in the 10K")
 		}
+	}
+}
+
+func TestParsingReports(t *testing.T) {
+	for i := 0; i < 20; i++ {
+		report, err := parseAllFinData("789019", "000119312513310206")
+		if err != nil {
+			t.Error("Failed to parse financial data: ", err.Error())
+			return
+		}
+		fmt.Println(report.FinData)
+		if report.FinData.ShareCount != 8329956402 {
+			t.Error("Incorrect sharcount parsed ", report.FinData.ShareCount)
+		}
+		if report.FinData.Revenue != 77849000000 {
+			t.Error("Incorrect revenue parsed ", report.FinData.Revenue)
+		}
+		if report.FinData.CostOfSales != 20249000000 {
+			t.Error("Incorrect cost of sales parsed ", report.FinData.CostOfSales)
+		}
+		if report.FinData.GrossMargin != 57600000000 {
+			t.Error("Incorrect gross margin parsed ", report.FinData.GrossMargin)
+		}
+		if report.FinData.OpIncome != 26764000000 {
+			t.Error("Incorrect ops income parsed ", report.FinData.OpIncome)
+		}
+		if report.FinData.OpExpense != 30836000000 {
+			t.Error("Incorrect ops expense parsed ", report.FinData.OpExpense)
+		}
+		if report.FinData.NetIncome != 21863000000 {
+			t.Error("Incorrect net income parsed ", report.FinData.NetIncome)
+		}
+		if report.FinData.OpCashFlow != 28833000000 {
+			t.Error("Incorrect operating cashflow parsed ", report.FinData.OpCashFlow)
+		}
+		if report.FinData.CapEx != -4257000000 {
+			t.Error("Incorrect capex parsed ", report.FinData.CapEx)
+		}
+		if report.FinData.LDebt != 12601000000 {
+			t.Error("Incorrect long term debt parsed ", report.FinData.LDebt)
+		}
+		if report.FinData.SDebt != 0 {
+			t.Error("Incorrect short term debt parsed ", report.FinData.SDebt)
+		}
+		if report.FinData.CLiab != 37417000000 {
+			t.Error("Incorrect current liabilities parsed ", report.FinData.CLiab)
+		}
+		if report.FinData.Deferred != 20639000000 {
+			t.Error("Incorrect deferred revenue parsed ", report.FinData.Deferred)
+		}
+		if report.FinData.Retained != 9895000000 {
+			t.Error("Incorrect retained earnings parsed ", report.FinData.Retained)
+		}
+		if report.FinData.Equity != 78944000000 {
+			t.Error("Incorrect shareholder equity parsed ", report.FinData.Equity)
+		}
+		fmt.Println("Done with iteration ", i)
 	}
 }
 

@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"sort"
 	"strconv"
 	"strings"
+	"sync"
 
 	"golang.org/x/net/html"
 )
@@ -353,4 +355,96 @@ func reportParser(page io.Reader, retData interface{}) (interface{}, error) {
 		data, err = parseTableRow(z, true)
 	}
 	return retData, validate(retData)
+}
+
+func finReportParser(page io.Reader, retData *finData) (*finData, error) {
+
+	z := html.NewTokenizer(page)
+	scales := parseFilingScale(z)
+	data, err := parseTableRow(z, true)
+	for err == nil {
+		if len(data) > 0 {
+			finType := getFinDataTypeFromXBRLTag(data[0])
+			if finType != finDataUnknown {
+				for _, str := range data[1:] {
+					if len(str) > 0 {
+						if setFinData(retData, finType, str, scales) == nil {
+							break
+						}
+					}
+				}
+			}
+		}
+		//Early break out if all required data is collected
+		if validate(retData) == nil {
+			break
+		}
+		data, err = parseTableRow(z, true)
+	}
+	return retData, validate(retData)
+}
+
+func parseAllReports(cik string, an string) []int {
+
+	var reports []int
+	url := "https://www.sec.gov/Archives/edgar/data/" + cik + "/" + an + "/"
+	page := getPage(url)
+	z := html.NewTokenizer(page)
+	data, err := parseTableRow(z, false)
+	for err == nil {
+		var num int
+		if len(data) > 0 && strings.Contains(data[0], "R") {
+			_, err := fmt.Sscanf(data[0], "R%d.htm", &num)
+			if err == nil {
+				reports = append(reports, num)
+			}
+		}
+		data, err = parseTableRow(z, false)
+	}
+	sort.Slice(reports, func(i, j int) bool {
+		return reports[i] < reports[j]
+	})
+	return reports
+}
+
+func parseAllFinData(cik string, an string) (*financialReport, error) {
+	reports := parseAllReports(cik, an)
+	if len(reports) == 0 {
+		return nil, errors.New("No valid reports found for requested filing")
+	}
+
+	numBatches := len(reports) / 10
+	if len(reports)%10 > 0 {
+		numBatches++
+	}
+	var wg sync.WaitGroup
+	//Parse 10 reports at a time and bail out if you got all the info
+	curr := 0
+	fr := new(financialReport)
+	fr.FinData = new(finData)
+	for i := 0; i < numBatches; i++ {
+		for j := 0; j < 10 && curr < len(reports); j++ {
+			wg.Add(1)
+			go func(docNum int, fd *finData) {
+				defer wg.Done()
+				url := "https://www.sec.gov/Archives/edgar/data/" + cik + "/" + an + "/R" + strconv.Itoa(docNum) + ".htm"
+				page := getPage(url)
+				if page != nil {
+					finReportParser(page, fr.FinData)
+					if fr.FinData.Equity == 62856000000 {
+						fmt.Println("The docnum is:", docNum)
+					}
+				}
+			}(reports[curr], fr.FinData)
+
+			curr++
+
+		}
+		wg.Wait()
+		//Check if all required fields were parsed
+		if validate(fr.FinData) == nil {
+			break
+		}
+	}
+	return fr, validate(fr.FinData)
 }

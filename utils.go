@@ -2,6 +2,7 @@ package edgar
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -41,6 +42,7 @@ func filingScale(strs []string) map[scaleEntity]scaleFactor {
 	ret[scaleEntityShares] = scaleNone
 	ret[scaleEntityMoney] = scaleMillion
 	for _, str := range strs {
+		fmt.Println(str)
 		for key, val := range filingScales {
 			if strings.Contains(strings.ToLower(str), strings.ToLower(key)) {
 				//Some scale available in this line

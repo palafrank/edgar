@@ -28,10 +28,11 @@ var (
 		"RetainedEarningsAccumulatedDeficitAndAccumulatedOtherComprehensiveIncomeLossNetOfTax":                finDataRetained,
 
 		//Operations Sheet info
-		"defref_us-gaap_SalesRevenueNet": finDataRevenue,
-		"SalesRevenueNet":                finDataRevenue,
-		"defref_us-gaap_Revenues":        finDataRevenue,
-		"Revenues":                       finDataRevenue,
+		"defref_us-gaap_SalesRevenueNet":            finDataRevenue,
+		"SalesRevenueNet":                           finDataRevenue,
+		"defref_us-gaap_Revenues":                   finDataRevenue,
+		"Revenues":                                  finDataRevenue,
+		"defref_us-gaap_CostOfRevenue":              finDataCostOfRevenue,
 		"defref_us-gaap_CostOfGoodsAndServicesSold": finDataCostOfRevenue,
 		"CostOfGoodsAndServicesSold":                finDataCostOfRevenue,
 		"defref_us-gaap_CostOfGoodsSold":            finDataCostOfRevenue,

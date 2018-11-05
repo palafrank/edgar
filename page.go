@@ -21,7 +21,7 @@ func createQueryURL(symbol string, docType FilingType) string {
 func getPage(url string) io.ReadCloser {
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal("Query to SEC page failed: ", err)
+		log.Fatal("Query to SEC page ", url, "failed: ", err)
 		return nil
 	}
 	return resp.Body
@@ -62,6 +62,12 @@ func getFilingDocs(url string, fileType FilingType) map[filingDocType]string {
 	}
 	defer resp.Close()
 	return filingPageParser(resp, fileType)
+}
+
+func getAllFinancialData(url string, fileType FilingType) (*financialReport, error) {
+	cik, an := parseCikAndDocId(url)
+	finData, err := parseAllFinData(cik, an)
+	return finData, err
 }
 
 func getFinancialData(url string, fileType FilingType) (*financialReport, error) {

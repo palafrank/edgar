@@ -180,6 +180,9 @@ func validate(data interface{}) error {
 		v = v.Elem()
 	}
 	for i := 0; i < t.NumField(); i++ {
+		if t.Field(i).Type.Kind() != reflect.Float64 {
+			continue
+		}
 		tag, ok := t.Field(i).Tag.Lookup("required")
 		val := v.Field(i).Float()
 		if val == 0 && (ok && tag == "true") {
@@ -216,19 +219,28 @@ func setData(data interface{},
 	for i := 0; i < t.NumField(); i++ {
 		tag, ok := t.Field(i).Tag.Lookup("json")
 		if ok && string(finType) == tag {
-			if v.Field(i).Float() == 0 {
-				num := normalizeNumber(val)
-				tag, ok := t.Field(i).Tag.Lookup("entity")
-				if ok {
-					factor, o := scale[scaleEntity(tag)]
-					if o {
-						num *= float64(factor)
-					}
+			//if v.Field(i).Float() == 0 {
+			num := normalizeNumber(val)
+			tag, ok := t.Field(i).Tag.Lookup("entity")
+			if ok {
+				factor, o := scale[scaleEntity(tag)]
+				if o {
+					num *= float64(factor)
 				}
-				v.Field(i).SetFloat(num)
 			}
+			v.Field(i).SetFloat(num)
+			//}
 			return nil
 		}
 	}
 	return errors.New("Could not find the field to set: " + string(finType))
+}
+
+func setFinData(fd *finData,
+	finType finDataType,
+	val string,
+	scale map[scaleEntity]scaleFactor) error {
+	fd.wlock.Lock()
+	defer fd.wlock.Unlock()
+	return setData(fd, finType, val, scale)
 }
