@@ -1,0 +1,5 @@
+package: github.com/palafrank/edgar
+import:
+- package: golang.org/x/net
+  subpackages:
+  - html

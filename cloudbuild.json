@@ -1,10 +1,9 @@
 {
     "steps": [
     {
-      "name": "gcr.io/cloud-builders/go",
+      "name": "gcr.io/cloud-builders/glide",
       "args": [
-          "dep",
-          "ensure"
+          "install"
       ],
       "name": "gcr.io/cloud-builders/go",
       "args": [
