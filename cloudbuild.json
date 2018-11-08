@@ -1,14 +1,19 @@
 {
     "steps": [
     {
-        "name": "gcr.io/cloud-builders/go",
-        "args": [
-            "test"
-        ],
-        "env": [
-            "PROJECT_ROOT=edgar"
-        ],
-        "timeout": "500s"
+      "name": "gcr.io/cloud-builders/go",
+      "args": [
+          "dep",
+          "ensure"
+      ],
+      "name": "gcr.io/cloud-builders/go",
+      "args": [
+          "test"
+      ],
+      "env": [
+          "PROJECT_ROOT=edgar"
+      ],
+      "timeout": "500s"
     }
     ]
 }
