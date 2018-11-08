@@ -1,0 +1,11 @@
+{
+    "steps": [
+    {
+        "name": "gcr.io/cloud-builders/go",
+        "args": [
+            "test"
+        ],
+        "timeout": "500s"
+    }
+    ]
+}
