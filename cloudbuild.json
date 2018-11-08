@@ -5,6 +5,9 @@
         "args": [
             "test"
         ],
+        "env": [
+            "PROJECT_ROOT=edgar"
+        ],
         "timeout": "500s"
     }
     ]
