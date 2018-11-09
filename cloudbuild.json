@@ -8,6 +8,9 @@
         "dep",
         "enforce"
       ],
+    },
+    {
+      "name": "gcr.io/cloud-builders/go:debian",
       "args": [
           "test"
       ],
