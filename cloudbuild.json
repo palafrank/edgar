@@ -2,11 +2,12 @@
     "steps": [
     {
 
-      "name": "gcr.io/cloud-builders/go:debian",
-      "entrypoint": "bash",
+      "name": "gcr.io/cloud-builders/glide",
       "args": [
-        "dep",
-        "enforce"
+        "install"
+      ],
+      "env": [
+          "PROJECT_ROOT=edgar"
       ],
     },
     {
