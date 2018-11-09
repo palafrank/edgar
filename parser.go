@@ -121,11 +121,9 @@ func filingPageParser(page io.Reader, fileType FilingType) map[filingDocType]str
 
 	switch fileType {
 	case FilingType10K:
-		log.Println("Getting 10K filing documents: ")
 		docs := map10KReports(page, filingLinks)
 		return docs
 	case FilingType10Q:
-		log.Println("Getting 10Q filing documents")
 		docs := map10QReports(page, filingLinks)
 		return docs
 	}
@@ -357,7 +355,7 @@ func reportParser(page io.Reader, retData interface{}) (interface{}, error) {
 	return retData, validate(retData)
 }
 
-func finReportParser(page io.Reader, retData *finData) (*finData, error) {
+func finReportParser(page io.Reader, retData interface{}) (interface{}, error) {
 
 	z := html.NewTokenizer(page)
 	scales := parseFilingScale(z)
@@ -368,7 +366,7 @@ func finReportParser(page io.Reader, retData *finData) (*finData, error) {
 			if finType != finDataUnknown {
 				for _, str := range data[1:] {
 					if len(str) > 0 {
-						if setFinData(retData, finType, str, scales) == nil {
+						if setData(retData, finType, str, scales) == nil {
 							break
 						}
 					}
@@ -384,6 +382,7 @@ func finReportParser(page io.Reader, retData *finData) (*finData, error) {
 	return retData, validate(retData)
 }
 
+// parseAllReports gets all the reports filed under a given account normalizeNumber
 func parseAllReports(cik string, an string) []int {
 
 	var reports []int
@@ -407,79 +406,30 @@ func parseAllReports(cik string, an string) []int {
 	return reports
 }
 
-/*
-This function attempts to indiscriminately parse all reports in that filing
-to find all relevant XBRL Information we are interested in
-
-Issue: Currently the same XBRL tag appears multiple times in different documents
-causing confusion in the parser.
-TODO:
-Figure out a way to deterministically identify which XBRL tag is relevant to this
-filing and ignore the rest.
-This can be done either by identifying which specific
-document you are parsing and use the XBRL tag from the doc we are interested in
-for that tag.
-Else we could corellate the date for that tag to see if that date matches the
-filing that we are working on.
-Both requires us to maintain context in each go routine regarding mapping.
-
-*/
-func parseAllFinData(cik string, an string) (*financialReport, error) {
-	reports := parseAllReports(cik, an)
-	if len(reports) == 0 {
-		return nil, errors.New("No valid reports found for requested filing")
-	}
-
-	numBatches := len(reports) / 10
-	if len(reports)%10 > 0 {
-		numBatches++
-	}
+func parseMappedReports(docs map[filingDocType]string, docType FilingType) (*financialReport, error) {
 	var wg sync.WaitGroup
-	//Parse 10 reports at a time and bail out if you got all the info
-	curr := 0
-	fr := new(financialReport)
-	fr.FinData = new(finData)
-	for i := 0; i < numBatches; i++ {
-		for j := 0; j < 10 && curr < len(reports); j++ {
-			wg.Add(1)
-			go func(docNum int, fd *finData) {
-				defer wg.Done()
-				url := "https://www.sec.gov/Archives/edgar/data/" + cik + "/" + an + "/R" + strconv.Itoa(docNum) + ".htm"
-				page := getPage(url)
-				if page != nil {
-					finReportParser(page, fr.FinData)
-					if fr.FinData.Equity == 62856000000 {
-						fmt.Println("The docnum is:", docNum)
-					}
-				}
-			}(reports[curr], fr.FinData)
-
-			curr++
-
-		}
-		wg.Wait()
-		//Check if all required fields were parsed
-		if validate(fr.FinData) == nil {
-			break
-		}
-	}
-	return fr, validate(fr.FinData)
-}
-
-func parseMappedReports(docs map[filingDocType]string) (*financialReport, error) {
-	var wg sync.WaitGroup
-	fr := new(financialReport)
-	fr.FinData = new(finData)
-	for _, url := range docs {
+	fr := newFinancialReport(docType)
+	for t, url := range docs {
 		wg.Add(1)
-		go func(url string, fd *finData) {
+		go func(url string, fr *financialReport, t filingDocType) {
 			defer wg.Done()
 			page := getPage(url)
 			if page != nil {
-				finReportParser(page, fr.FinData)
+				switch t {
+				case filingDocBS:
+					finReportParser(page, fr.Bs)
+				case filingDocEN:
+					finReportParser(page, fr.Entity)
+				case filingDocCF:
+					finReportParser(page, fr.Cf)
+				case filingDocOps:
+					finReportParser(page, fr.Ops)
+				case filingDocInc:
+					finReportParser(page, fr.Ops)
+				}
 			}
-		}(baseURL+url, fr.FinData)
+		}(baseURL+url, fr, t)
 	}
 	wg.Wait()
-	return fr, validate(fr.FinData)
+	return fr, validate(fr)
 }

@@ -1,7 +1,6 @@
 package edgar
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"strconv"
@@ -17,9 +16,6 @@ func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 	tt := z.Next()
 	for tt != html.ErrorToken {
 		token := z.Token()
-		if token.Data == "var" {
-			fmt.Println("Found the var")
-		}
 		if token.Data == "a" {
 			for _, a := range token.Attr {
 				if a.Key == "href" && strings.Contains(a.Val, "loadReport") {
@@ -48,8 +44,9 @@ func map10QReports(page io.Reader, filingLinks []string) map[filingDocType]strin
 		}
 		tt = z.Next()
 	}
-	if len(retData) != len(requiredDocTypes) {
-		log.Fatal("Did not find following documents: " + getMissingDocs(retData))
+	ret := getMissingDocs(retData)
+	if ret != "" {
+		log.Println("Did not find the following filing documents: " + ret)
 	}
 	return retData
 }

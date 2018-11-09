@@ -1,6 +1,7 @@
 package edgar
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -152,19 +153,6 @@ func TestFiling10QParser(t *testing.T) {
 	}
 }
 
-func TestEquityParser(t *testing.T) {
-	for i := 0; i < 1; i++ {
-		filingDoc := "/Archives/edgar/data/789019/000119312513310206/R5.htm"
-		r := getPage("http://sec.gov" + filingDoc)
-		fd := new(finData)
-		finReportParser(r, fd)
-		if fd.Equity != 78944000000 {
-			t.Error("Equity arsing failed")
-		}
-	}
-
-}
-
 func TestFiling10KParser(t *testing.T) {
 	var check = map[filingDocType]string{
 		filingDocCF:  "/Archives/edgar/data/320193/000119312515356351/R8.htm",
@@ -186,55 +174,55 @@ func TestFiling10KParser(t *testing.T) {
 func TestParsingReports(t *testing.T) {
 	url := "cgi-bin/viewer?action=view&cik=789019&accession_number=0001193125-13-310206&xbrl_type=v"
 	for i := 0; i < 1; i++ {
-		report, err := getAllFinancialData(url, FilingType10K)
+		report, err := getFinancialData(url, FilingType10K)
 		if err != nil {
 			t.Error("Failed to parse financial data: ", err.Error())
 			return
 		}
-		if report.FinData.ShareCount != 8329956402 {
-			t.Error("Incorrect sharcount parsed ", report.FinData.ShareCount)
+		if report.Entity.ShareCount != 8329956402 {
+			t.Error("Incorrect sharcount parsed ", report.Entity.ShareCount)
 		}
-		if report.FinData.Revenue != 77849000000 {
-			t.Error("Incorrect revenue parsed ", report.FinData.Revenue)
+		if report.Ops.Revenue != 77849000000 {
+			t.Error("Incorrect revenue parsed ", report.Ops.Revenue)
 		}
-		if report.FinData.CostOfSales != 20249000000 {
-			t.Error("Incorrect cost of sales parsed ", report.FinData.CostOfSales)
+		if report.Ops.CostOfSales != 20249000000 {
+			t.Error("Incorrect cost of sales parsed ", report.Ops.CostOfSales)
 		}
-		if report.FinData.GrossMargin != 57600000000 {
-			t.Error("Incorrect gross margin parsed ", report.FinData.GrossMargin)
+		if report.Ops.GrossMargin != 57600000000 {
+			t.Error("Incorrect gross margin parsed ", report.Ops.GrossMargin)
 		}
-		if report.FinData.OpIncome != 26764000000 {
-			t.Error("Incorrect ops income parsed ", report.FinData.OpIncome)
+		if report.Ops.OpIncome != 26764000000 {
+			t.Error("Incorrect ops income parsed ", report.Ops.OpIncome)
 		}
-		if report.FinData.OpExpense != 30836000000 {
-			t.Error("Incorrect ops expense parsed ", report.FinData.OpExpense)
+		if report.Ops.OpExpense != 30836000000 {
+			t.Error("Incorrect ops expense parsed ", report.Ops.OpExpense)
 		}
-		if report.FinData.NetIncome != 21863000000 {
-			t.Error("Incorrect net income parsed ", report.FinData.NetIncome)
+		if report.Ops.NetIncome != 21863000000 {
+			t.Error("Incorrect net income parsed ", report.Ops.NetIncome)
 		}
-		if report.FinData.OpCashFlow != 28833000000 {
-			t.Error("Incorrect operating cashflow parsed ", report.FinData.OpCashFlow)
+		if report.Cf.OpCashFlow != 28833000000 {
+			t.Error("Incorrect operating cashflow parsed ", report.Cf.OpCashFlow)
 		}
-		if report.FinData.CapEx != -4257000000 {
-			t.Error("Incorrect capex parsed ", report.FinData.CapEx)
+		if report.Cf.CapEx != -4257000000 {
+			t.Error("Incorrect capex parsed ", report.Cf.CapEx)
 		}
-		if report.FinData.LDebt != 12601000000 {
-			t.Error("Incorrect long term debt parsed ", report.FinData.LDebt)
+		if report.Bs.LDebt != 12601000000 {
+			t.Error("Incorrect long term debt parsed ", report.Bs.LDebt)
 		}
-		if report.FinData.SDebt != 0 {
-			t.Error("Incorrect short term debt parsed ", report.FinData.SDebt)
+		if report.Bs.SDebt != 0 {
+			t.Error("Incorrect short term debt parsed ", report.Bs.SDebt)
 		}
-		if report.FinData.CLiab != 37417000000 {
-			t.Error("Incorrect current liabilities parsed ", report.FinData.CLiab)
+		if report.Bs.CLiab != 37417000000 {
+			t.Error("Incorrect current liabilities parsed ", report.Bs.CLiab)
 		}
-		if report.FinData.Deferred != 20639000000 {
-			t.Error("Incorrect deferred revenue parsed ", report.FinData.Deferred)
+		if report.Bs.Deferred != 20639000000 {
+			t.Error("Incorrect deferred revenue parsed ", report.Bs.Deferred)
 		}
-		if report.FinData.Retained != 9895000000 {
-			t.Error("Incorrect retained earnings parsed ", report.FinData.Retained)
+		if report.Bs.Retained != 9895000000 {
+			t.Error("Incorrect retained earnings parsed ", report.Bs.Retained)
 		}
-		if report.FinData.Equity != 78944000000 {
-			t.Error("Incorrect shareholder equity parsed ", report.FinData.Equity)
+		if report.Bs.Equity != 78944000000 {
+			t.Error("Incorrect shareholder equity parsed ", report.Bs.Equity)
 		}
 	}
 }
@@ -559,6 +547,7 @@ func TestFolderWriter(t *testing.T) {
 }
 
 func TestLiveMSFTParsing(t *testing.T) {
+	fmt.Println("*** Running a live test ***")
 	fetcher := NewFilingFetcher()
 	c, err := fetcher.CompanyFolder("MSFT", FilingType10K)
 	if err != nil {
