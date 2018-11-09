@@ -40,6 +40,16 @@ type bsData struct {
 	Equity   float64 `json:"Total Shareholder Equity" required:"true" entity:"Money"`
 }
 
+func newFinancialReport(docType FilingType) *financialReport {
+	fr := new(financialReport)
+	fr.DocType = docType
+	fr.Bs = new(bsData)
+	fr.Cf = new(cfData)
+	fr.Entity = new(entityData)
+	fr.Ops = new(opsData)
+	return fr
+}
+
 func (f financialReport) String() string {
 	data, err := json.MarshalIndent(f, "", "    ")
 	if err != nil {

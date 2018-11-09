@@ -142,15 +142,34 @@ func lookupDocType(data string) filingDocType {
 }
 
 func getMissingDocs(data map[filingDocType]string) string {
+
+	if len(data) >= len(requiredDocTypes) {
+		return ""
+	}
+	var diff []filingDocType
+	for key, _ := range requiredDocTypes {
+		if _, ok := data[key]; !ok {
+			switch key {
+			case filingDocOps:
+				if _, ok := data[filingDocInc]; ok {
+					continue
+				}
+			case filingDocInc:
+				if _, ok := data[filingDocOps]; ok {
+					continue
+				}
+			}
+			diff = append(diff, key)
+		}
+	}
+	if len(diff) == 0 {
+		return ""
+	}
+
 	var ret string
 	ret = "[ "
-	for key, val := range requiredDocTypes {
-		if val == true {
-			_, ok := data[key]
-			if !ok {
-				ret = ret + " " + string(key)
-			}
-		}
+	for _, val := range diff {
+		ret = ret + " " + string(val)
 	}
 	ret += " ]"
 	return ret
@@ -180,6 +199,9 @@ func validate(data interface{}) error {
 		v = v.Elem()
 	}
 	for i := 0; i < t.NumField(); i++ {
+		if t.Field(i).Type.Kind() != reflect.Float64 {
+			continue
+		}
 		tag, ok := t.Field(i).Tag.Lookup("required")
 		val := v.Field(i).Float()
 		if val == 0 && (ok && tag == "true") {

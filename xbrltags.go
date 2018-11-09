@@ -1,6 +1,8 @@
 package edgar
 
-import "strings"
+import (
+	"strings"
+)
 
 var (
 	// A Map of XBRL tags to financial data type
@@ -28,10 +30,11 @@ var (
 		"RetainedEarningsAccumulatedDeficitAndAccumulatedOtherComprehensiveIncomeLossNetOfTax":                finDataRetained,
 
 		//Operations Sheet info
-		"defref_us-gaap_SalesRevenueNet": finDataRevenue,
-		"SalesRevenueNet":                finDataRevenue,
-		"defref_us-gaap_Revenues":        finDataRevenue,
-		"Revenues":                       finDataRevenue,
+		"defref_us-gaap_SalesRevenueNet":            finDataRevenue,
+		"SalesRevenueNet":                           finDataRevenue,
+		"defref_us-gaap_Revenues":                   finDataRevenue,
+		"Revenues":                                  finDataRevenue,
+		"defref_us-gaap_CostOfRevenue":              finDataCostOfRevenue,
 		"defref_us-gaap_CostOfGoodsAndServicesSold": finDataCostOfRevenue,
 		"CostOfGoodsAndServicesSold":                finDataCostOfRevenue,
 		"defref_us-gaap_CostOfGoodsSold":            finDataCostOfRevenue,
@@ -68,6 +71,7 @@ var (
 func getFinDataTypeFromXBRLTag(key string) finDataType {
 	data, ok := xbrlTags[key]
 	if !ok {
+
 		// Now look for non-gaap filing
 		// defref_us-gaap_XXX could be filed company specific
 		// as defref_msft_XXX

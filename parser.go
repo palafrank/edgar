@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"sort"
 	"strconv"
 	"strings"
+	"sync"
 
 	"golang.org/x/net/html"
 )
@@ -119,11 +121,9 @@ func filingPageParser(page io.Reader, fileType FilingType) map[filingDocType]str
 
 	switch fileType {
 	case FilingType10K:
-		log.Println("Getting 10K filing documents: ")
 		docs := map10KReports(page, filingLinks)
 		return docs
 	case FilingType10Q:
-		log.Println("Getting 10Q filing documents")
 		docs := map10QReports(page, filingLinks)
 		return docs
 	}
@@ -353,4 +353,83 @@ func reportParser(page io.Reader, retData interface{}) (interface{}, error) {
 		data, err = parseTableRow(z, true)
 	}
 	return retData, validate(retData)
+}
+
+func finReportParser(page io.Reader, retData interface{}) (interface{}, error) {
+
+	z := html.NewTokenizer(page)
+	scales := parseFilingScale(z)
+	data, err := parseTableRow(z, true)
+	for err == nil {
+		if len(data) > 0 {
+			finType := getFinDataTypeFromXBRLTag(data[0])
+			if finType != finDataUnknown {
+				for _, str := range data[1:] {
+					if len(str) > 0 {
+						if setData(retData, finType, str, scales) == nil {
+							break
+						}
+					}
+				}
+			}
+		}
+		//Early break out if all required data is collected
+		if validate(retData) == nil {
+			break
+		}
+		data, err = parseTableRow(z, true)
+	}
+	return retData, validate(retData)
+}
+
+// parseAllReports gets all the reports filed under a given account normalizeNumber
+func parseAllReports(cik string, an string) []int {
+
+	var reports []int
+	url := "https://www.sec.gov/Archives/edgar/data/" + cik + "/" + an + "/"
+	page := getPage(url)
+	z := html.NewTokenizer(page)
+	data, err := parseTableRow(z, false)
+	for err == nil {
+		var num int
+		if len(data) > 0 && strings.Contains(data[0], "R") {
+			_, err := fmt.Sscanf(data[0], "R%d.htm", &num)
+			if err == nil {
+				reports = append(reports, num)
+			}
+		}
+		data, err = parseTableRow(z, false)
+	}
+	sort.Slice(reports, func(i, j int) bool {
+		return reports[i] < reports[j]
+	})
+	return reports
+}
+
+func parseMappedReports(docs map[filingDocType]string, docType FilingType) (*financialReport, error) {
+	var wg sync.WaitGroup
+	fr := newFinancialReport(docType)
+	for t, url := range docs {
+		wg.Add(1)
+		go func(url string, fr *financialReport, t filingDocType) {
+			defer wg.Done()
+			page := getPage(url)
+			if page != nil {
+				switch t {
+				case filingDocBS:
+					finReportParser(page, fr.Bs)
+				case filingDocEN:
+					finReportParser(page, fr.Entity)
+				case filingDocCF:
+					finReportParser(page, fr.Cf)
+				case filingDocOps:
+					finReportParser(page, fr.Ops)
+				case filingDocInc:
+					finReportParser(page, fr.Ops)
+				}
+			}
+		}(baseURL+url, fr, t)
+	}
+	wg.Wait()
+	return fr, validate(fr)
 }

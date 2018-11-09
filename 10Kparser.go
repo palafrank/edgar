@@ -49,9 +49,9 @@ loop:
 		}
 		tt = z.Next()
 	}
-	if len(retData) != len(requiredDocTypes) {
-		log.Println("Did not find the following filing documents: " +
-			getMissingDocs(retData))
+	ret := getMissingDocs(retData)
+	if ret != "" {
+		log.Println("Did not find the following filing documents: " + ret)
 	}
 	return retData
 }

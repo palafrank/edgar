@@ -11,6 +11,8 @@ type fetcher struct {
 	folders map[string]*company
 }
 
+// CompanyFolder creates a new folder and populates it with the filing filing
+// links available for the list of filing types
 func (f *fetcher) CompanyFolder(
 	ticker string,
 	fileTypes ...FilingType) (CompanyFolder, error) {
@@ -29,7 +31,7 @@ func (f *fetcher) CompanyFolder(
 	return comp, nil
 }
 
-// Read from the reader and unmarshal from JSON to company folder
+// CreateFolder Reads from the reader into a new company folder
 func (f *fetcher) CreateFolder(
 	r io.Reader,
 	fileTypes ...FilingType) (CompanyFolder, error) {

@@ -1,6 +1,7 @@
 package edgar
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -170,6 +171,62 @@ func TestFiling10KParser(t *testing.T) {
 	}
 }
 
+func TestParsingReports(t *testing.T) {
+	url := "cgi-bin/viewer?action=view&cik=789019&accession_number=0001193125-13-310206&xbrl_type=v"
+	for i := 0; i < 1; i++ {
+		report, err := getFinancialData(url, FilingType10K)
+		if err != nil {
+			t.Error("Failed to parse financial data: ", err.Error())
+			return
+		}
+		if report.Entity.ShareCount != 8329956402 {
+			t.Error("Incorrect sharcount parsed ", report.Entity.ShareCount)
+		}
+		if report.Ops.Revenue != 77849000000 {
+			t.Error("Incorrect revenue parsed ", report.Ops.Revenue)
+		}
+		if report.Ops.CostOfSales != 20249000000 {
+			t.Error("Incorrect cost of sales parsed ", report.Ops.CostOfSales)
+		}
+		if report.Ops.GrossMargin != 57600000000 {
+			t.Error("Incorrect gross margin parsed ", report.Ops.GrossMargin)
+		}
+		if report.Ops.OpIncome != 26764000000 {
+			t.Error("Incorrect ops income parsed ", report.Ops.OpIncome)
+		}
+		if report.Ops.OpExpense != 30836000000 {
+			t.Error("Incorrect ops expense parsed ", report.Ops.OpExpense)
+		}
+		if report.Ops.NetIncome != 21863000000 {
+			t.Error("Incorrect net income parsed ", report.Ops.NetIncome)
+		}
+		if report.Cf.OpCashFlow != 28833000000 {
+			t.Error("Incorrect operating cashflow parsed ", report.Cf.OpCashFlow)
+		}
+		if report.Cf.CapEx != -4257000000 {
+			t.Error("Incorrect capex parsed ", report.Cf.CapEx)
+		}
+		if report.Bs.LDebt != 12601000000 {
+			t.Error("Incorrect long term debt parsed ", report.Bs.LDebt)
+		}
+		if report.Bs.SDebt != 0 {
+			t.Error("Incorrect short term debt parsed ", report.Bs.SDebt)
+		}
+		if report.Bs.CLiab != 37417000000 {
+			t.Error("Incorrect current liabilities parsed ", report.Bs.CLiab)
+		}
+		if report.Bs.Deferred != 20639000000 {
+			t.Error("Incorrect deferred revenue parsed ", report.Bs.Deferred)
+		}
+		if report.Bs.Retained != 9895000000 {
+			t.Error("Incorrect retained earnings parsed ", report.Bs.Retained)
+		}
+		if report.Bs.Equity != 78944000000 {
+			t.Error("Incorrect shareholder equity parsed ", report.Bs.Equity)
+		}
+	}
+}
+
 func TestFiling10KParser1(t *testing.T) {
 	var check = map[filingDocType]string{
 		filingDocCF:  "/Archives/edgar/data/320193/000119312511282113/R6.htm",
@@ -239,7 +296,7 @@ func TestOpsParser(t *testing.T) {
 			t.Error("Cost of Sales amount did not match")
 		}
 		if ops.GrossMargin != 20421000000 {
-			t.Error("Gross margin amount did not match")
+			t.Error("Gross margin amount did not match ", ops.GrossMargin)
 		}
 		if ops.OpExpense != 7809000000 {
 			t.Error("Operational Expense amount did not match")
@@ -490,6 +547,7 @@ func TestFolderWriter(t *testing.T) {
 }
 
 func TestLiveMSFTParsing(t *testing.T) {
+	fmt.Println("*** Running a live test ***")
 	fetcher := NewFilingFetcher()
 	c, err := fetcher.CompanyFolder("MSFT", FilingType10K)
 	if err != nil {
