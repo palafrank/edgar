@@ -5,8 +5,8 @@
       "name": "gcr.io/cloud-builders/go",
       "entrypoint": "bash",
       "args": [
-        "glide",
-        "install"
+        "dep",
+        "enforce"
       ],
       "args": [
           "test"
