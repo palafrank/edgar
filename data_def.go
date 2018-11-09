@@ -219,17 +219,17 @@ func setData(data interface{},
 	for i := 0; i < t.NumField(); i++ {
 		tag, ok := t.Field(i).Tag.Lookup("json")
 		if ok && string(finType) == tag {
-			//if v.Field(i).Float() == 0 {
-			num := normalizeNumber(val)
-			tag, ok := t.Field(i).Tag.Lookup("entity")
-			if ok {
-				factor, o := scale[scaleEntity(tag)]
-				if o {
-					num *= float64(factor)
+			if v.Field(i).Float() == 0 {
+				num := normalizeNumber(val)
+				tag, ok := t.Field(i).Tag.Lookup("entity")
+				if ok {
+					factor, o := scale[scaleEntity(tag)]
+					if o {
+						num *= float64(factor)
+					}
 				}
+				v.Field(i).SetFloat(num)
 			}
-			v.Field(i).SetFloat(num)
-			//}
 			return nil
 		}
 	}

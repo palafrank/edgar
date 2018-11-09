@@ -65,9 +65,8 @@ func getFilingDocs(url string, fileType FilingType) map[filingDocType]string {
 }
 
 func getAllFinancialData(url string, fileType FilingType) (*financialReport, error) {
-	cik, an := parseCikAndDocId(url)
-	finData, err := parseAllFinData(cik, an)
-	return finData, err
+	docs := getFilingDocs(url, fileType)
+	return parseMappedReports(docs)
 }
 
 func getFinancialData(url string, fileType FilingType) (*financialReport, error) {

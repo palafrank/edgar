@@ -1,6 +1,8 @@
 package edgar
 
-import "strings"
+import (
+	"strings"
+)
 
 var (
 	// A Map of XBRL tags to financial data type
@@ -69,6 +71,7 @@ var (
 func getFinDataTypeFromXBRLTag(key string) finDataType {
 	data, ok := xbrlTags[key]
 	if !ok {
+
 		// Now look for non-gaap filing
 		// defref_us-gaap_XXX could be filed company specific
 		// as defref_msft_XXX

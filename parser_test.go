@@ -1,7 +1,6 @@
 package edgar
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -159,7 +158,6 @@ func TestEquityParser(t *testing.T) {
 		r := getPage("http://sec.gov" + filingDoc)
 		fd := new(finData)
 		finReportParser(r, fd)
-		fmt.Println(fd)
 		if fd.Equity != 78944000000 {
 			t.Error("Equity arsing failed")
 		}
@@ -186,13 +184,13 @@ func TestFiling10KParser(t *testing.T) {
 }
 
 func TestParsingReports(t *testing.T) {
-	for i := 0; i < 20; i++ {
-		report, err := parseAllFinData("789019", "000119312513310206")
+	url := "cgi-bin/viewer?action=view&cik=789019&accession_number=0001193125-13-310206&xbrl_type=v"
+	for i := 0; i < 1; i++ {
+		report, err := getAllFinancialData(url, FilingType10K)
 		if err != nil {
 			t.Error("Failed to parse financial data: ", err.Error())
 			return
 		}
-		fmt.Println(report.FinData)
 		if report.FinData.ShareCount != 8329956402 {
 			t.Error("Incorrect sharcount parsed ", report.FinData.ShareCount)
 		}
@@ -238,7 +236,6 @@ func TestParsingReports(t *testing.T) {
 		if report.FinData.Equity != 78944000000 {
 			t.Error("Incorrect shareholder equity parsed ", report.FinData.Equity)
 		}
-		fmt.Println("Done with iteration ", i)
 	}
 }
 
@@ -311,7 +308,7 @@ func TestOpsParser(t *testing.T) {
 			t.Error("Cost of Sales amount did not match")
 		}
 		if ops.GrossMargin != 20421000000 {
-			t.Error("Gross margin amount did not match")
+			t.Error("Gross margin amount did not match ", ops.GrossMargin)
 		}
 		if ops.OpExpense != 7809000000 {
 			t.Error("Operational Expense amount did not match")

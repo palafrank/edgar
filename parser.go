@@ -407,6 +407,23 @@ func parseAllReports(cik string, an string) []int {
 	return reports
 }
 
+/*
+This function attempts to indiscriminately parse all reports in that filing
+to find all relevant XBRL Information we are interested in
+
+Issue: Currently the same XBRL tag appears multiple times in different documents
+causing confusion in the parser.
+TODO:
+Figure out a way to deterministically identify which XBRL tag is relevant to this
+filing and ignore the rest.
+This can be done either by identifying which specific
+document you are parsing and use the XBRL tag from the doc we are interested in
+for that tag.
+Else we could corellate the date for that tag to see if that date matches the
+filing that we are working on.
+Both requires us to maintain context in each go routine regarding mapping.
+
+*/
 func parseAllFinData(cik string, an string) (*financialReport, error) {
 	reports := parseAllReports(cik, an)
 	if len(reports) == 0 {
@@ -446,5 +463,23 @@ func parseAllFinData(cik string, an string) (*financialReport, error) {
 			break
 		}
 	}
+	return fr, validate(fr.FinData)
+}
+
+func parseMappedReports(docs map[filingDocType]string) (*financialReport, error) {
+	var wg sync.WaitGroup
+	fr := new(financialReport)
+	fr.FinData = new(finData)
+	for _, url := range docs {
+		wg.Add(1)
+		go func(url string, fd *finData) {
+			defer wg.Done()
+			page := getPage(url)
+			if page != nil {
+				finReportParser(page, fr.FinData)
+			}
+		}(baseURL+url, fr.FinData)
+	}
+	wg.Wait()
 	return fr, validate(fr.FinData)
 }
