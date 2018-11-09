@@ -1,11 +1,17 @@
 {
     "steps": [
     {
+
       "name": "gcr.io/cloud-builders/glide",
       "args": [
-          "install"
+        "install"
       ],
-      "name": "gcr.io/cloud-builders/go",
+      "env": [
+          "PROJECT_ROOT=edgar"
+      ],
+    },
+    {
+      "name": "gcr.io/cloud-builders/go:debian",
       "args": [
           "test"
       ],
