@@ -2,7 +2,7 @@
     "steps": [
     {
 
-      "name": "gcr.io/cloud-builders/go",
+      "name": "gcr.io/cloud-builders/go:debian",
       "entrypoint": "bash",
       "args": [
         "dep",
