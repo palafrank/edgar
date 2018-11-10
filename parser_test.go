@@ -179,6 +179,7 @@ func TestParsingReports(t *testing.T) {
 			t.Error("Failed to parse financial data: ", err.Error())
 			return
 		}
+
 		if report.Entity.ShareCount != 8329956402 {
 			t.Error("Incorrect sharcount parsed ", report.Entity.ShareCount)
 		}
@@ -242,18 +243,24 @@ func TestFiling10KParser1(t *testing.T) {
 			t.Error("Did not get the expected number of filing document in the 10K")
 		}
 	}
-
 }
 
+/*
+	Entity document parser testcases
+*/
+
 func TestEntityParser(t *testing.T) {
+	fmt.Println("*** Entity Parser testing ***")
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_entity.html")
-	entity := new(entityData)
-	_, err := reportParser(f, entity)
+
+	_, err := reportParser(f, file.FinData.Entity)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
-	} else if entity.ShareCount != 4829926000 {
-		t.Error("Incorrect sharecount value parsed")
+	} else if data, _ := file.ShareCount(); data != 4829926000 {
+		t.Error("Incorrect sharecount value parsed ", data)
 	}
 }
 
@@ -281,7 +288,12 @@ func Test10KEntityParser(t *testing.T) {
 	}
 }
 
+/*
+	Operations statement parsing testcases
+*/
+
 func TestOpsParser(t *testing.T) {
+	fmt.Println("*** Operations Parser testing ***")
 	f, _ := os.Open("samples/sample_ops.html")
 	ops := new(opsData)
 	_, err := reportParser(f, ops)
@@ -311,35 +323,44 @@ func TestOpsParser(t *testing.T) {
 }
 
 func Test10KOpsParser(t *testing.T) {
+
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
+
 	f, _ := os.Open("samples/sample_10K_ops.html")
-	ops := new(opsData)
-	_, err := reportParser(f, ops)
+	_, err := reportParser(f, file.FinData.Ops)
 	f.Close()
+
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if ops.Revenue != 233715000000 {
-			t.Error("Revenue amount did not match")
+		if data, _ := file.Revenue(); data != 233715000000 {
+			t.Error("Revenue amount did not match ", data)
 		}
-		if ops.CostOfSales != 140089000000 {
-			t.Error("Cost of Sales amount did not match")
+		if data, _ := file.CostOfRevenue(); data != 140089000000 {
+			t.Error("Cost of Sales amount did not match ", data)
 		}
-		if ops.GrossMargin != 93626000000 {
-			t.Error("Gross margin amount did not match")
+		if data, _ := file.GrossMargin(); data != 93626000000 {
+			t.Error("Gross margin amount did not match ", data)
 		}
-		if ops.OpExpense != 22396000000 {
-			t.Error("Operational Expense amount did not match")
+		if data, _ := file.OperatingExpense(); data != 22396000000 {
+			t.Error("Operational Expense amount did not match ", data)
 		}
-		if ops.OpIncome != 71230000000 {
-			t.Error("Operational Income amount did not match")
+		if data, _ := file.OperatingIncome(); data != 71230000000 {
+			t.Error("Operational Income amount did not match ", data)
 		}
-		if ops.NetIncome != 53394000000 {
-			t.Error("Net income amount did not match")
+		if data, _ := file.NetIncome(); data != 53394000000 {
+			t.Error("Net income amount did not match ", data)
 		}
 	}
 }
 
+/*
+	Cash Flow parsing testcases
+*/
+
 func TestCfParser(t *testing.T) {
+	fmt.Println("*** Cash flow parser testing ***")
 	f, _ := os.Open("samples/sample_cf.html")
 	cf := new(cfData)
 	_, err := reportParser(f, cf)
@@ -357,100 +378,105 @@ func TestCfParser(t *testing.T) {
 }
 
 func Test10KCfParser(t *testing.T) {
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_10K_cf.html")
-	cf := new(cfData)
-	_, err := reportParser(f, cf)
+	_, err := reportParser(f, file.FinData.Cf)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if cf.OpCashFlow != 81266000000 {
+		if data, _ := file.OperatingCashFlow(); data != 81266000000 {
 			t.Error("Incorrect cash flow from operations value parsed")
 		}
-		if cf.CapEx != float64(-11247000000) {
-			t.Error("Incorrect capital expenditure value parsed ", cf.CapEx)
+		if data, _ := file.CapitalExpenditure(); data != float64(-11247000000) {
+			t.Error("Incorrect capital expenditure value parsed ", data)
 		}
 	}
 }
 
+/*
+	Balance Sheet parsing testcases
+*/
+
 func TestBSParser(t *testing.T) {
+	fmt.Println("*** Balance sheet parser testing ***")
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs.html")
-	bs := new(bsData)
-	_, err := reportParser(f, bs)
+	_, err := reportParser(f, file.FinData.Bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if bs.CLiab != 88548000000 {
+		if data, _ := file.CurrentLiabilities(); data != 88548000000 {
 			t.Error("Incorrect current liabilities from balance sheet value parsed")
 		}
-		if bs.LDebt != 97128000000 {
+		if data, _ := file.LongTermDebt(); data != 97128000000 {
 			t.Error("Incorrect long term debt from balance sheet value parsed")
 		}
-		/*
-			if bs.SDebt != 5498000000 {
-				t.Error("Incorrect short term debt from balance sheet value parsed")
-			}
-		*/
-		if bs.Retained != 79436000000 {
+
+		if data, _ := file.RetainedEarnings(); data != 79436000000 {
 			t.Error("Incorrect retained earningd from balance sheet value parsed")
 		}
 	}
 }
 
 func TestBS1Parser(t *testing.T) {
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs1.html")
-	bs := new(bsData)
-	_, err := reportParser(f, bs)
+
+	_, err := reportParser(f, file.FinData.Bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if bs.CLiab != 5018000000 {
-			t.Error("Incorrect current liabilities: ", bs.CLiab)
+		if data, _ := file.CurrentLiabilities(); data != 5018000000 {
+			t.Error("Incorrect current liabilities: ", data)
 		}
-		if bs.LDebt != 14846000000 {
-			t.Error("Incorrect long term debt ", bs.LDebt)
-		}
-
-		if bs.Deferred != 27000000 {
-			t.Error("Incorrect Deferred ", bs.Deferred)
+		if data, _ := file.LongTermDebt(); data != 14846000000 {
+			t.Error("Incorrect long term debt ", data)
 		}
 
-		if bs.Equity != 28331000000 {
-			t.Error("Incorrect equity ", bs.Equity)
+		if data, _ := file.DeferredRevenue(); data != 27000000 {
+			t.Error("Incorrect Deferred ", data)
 		}
 
-		if bs.Retained != -198000000 {
-			t.Error("Incorrect retained earningd ", bs.Retained)
+		if data, _ := file.TotalEquity(); data != 28331000000 {
+			t.Error("Incorrect equity ", data)
+		}
+
+		if data, _ := file.RetainedEarnings(); data != -198000000 {
+			t.Error("Incorrect retained earningd ", data)
 		}
 	}
 }
 
 func Test10KBSParser(t *testing.T) {
+	var file filing
 	f, _ := os.Open("samples/sample_10K_bs.html")
-	bs := new(bsData)
-	_, err := reportParser(f, bs)
+	file.FinData = newFinancialReport(FilingType10K)
+	_, err := reportParser(f, file.FinData.Bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if bs.CLiab != 80610000000 {
+		if data, _ := file.CurrentLiabilities(); data != 80610000000 {
 			t.Error("Incorrect current liabilities from balance sheet value parsed")
 		}
-		if bs.LDebt != 53463000000 {
+		if data, _ := file.LongTermDebt(); data != 53463000000 {
 			t.Error("Incorrect long term debt from balance sheet value parsed")
 		}
-		/*
-			if bs.SDebt != 2500000000 {
-				t.Error("Incorrect short term debt from balance sheet value parsed")
-			}
-		*/
-		if bs.Retained != 92284000000 {
+		if data, _ := file.RetainedEarnings(); data != 92284000000 {
 			t.Error("Incorrect retained earningd from balance sheet value parsed")
 		}
 	}
 }
+
+/*
+Reader/Writer testcases
+*/
 
 func TestFinReportMarshal(t *testing.T) {
 
@@ -482,6 +508,7 @@ func TestFinReportMarshal(t *testing.T) {
 	_, _ = reportParser(f, data.Entity)
 	f.Close()
 	str := data.String()
+	str1 := file.String()
 	if !(strings.Contains(str, "Entity Information") &&
 		strings.Contains(str, "Operational Information") &&
 		strings.Contains(str, "Balance Sheet Information") &&
@@ -494,7 +521,7 @@ func TestFinReportMarshal(t *testing.T) {
 
 	//There is an extra byte at the end of the save file that needs to be
 	//eliminated to avoid a mismatch
-	if str != string(b[:len(b)-1]) {
+	if str1 != string(b[:len(b)-1]) {
 		t.Error("Marshaled data doesnot match reference JSON\n", str)
 	}
 }

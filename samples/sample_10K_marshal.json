@@ -1,26 +1,30 @@
 {
-    "Filing Type": "10-K",
-    "Entity Information": {
-        "Shares Outstanding": 5575331000
-    },
-    "Operational Information": {
-        "Revenue": 233715000000,
-        "Cost Of Revenue": 140089000000,
-        "Gross Margin": 93626000000,
-        "Operational Income": 71230000000,
-        "Operational Expense": 22396000000,
-        "Net Income": 53394000000
-    },
-    "Balance Sheet Information": {
-        "Long-Term debt": 53463000000,
-        "Short-Term debt": 0,
-        "Current Liabilities": 80610000000,
-        "Deferred revenue": 8940000000,
-        "Retained Earnings": 92284000000,
-        "Total Shareholder Equity": 119355000000
-    },
-    "Cash Flow Information": {
-        "Operating Cash Flow": 81266000000,
-        "Capital Expenditure": -11247000000
+    "Company": "AAPL",
+    "Report date": "2017-02-1",
+    "Financial Data": {
+        "Filing Type": "10-K",
+        "Entity Information": {
+            "Shares Outstanding": 5575331000
+        },
+        "Operational Information": {
+            "Revenue": 233715000000,
+            "Cost Of Revenue": 140089000000,
+            "Gross Margin": 93626000000,
+            "Operational Income": 71230000000,
+            "Operational Expense": 22396000000,
+            "Net Income": 53394000000
+        },
+        "Balance Sheet Information": {
+            "Long-Term debt": 53463000000,
+            "Short-Term debt": 0,
+            "Current Liabilities": 80610000000,
+            "Deferred revenue": 8940000000,
+            "Retained Earnings": 92284000000,
+            "Total Shareholder Equity": 119355000000
+        },
+        "Cash Flow Information": {
+            "Operating Cash Flow": 81266000000,
+            "Capital Expenditure": -11247000000
+        }
     }
 }
