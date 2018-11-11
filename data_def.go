@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"strings"
 )
 
 type finDataType string
@@ -28,12 +27,15 @@ var (
 	thresholdYear int = 2011
 
 	//Document types
-	filingDocOps filingDocType = "Operations"
-	filingDocInc filingDocType = "Income"
-	filingDocBS  filingDocType = "Assets"
-	filingDocCF  filingDocType = "Cash Flow"
-	filingDocEN  filingDocType = "Entity Info"
-	filingDocIg  filingDocType = "Ignore"
+	filingDocOps      filingDocType = "Operations"
+	filingDocInc      filingDocType = "Income"
+	filingDocBS       filingDocType = "Assets"
+	filingDocCF       filingDocType = "Cash Flow"
+	filingDocEN       filingDocType = "Entity Info"
+	filingDocEPSNotes filingDocType = "Notes on EPS"
+	filingDocEquity   filingDocType = "Notes on Equity"
+	filingDocDebt     filingDocType = "Notes on Debt"
+	filingDocIg       filingDocType = "Ignore"
 
 	//Scale of the money in the filing
 	scaleNone     scaleFactor = 1
@@ -100,79 +102,6 @@ func (d date) Year() int {
 
 func (d date) String() string {
 	return fmt.Sprintf("%04d-%02d-%02d", d.year, d.month, d.day)
-}
-
-func lookupDocType(data string) filingDocType {
-
-	//fmt.Println("Looking up: ", data)
-	data = strings.ToUpper(data)
-
-	if strings.Contains(data, "PARENTHETICAL") {
-		//skip this doc
-		return filingDocIg
-	}
-
-	if strings.Contains(data, "DOCUMENT") && strings.Contains(data, "ENTITY") {
-		//Entity document
-		return filingDocEN
-		//} else if strings.Contains(data, "CONSOLIDATED") {
-	} else {
-		/*
-			match, _ := regexp.MatchString("^(?s)(.*)CONSOLIDATED.*$", data)
-			if !match {
-				//fmt.Println("PASSING ON :", data)
-				return filingDocIg
-			}
-		*/
-		if strings.Contains(data, "BALANCE SHEETS") {
-			//Balance sheet
-			return filingDocBS
-		} else if strings.Contains(data, "OPERATIONS") {
-			//Operations statement
-			return filingDocOps
-		} else if strings.Contains(data, "INCOME") {
-			//Income statement
-			return filingDocInc
-		} else if strings.Contains(data, "CASH FLOWS") {
-			//Cash flow statement
-			return filingDocCF
-		}
-	}
-	return filingDocIg
-}
-
-func getMissingDocs(data map[filingDocType]string) string {
-
-	if len(data) >= len(requiredDocTypes) {
-		return ""
-	}
-	var diff []filingDocType
-	for key, _ := range requiredDocTypes {
-		if _, ok := data[key]; !ok {
-			switch key {
-			case filingDocOps:
-				if _, ok := data[filingDocInc]; ok {
-					continue
-				}
-			case filingDocInc:
-				if _, ok := data[filingDocOps]; ok {
-					continue
-				}
-			}
-			diff = append(diff, key)
-		}
-	}
-	if len(diff) == 0 {
-		return ""
-	}
-
-	var ret string
-	ret = "[ "
-	for _, val := range diff {
-		ret = ret + " " + string(val)
-	}
-	ret += " ]"
-	return ret
 }
 
 func generateData(data interface{}, name string) float64 {
