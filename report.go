@@ -24,11 +24,14 @@ type opsData struct {
 	OpIncome    float64 `json:"Operational Income" required:"true" entity:"Money"`
 	OpExpense   float64 `json:"Operational Expense" required:"true" entity:"Money"`
 	NetIncome   float64 `json:"Net Income" required:"true" entity:"Money"`
+	WAShares    float64 `json:"Weighted Average Share Count" required:"true" entity:"Shares"`
+	Dps         float64 `json:"Dividend Per Share" required:"false" entity:"PerShare"`
 }
 
 type cfData struct {
 	OpCashFlow float64 `json:"Operating Cash Flow" required:"true" entity:"Money"`
 	CapEx      float64 `json:"Capital Expenditure" required:"true" entity:"Money"`
+	Dividends  float64 `json:"Dividends paid" required:"false" entity:"Money"`
 }
 
 type bsData struct {

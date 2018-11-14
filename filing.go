@@ -140,3 +140,24 @@ func (f *filing) CapitalExpenditure() (float64, error) {
 	}
 	return 0, errors.New(filingErrorString)
 }
+
+func (f *filing) Dividend() (float64, error) {
+	if f.FinData != nil && f.FinData.Cf != nil {
+		return f.FinData.Cf.Dividends, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) WAShares() (float64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.WAShares, nil
+	}
+	return 0, errors.New(filingErrorString)
+}
+
+func (f *filing) DividendPerShare() (float64, error) {
+	if f.FinData != nil && f.FinData.Ops != nil {
+		return f.FinData.Ops.Dps, nil
+	}
+	return 0, errors.New(filingErrorString)
+}

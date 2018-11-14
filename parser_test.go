@@ -255,7 +255,7 @@ func TestEntityParser(t *testing.T) {
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_entity.html")
 
-	_, err := reportParser(f, file.FinData.Entity)
+	_, err := finReportParser(f, file.FinData.Entity)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -267,7 +267,7 @@ func TestEntityParser(t *testing.T) {
 func TestEntity1Parser(t *testing.T) {
 	f, _ := os.Open("samples/sample_entity1.html")
 	entity := new(entityData)
-	_, err := reportParser(f, entity)
+	_, err := finReportParser(f, entity)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -279,7 +279,7 @@ func TestEntity1Parser(t *testing.T) {
 func Test10KEntityParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_entity.html")
 	entity := new(entityData)
-	_, err := reportParser(f, entity)
+	_, err := finReportParser(f, entity)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -296,7 +296,7 @@ func TestOpsParser(t *testing.T) {
 	fmt.Println("*** Operations Parser testing ***")
 	f, _ := os.Open("samples/sample_ops.html")
 	ops := new(opsData)
-	_, err := reportParser(f, ops)
+	_, err := finReportParser(f, ops)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -322,13 +322,28 @@ func TestOpsParser(t *testing.T) {
 	}
 }
 
+func TestOps1Parser(t *testing.T) {
+	fmt.Println("*** Income Parser testing ***")
+	doc := "https://www.sec.gov//Archives/edgar/data/789019/000119312511200680/R2.htm"
+	f := getPage(doc)
+	ops := new(opsData)
+	_, err := finReportParser(f, ops)
+	f.Close()
+	if err != nil {
+		t.Error("Error parsing net income sheet ", err.Error())
+	} else {
+		if ops.Dps != 0.64 {
+			t.Error("Incorrect dividends per share ", ops.Dps)
+		}
+	}
+}
+
 func Test10KOpsParser(t *testing.T) {
 
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
-
 	f, _ := os.Open("samples/sample_10K_ops.html")
-	_, err := reportParser(f, file.FinData.Ops)
+	_, err := finReportParser(f, file.FinData.Ops)
 	f.Close()
 
 	if err != nil {
@@ -363,7 +378,7 @@ func TestCfParser(t *testing.T) {
 	fmt.Println("*** Cash flow parser testing ***")
 	f, _ := os.Open("samples/sample_cf.html")
 	cf := new(cfData)
-	_, err := reportParser(f, cf)
+	_, err := finReportParser(f, cf)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -381,7 +396,7 @@ func Test10KCfParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_10K_cf.html")
-	_, err := reportParser(f, file.FinData.Cf)
+	_, err := finReportParser(f, file.FinData.Cf)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -404,7 +419,7 @@ func TestBSParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs.html")
-	_, err := reportParser(f, file.FinData.Bs)
+	_, err := finReportParser(f, file.FinData.Bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -427,15 +442,15 @@ func TestBS1Parser(t *testing.T) {
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs1.html")
 
-	_, err := reportParser(f, file.FinData.Bs)
+	_, err := finReportParser(f, file.FinData.Bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
-		if data, _ := file.CurrentLiabilities(); data != 5018000000 {
+		if data, _ := file.CurrentLiabilities(); data != 5018600000 {
 			t.Error("Incorrect current liabilities: ", data)
 		}
-		if data, _ := file.LongTermDebt(); data != 14846000000 {
+		if data, _ := file.LongTermDebt(); data != 14846300000 {
 			t.Error("Incorrect long term debt ", data)
 		}
 
@@ -443,11 +458,11 @@ func TestBS1Parser(t *testing.T) {
 			t.Error("Incorrect Deferred ", data)
 		}
 
-		if data, _ := file.TotalEquity(); data != 28331000000 {
+		if data, _ := file.TotalEquity(); data != 28331100000 {
 			t.Error("Incorrect equity ", data)
 		}
 
-		if data, _ := file.RetainedEarnings(); data != -198000000 {
+		if data, _ := file.RetainedEarnings(); data != -198200000 {
 			t.Error("Incorrect retained earningd ", data)
 		}
 	}
@@ -457,7 +472,7 @@ func Test10KBSParser(t *testing.T) {
 	var file filing
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := reportParser(f, file.FinData.Bs)
+	_, err := finReportParser(f, file.FinData.Bs)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -493,19 +508,19 @@ func TestFinReportMarshal(t *testing.T) {
 	data.DocType = FilingType10K
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	data.Bs = new(bsData)
-	_, _ = reportParser(f, data.Bs)
+	_, _ = finReportParser(f, data.Bs)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_cf.html")
 	data.Cf = new(cfData)
-	_, _ = reportParser(f, data.Cf)
+	_, _ = finReportParser(f, data.Cf)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_ops.html")
 	data.Ops = new(opsData)
-	_, _ = reportParser(f, data.Ops)
+	_, _ = finReportParser(f, data.Ops)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_entity.html")
 	data.Entity = new(entityData)
-	_, _ = reportParser(f, data.Entity)
+	_, _ = finReportParser(f, data.Entity)
 	f.Close()
 	str := data.String()
 	str1 := file.String()
@@ -570,6 +585,7 @@ func TestFolderWriter(t *testing.T) {
 	//eliminated to avoid a mismatch
 	if c.String() != string(b[:len(b)-1]) {
 		t.Error("Created folder does not match sample stored folder ", c.String())
+		fmt.Println(len(c.String()), len(string(b)))
 	}
 }
 
@@ -582,6 +598,7 @@ func TestLiveMSFTParsing(t *testing.T) {
 	}
 	files := c.AvailableFilings(FilingType10K)
 	for _, val := range files {
+
 		if val.Year() == 2018 || val.Year() == 2015 || val.Year() == 2011 {
 			fs, err := c.Filing(FilingType10K, val)
 			if err != nil {
@@ -600,6 +617,13 @@ func TestLiveMSFTParsing(t *testing.T) {
 				if val, _ := fs.OperatingCashFlow(); val != 43884000000 {
 					t.Error("Incorrect share count-2018: ", val)
 				}
+				if val, _ := fs.DividendPerShare(); val != 1.68 {
+					t.Error("Incorrect dividend per share-2018: ", val)
+				}
+				if val, _ := fs.Dividend(); val != -12699000000 {
+					t.Error("Incorrect dividend per share-2018: ", val)
+				}
+
 			}
 			if val.Year() == 2011 {
 				if val, _ := fs.LongTermDebt(); val != 11921000000 {
@@ -617,6 +641,12 @@ func TestLiveMSFTParsing(t *testing.T) {
 				if val, _ := fs.CapitalExpenditure(); val != -2355000000 {
 					t.Error("Incorrect share count-2018: ", val)
 				}
+				if val, _ := fs.DividendPerShare(); val != 0.64 {
+					t.Error("Incorrect dividend per share-2011: ", val)
+				}
+				if val, _ := fs.Dividend(); val != -5180000000 {
+					t.Error("Incorrect dividend per share-2018: ", val)
+				}
 			}
 			if val.Year() == 2015 {
 				if val, _ := fs.LongTermDebt(); val != 27808000000 {
@@ -633,6 +663,12 @@ func TestLiveMSFTParsing(t *testing.T) {
 				}
 				if val, _ := fs.CapitalExpenditure(); val != -5944000000 {
 					t.Error("Incorrect share count-2018: ", val)
+				}
+				if val, _ := fs.DividendPerShare(); val != 1.24 {
+					t.Error("Incorrect dividend per share-2015: ", val)
+				}
+				if val, _ := fs.Dividend(); val != -9882000000 {
+					t.Error("Incorrect dividend per share-2018: ", val)
 				}
 			}
 		}

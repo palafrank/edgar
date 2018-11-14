@@ -49,6 +49,11 @@ var (
 		"OperatingIncomeLoss":                       finDataOpsIncome,
 		"defref_us-gaap_NetIncomeLoss":              finDataNetIncome,
 		"NetIncomeLoss":                             finDataNetIncome,
+		"defref_us-gaap_WeightedAverageNumberOfDilutedSharesOutstanding": finDataWAShares,
+		"WeightedAverageNumberOfDilutedSharesOutstanding":                finDataWAShares,
+		"defref_us-gaap_CommonStockDividendsPerShareDeclared":            finDataDps,
+		"CommonStockDividendsPerShareDeclared":                           finDataDps,
+
 		"defref_us-gaap_IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": finDataGrossMargin,
 		"IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest":                finDataGrossMargin,
 
@@ -61,6 +66,10 @@ var (
 		"PaymentsToAcquirePropertyPlantAndEquipment":                                    finDataCapEx,
 		"defref_us-gaap_PaymentsToAcquireProductiveAssets":                              finDataCapEx,
 		"PaymentsToAcquireProductiveAssets":                                             finDataCapEx,
+		"defref_us-gaap_PaymentsOfDividends":                                            finDataDividend,
+		"PaymentsOfDividends":                                                           finDataDividend,
+		"defref_us-gaap_PaymentsOfDividendsCommonStock":                                 finDataDividend,
+		"PaymentsOfDividendsCommonStock":                                                finDataDividend,
 
 		//Entity sheet information
 		"defref_dei_EntityCommonStockSharesOutstanding": finDataSharesOutstanding,

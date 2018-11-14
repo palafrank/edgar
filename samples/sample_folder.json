@@ -16,7 +16,9 @@
                         "Gross Margin": 3987,
                         "Operational Income": -423,
                         "Operational Expense": 9100,
-                        "Net Income": -751
+                        "Net Income": -751,
+                        "Weighted Average Share Count": 0,
+                        "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
                         "Long-Term debt": 8517,
@@ -28,7 +30,8 @@
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 1213,
-                        "Capital Expenditure": -177
+                        "Capital Expenditure": -177,
+                        "Dividends paid": 0
                     }
                 }
             },
@@ -46,7 +49,9 @@
                         "Gross Margin": 6759,
                         "Operational Income": -1267,
                         "Operational Expense": 14330,
-                        "Net Income": -1630
+                        "Net Income": -1630,
+                        "Weighted Average Share Count": 0,
+                        "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
                         "Long-Term debt": 14846,
@@ -58,7 +63,8 @@
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 2243,
-                        "Capital Expenditure": -238
+                        "Capital Expenditure": -238,
+                        "Dividends paid": 0
                     }
                 }
             },
@@ -76,7 +82,9 @@
                         "Gross Margin": 10261,
                         "Operational Income": -3014,
                         "Operational Expense": 18085,
-                        "Net Income": 3919
+                        "Net Income": 3919,
+                        "Weighted Average Share Count": 0,
+                        "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
                         "Long-Term debt": 40293,
@@ -88,7 +96,8 @@
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 4530,
-                        "Capital Expenditure": -454
+                        "Capital Expenditure": -454,
+                        "Dividends paid": 0
                     }
                 }
             },
@@ -106,7 +115,9 @@
                         "Gross Margin": 12710,
                         "Operational Income": -1825,
                         "Operational Expense": 16396,
-                        "Net Income": 14979
+                        "Net Income": 14979,
+                        "Weighted Average Share Count": 0,
+                        "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
                         "Long-Term debt": 29970,
@@ -118,7 +129,8 @@
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 1425,
-                        "Capital Expenditure": -331
+                        "Capital Expenditure": -331,
+                        "Dividends paid": 0
                     }
                 }
             },
@@ -136,7 +148,9 @@
                         "Gross Margin": 13772,
                         "Operational Income": -5921,
                         "Operational Expense": 21861,
-                        "Net Income": -3716
+                        "Net Income": -3716,
+                        "Weighted Average Share Count": 0,
+                        "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
                         "Long-Term debt": 25843,
@@ -148,7 +162,8 @@
                     },
                     "Cash Flow Information": {
                         "Operating Cash Flow": 5873,
-                        "Capital Expenditure": -349
+                        "Capital Expenditure": -349,
+                        "Dividends paid": 0
                     }
                 }
             }

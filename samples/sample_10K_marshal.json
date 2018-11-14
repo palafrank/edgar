@@ -12,7 +12,9 @@
             "Gross Margin": 93626000000,
             "Operational Income": 71230000000,
             "Operational Expense": 22396000000,
-            "Net Income": 53394000000
+            "Net Income": 53394000000,
+            "Weighted Average Share Count": 5793069000,
+            "Dividend Per Share": 1.98
         },
         "Balance Sheet Information": {
             "Long-Term debt": 53463000000,
@@ -24,7 +26,8 @@
         },
         "Cash Flow Information": {
             "Operating Cash Flow": 81266000000,
-            "Capital Expenditure": -11247000000
+            "Capital Expenditure": -11247000000,
+            "Dividends paid": 0
         }
     }
 }

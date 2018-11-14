@@ -41,6 +41,9 @@ type Filing interface {
 	RetainedEarnings() (float64, error)
 	OperatingCashFlow() (float64, error)
 	CapitalExpenditure() (float64, error)
+	Dividend() (float64, error)
+	WAShares() (float64, error)
+	DividendPerShare() (float64, error)
 }
 
 // Company interface used to get information and filing about a company

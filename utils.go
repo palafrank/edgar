@@ -19,14 +19,21 @@ func normalizeNumber(str string) float64 {
 	str = strings.TrimLeft(str, "(")
 	str = strings.TrimRight(str, ")")
 
-	//TODO: Ignoring decimals for now
+	dec := ""
 	s := strings.Split(str, ".")
+	if len(s) > 1 {
+		dec = s[1]
+	}
 	s = strings.Split(s[0], ",")
 
 	if len(s) > 0 {
 		var s1 string
 		for _, data := range s {
 			s1 += data
+		}
+		if dec != "" {
+			s1 += "."
+			s1 += dec
 		}
 		num, err := strconv.ParseFloat(s1, 64)
 		if err == nil {
@@ -40,6 +47,7 @@ func filingScale(strs []string) map[scaleEntity]scaleFactor {
 	ret := make(map[scaleEntity]scaleFactor)
 	ret[scaleEntityShares] = scaleNone
 	ret[scaleEntityMoney] = scaleMillion
+	ret[scaleEntityPerShare] = scaleNone
 	for _, str := range strs {
 		for key, val := range filingScales {
 			if strings.Contains(strings.ToLower(str), strings.ToLower(key)) {

@@ -44,8 +44,9 @@ var (
 	scaleBillion  scaleFactor = 1000 * scaleMillion
 
 	// Scaling entities in filings
-	scaleEntityShares scaleEntity = "Shares"
-	scaleEntityMoney  scaleEntity = "Money"
+	scaleEntityShares   scaleEntity = "Shares"
+	scaleEntityMoney    scaleEntity = "Money"
+	scaleEntityPerShare scaleEntity = "PerShare"
 
 	//Types of financial data collected
 	finDataSharesOutstanding finDataType = "Shares Outstanding"
@@ -63,6 +64,9 @@ var (
 	finDataDeferred          finDataType = "Deferred revenue"
 	finDataRetained          finDataType = "Retained Earnings"
 	finDataTotalEquity       finDataType = "Total Shareholder Equity"
+	finDataDividend          finDataType = "Dividends paid"
+	finDataWAShares          finDataType = "Weighted Average Share Count"
+	finDataDps               finDataType = "Dividend Per Share"
 	finDataUnknown           finDataType = "Unknown"
 
 	//Required Documents list
