@@ -31,7 +31,8 @@
                     "Cash Flow Information": {
                         "Operating Cash Flow": 1213,
                         "Capital Expenditure": -177,
-                        "Dividends paid": 0
+                        "Dividends paid": 0,
+                        "Interest paid": 0
                     }
                 }
             },
@@ -64,7 +65,8 @@
                     "Cash Flow Information": {
                         "Operating Cash Flow": 2243,
                         "Capital Expenditure": -238,
-                        "Dividends paid": 0
+                        "Dividends paid": 0,
+                        "Interest paid": 0
                     }
                 }
             },
@@ -97,7 +99,8 @@
                     "Cash Flow Information": {
                         "Operating Cash Flow": 4530,
                         "Capital Expenditure": -454,
-                        "Dividends paid": 0
+                        "Dividends paid": 0,
+                        "Interest paid": 0
                     }
                 }
             },
@@ -130,7 +133,8 @@
                     "Cash Flow Information": {
                         "Operating Cash Flow": 1425,
                         "Capital Expenditure": -331,
-                        "Dividends paid": 0
+                        "Dividends paid": 0,
+                        "Interest paid": 0
                     }
                 }
             },
@@ -163,7 +167,8 @@
                     "Cash Flow Information": {
                         "Operating Cash Flow": 5873,
                         "Capital Expenditure": -349,
-                        "Dividends paid": 0
+                        "Dividends paid": 0,
+                        "Interest paid": 0
                     }
                 }
             }

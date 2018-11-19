@@ -44,6 +44,7 @@ type Filing interface {
 	Dividend() (float64, error)
 	WAShares() (float64, error)
 	DividendPerShare() (float64, error)
+	Interest() (float64, error)
 }
 
 // Company interface used to get information and filing about a company

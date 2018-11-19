@@ -70,6 +70,7 @@ var (
 		"PaymentsOfDividends":                                                           finDataDividend,
 		"defref_us-gaap_PaymentsOfDividendsCommonStock":                                 finDataDividend,
 		"PaymentsOfDividendsCommonStock":                                                finDataDividend,
+		"defref_us-gaap_InterestPaidNet":                                                finDataInterest,
 
 		//Entity sheet information
 		"defref_dei_EntityCommonStockSharesOutstanding": finDataSharesOutstanding,

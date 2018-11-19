@@ -31,7 +31,8 @@
                     "Cash Flow Information": {
                         "Operating Cash Flow": 1425300000,
                         "Capital Expenditure": -331400000,
-                        "Dividends paid": -278400000
+                        "Dividends paid": -278400000,
+                        "Interest paid": 0
                     }
                 }
             },
@@ -64,7 +65,8 @@
                     "Cash Flow Information": {
                         "Operating Cash Flow": 5873400000,
                         "Capital Expenditure": -349900000,
-                        "Dividends paid": -1218200000
+                        "Dividends paid": -1218200000,
+                        "Interest paid": 0
                     }
                 }
             }

@@ -32,6 +32,7 @@ type cfData struct {
 	OpCashFlow float64 `json:"Operating Cash Flow" required:"true" entity:"Money"`
 	CapEx      float64 `json:"Capital Expenditure" required:"true" entity:"Money"`
 	Dividends  float64 `json:"Dividends paid" required:"false" entity:"Money"`
+	Interest   float64 `json:"Interest paid" required:"false" entity:"Money"`
 }
 
 type bsData struct {

@@ -161,3 +161,10 @@ func (f *filing) DividendPerShare() (float64, error) {
 	}
 	return 0, errors.New(filingErrorString)
 }
+
+func (f *filing) Interest() (float64, error) {
+	if f.FinData != nil && f.FinData.Cf != nil {
+		return f.FinData.Cf.Interest, nil
+	}
+	return 0, errors.New(filingErrorString)
+}

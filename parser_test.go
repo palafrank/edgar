@@ -674,3 +674,43 @@ func TestLiveMSFTParsing(t *testing.T) {
 		}
 	}
 }
+
+func TestLiveIBMParsing(t *testing.T) {
+	fmt.Println("*** Running a live test ***")
+	fetcher := NewFilingFetcher()
+	c, err := fetcher.CompanyFolder("IBM", FilingType10K)
+	if err != nil {
+		t.Error(err)
+	}
+	files := c.AvailableFilings(FilingType10K)
+
+	for _, val := range files {
+		if val.Year() == 2018 {
+			fs, err := c.Filing(FilingType10K, val)
+			if err != nil {
+				t.Error("Failed to get filing " + val.String())
+			}
+			if val, _ := fs.Interest(); val != 1208000000 {
+				t.Error("Incorrect Interest paid-2018: ", val)
+			}
+		}
+		if val.Year() == 2017 {
+			fs, err := c.Filing(FilingType10K, val)
+			if err != nil {
+				t.Error("Failed to get filing " + val.String())
+			}
+			if val, _ := fs.Interest(); val != 1158000000 {
+				t.Error("Incorrect Interest paid-2017: ", val)
+			}
+		}
+		if val.Year() == 2016 {
+			fs, err := c.Filing(FilingType10K, val)
+			if err != nil {
+				t.Error("Failed to get filing " + val.String())
+			}
+			if val, _ := fs.Interest(); val != 995000000 {
+				t.Error("Incorrect Interest paid-2017: ", val)
+			}
+		}
+	}
+}
