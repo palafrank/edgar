@@ -2,6 +2,7 @@ package edgar
 
 import (
 	"errors"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -104,4 +105,76 @@ func getFinDataXBRLTag(onclick string) (string, error) {
 		}
 	}
 	return "", errors.New("Not a financial tag")
+}
+
+func setCollectedData(data interface{}, fieldNum int) {
+	t := reflect.TypeOf(data)
+	v := reflect.ValueOf(data)
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+		v = v.Elem()
+	}
+	bit, bitOk := t.Field(fieldNum).Tag.Lookup("bit")
+	if bitOk {
+		bitLoc, err := strconv.Atoi(bit)
+		if err == nil {
+			field := v.FieldByName("CollectedData")
+			if field.CanSet() {
+				var mask uint64 = 0x01
+				obj := field.Uint()
+				obj |= mask << uint8(bitLoc)
+				field.SetUint(obj)
+			}
+		}
+	}
+}
+
+func clearCollectedData(data interface{}, fieldNum int) {
+	t := reflect.TypeOf(data)
+	v := reflect.ValueOf(data)
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+		v = v.Elem()
+	}
+	bit, bitOk := t.Field(fieldNum).Tag.Lookup("bit")
+	if bitOk {
+		bitLoc, err := strconv.Atoi(bit)
+		if err == nil {
+			field := v.FieldByName("CollectedData")
+			if field.CanSet() {
+				var mask uint64 = 0x01
+				obj := field.Uint()
+				obj &= ^(mask << uint8(bitLoc))
+				field.SetUint(obj)
+			}
+		}
+	}
+}
+
+func isCollectedDataSet(data interface{}, fieldName string) bool {
+	t := reflect.TypeOf(data)
+	v := reflect.ValueOf(data)
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+		v = v.Elem()
+	}
+	f, ok := t.FieldByName(fieldName)
+	if !ok {
+		return false
+	}
+	bit, bitOk := f.Tag.Lookup("bit")
+	if bitOk {
+		bitLoc, err := strconv.Atoi(bit)
+		if err == nil {
+			field := v.FieldByName("CollectedData")
+			if field.CanSet() {
+				var mask uint64 = 0x01
+				obj := field.Uint()
+				if obj&(mask<<uint8(bitLoc)) != 0 {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }

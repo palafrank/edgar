@@ -137,8 +137,7 @@ func validate(data interface{}) error {
 			continue
 		}
 		tag, ok := t.Field(i).Tag.Lookup("required")
-		val := v.Field(i).Float()
-		if val == 0 && (ok && tag == "true") {
+		if !isCollectedDataSet(data, t.Field(i).Name) && (ok && tag == "true") {
 			tag, ok = t.Field(i).Tag.Lookup("generate")
 			if ok && tag == "true" {
 				num := generateData(data, t.Field(i).Name)
@@ -182,6 +181,7 @@ func setData(data interface{},
 					}
 				}
 				v.Field(i).SetFloat(num)
+				setCollectedData(data, i)
 			}
 			return nil
 		}

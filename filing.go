@@ -41,130 +41,171 @@ func (f *filing) Type() (FilingType, error) {
 
 func (f *filing) ShareCount() (float64, error) {
 	if f.FinData != nil && f.FinData.Entity != nil {
-		return f.FinData.Entity.ShareCount, nil
+		if isCollectedDataSet(f.FinData.Entity, "ShareCount") {
+			return f.FinData.Entity.ShareCount, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) Revenue() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.Revenue, nil
+		if isCollectedDataSet(f.FinData.Ops, "Revenue") {
+			return f.FinData.Ops.Revenue, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) CostOfRevenue() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.CostOfSales, nil
+		if isCollectedDataSet(f.FinData.Ops, "CostOfSales") {
+			return f.FinData.Ops.CostOfSales, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) GrossMargin() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.GrossMargin, nil
+		if isCollectedDataSet(f.FinData.Ops, "GrossMargin") {
+			return f.FinData.Ops.GrossMargin, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) OperatingIncome() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.OpIncome, nil
+		if isCollectedDataSet(f.FinData.Ops, "OpIncome") {
+			return f.FinData.Ops.OpIncome, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) OperatingExpense() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.OpExpense, nil
+		if isCollectedDataSet(f.FinData.Ops, "OpExpense") {
+			return f.FinData.Ops.OpExpense, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) NetIncome() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.NetIncome, nil
+		if isCollectedDataSet(f.FinData.Ops, "NetIncome") {
+			return f.FinData.Ops.NetIncome, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) TotalEquity() (float64, error) {
-	return f.FinData.Bs.Equity, nil
+	if f.FinData != nil && f.FinData.Bs != nil {
+		if isCollectedDataSet(f.FinData.Bs, "Equity") {
+			return f.FinData.Bs.Equity, nil
+		}
+	}
+	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) ShortTermDebt() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
-		return f.FinData.Bs.SDebt, nil
+		if isCollectedDataSet(f.FinData.Bs, "SDebt") {
+			return f.FinData.Bs.SDebt, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) LongTermDebt() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
-		return f.FinData.Bs.LDebt, nil
+		if isCollectedDataSet(f.FinData.Bs, "LDebt") {
+			return f.FinData.Bs.LDebt, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) CurrentLiabilities() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
-		return f.FinData.Bs.CLiab, nil
+		if isCollectedDataSet(f.FinData.Bs, "CLiab") {
+			return f.FinData.Bs.CLiab, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) DeferredRevenue() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
-		return f.FinData.Bs.Deferred, nil
+		if isCollectedDataSet(f.FinData.Bs, "Deferred") {
+			return f.FinData.Bs.Deferred, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) RetainedEarnings() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
-		return f.FinData.Bs.Retained, nil
+		if isCollectedDataSet(f.FinData.Bs, "Retained") {
+			return f.FinData.Bs.Retained, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) OperatingCashFlow() (float64, error) {
 	if f.FinData != nil && f.FinData.Cf != nil {
-		return f.FinData.Cf.OpCashFlow, nil
+		if isCollectedDataSet(f.FinData.Cf, "OpCashFlow") {
+			return f.FinData.Cf.OpCashFlow, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) CapitalExpenditure() (float64, error) {
 	if f.FinData != nil && f.FinData.Cf != nil {
-		return f.FinData.Cf.CapEx, nil
+		if isCollectedDataSet(f.FinData.Cf, "CapEx") {
+			return f.FinData.Cf.CapEx, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) Dividend() (float64, error) {
 	if f.FinData != nil && f.FinData.Cf != nil {
-		return f.FinData.Cf.Dividends, nil
+		if isCollectedDataSet(f.FinData.Cf, "Dividends") {
+			return f.FinData.Cf.Dividends, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) WAShares() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.WAShares, nil
+		if isCollectedDataSet(f.FinData.Ops, "WAShares") {
+			return f.FinData.Ops.WAShares, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) DividendPerShare() (float64, error) {
 	if f.FinData != nil && f.FinData.Ops != nil {
-		return f.FinData.Ops.Dps, nil
+		if isCollectedDataSet(f.FinData.Ops, "Dps") {
+			return f.FinData.Ops.Dps, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
 
 func (f *filing) Interest() (float64, error) {
 	if f.FinData != nil && f.FinData.Cf != nil {
-		return f.FinData.Cf.Interest, nil
+		if isCollectedDataSet(f.FinData.Cf, "Interest") {
+			return f.FinData.Cf.Interest, nil
+		}
 	}
 	return 0, errors.New(filingErrorString)
 }
