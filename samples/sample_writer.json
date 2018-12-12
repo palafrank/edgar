@@ -8,9 +8,11 @@
                 "Financial Data": {
                     "Filing Type": "10-K",
                     "Entity Information": {
+                        "Collected Data": 1,
                         "Shares Outstanding": 335224713
                     },
                     "Operational Information": {
+                        "Collected Data": 127,
                         "Revenue": 14570600000,
                         "Cost Of Revenue": 1860800000,
                         "Gross Margin": -2832000000,
@@ -21,6 +23,7 @@
                         "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
+                        "Collected Data": 55,
                         "Long-Term debt": 29970800000,
                         "Short-Term debt": 2797900000,
                         "Current Liabilities": 7874700000,
@@ -29,6 +32,7 @@
                         "Total Shareholder Equity": 76192700000
                     },
                     "Cash Flow Information": {
+                        "Collected Data": 7,
                         "Operating Cash Flow": 1425300000,
                         "Capital Expenditure": -331400000,
                         "Dividends paid": -278400000,
@@ -42,9 +46,11 @@
                 "Financial Data": {
                     "Filing Type": "10-K",
                     "Entity Information": {
+                        "Collected Data": 1,
                         "Shares Outstanding": 330320420
                     },
                     "Operational Information": {
+                        "Collected Data": 127,
                         "Revenue": 15940700000,
                         "Cost Of Revenue": 2168000000,
                         "Gross Margin": -10386400000,
@@ -55,6 +61,7 @@
                         "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
+                        "Collected Data": 55,
                         "Long-Term debt": 25843500000,
                         "Short-Term debt": 4231800000,
                         "Current Liabilities": 9848100000,
@@ -63,6 +70,7 @@
                         "Total Shareholder Equity": 73821100000
                     },
                     "Cash Flow Information": {
+                        "Collected Data": 7,
                         "Operating Cash Flow": 5873400000,
                         "Capital Expenditure": -349900000,
                         "Dividends paid": -1218200000,

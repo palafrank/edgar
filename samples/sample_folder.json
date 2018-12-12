@@ -8,9 +8,11 @@
                 "Financial Data": {
                     "Filing Type": "10-K",
                     "Entity Information": {
+                        "Collected Data": 0,
                         "Shares Outstanding": 174199744
                     },
                     "Operational Information": {
+                        "Collected Data": 0,
                         "Revenue": 8677,
                         "Cost Of Revenue": 4690,
                         "Gross Margin": 3987,
@@ -21,6 +23,7 @@
                         "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
+                        "Collected Data": 0,
                         "Long-Term debt": 8517,
                         "Short-Term debt": 534,
                         "Current Liabilities": 3294,
@@ -29,6 +32,7 @@
                         "Total Shareholder Equity": 12345
                     },
                     "Cash Flow Information": {
+                        "Collected Data": 0,
                         "Operating Cash Flow": 1213,
                         "Capital Expenditure": -177,
                         "Dividends paid": 0,
@@ -42,9 +46,11 @@
                 "Financial Data": {
                     "Filing Type": "10-K",
                     "Entity Information": {
+                        "Collected Data": 0,
                         "Shares Outstanding": 266252295
                     },
                     "Operational Information": {
+                        "Collected Data": 0,
                         "Revenue": 13062,
                         "Cost Of Revenue": 6303,
                         "Gross Margin": 6759,
@@ -55,6 +61,7 @@
                         "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
+                        "Collected Data": 0,
                         "Long-Term debt": 14846,
                         "Short-Term debt": 697,
                         "Current Liabilities": 5018,
@@ -63,6 +70,7 @@
                         "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
+                        "Collected Data": 0,
                         "Operating Cash Flow": 2243,
                         "Capital Expenditure": -238,
                         "Dividends paid": 0,
@@ -76,9 +84,11 @@
                 "Financial Data": {
                     "Filing Type": "10-K",
                     "Entity Information": {
+                        "Collected Data": 0,
                         "Shares Outstanding": 394687384
                     },
                     "Operational Information": {
+                        "Collected Data": 0,
                         "Revenue": 15071,
                         "Cost Of Revenue": 4810,
                         "Gross Margin": 10261,
@@ -89,6 +99,7 @@
                         "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
+                        "Collected Data": 0,
                         "Long-Term debt": 40293,
                         "Short-Term debt": 2432,
                         "Current Liabilities": 8328,
@@ -97,6 +108,7 @@
                         "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
+                        "Collected Data": 0,
                         "Operating Cash Flow": 4530,
                         "Capital Expenditure": -454,
                         "Dividends paid": 0,
@@ -110,9 +122,11 @@
                 "Financial Data": {
                     "Filing Type": "10-K",
                     "Entity Information": {
+                        "Collected Data": 0,
                         "Shares Outstanding": 335224713
                     },
                     "Operational Information": {
+                        "Collected Data": 0,
                         "Revenue": 14570,
                         "Cost Of Revenue": 1860,
                         "Gross Margin": 12710,
@@ -123,6 +137,7 @@
                         "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
+                        "Collected Data": 0,
                         "Long-Term debt": 29970,
                         "Short-Term debt": 2797,
                         "Current Liabilities": 7874,
@@ -131,6 +146,7 @@
                         "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
+                        "Collected Data": 0,
                         "Operating Cash Flow": 1425,
                         "Capital Expenditure": -331,
                         "Dividends paid": 0,
@@ -144,9 +160,11 @@
                 "Financial Data": {
                     "Filing Type": "10-K",
                     "Entity Information": {
+                        "Collected Data": 0,
                         "Shares Outstanding": 330320420
                     },
                     "Operational Information": {
+                        "Collected Data": 0,
                         "Revenue": 15940,
                         "Cost Of Revenue": 2168,
                         "Gross Margin": 13772,
@@ -157,6 +175,7 @@
                         "Dividend Per Share": 0
                     },
                     "Balance Sheet Information": {
+                        "Collected Data": 0,
                         "Long-Term debt": 25843,
                         "Short-Term debt": 4231,
                         "Current Liabilities": 9848,
@@ -165,6 +184,7 @@
                         "Total Shareholder Equity": 0
                     },
                     "Cash Flow Information": {
+                        "Collected Data": 0,
                         "Operating Cash Flow": 5873,
                         "Capital Expenditure": -349,
                         "Dividends paid": 0,

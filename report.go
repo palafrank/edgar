@@ -14,12 +14,12 @@ type financialReport struct {
 }
 
 type entityData struct {
-	CollectedData uint64  `json:"-"`
+	CollectedData uint64  `json:"Collected Data"`
 	ShareCount    float64 `json:"Shares Outstanding" required:"true" entity:"Shares" bit:"0"`
 }
 
 type opsData struct {
-	CollectedData uint64  `json:"-"`
+	CollectedData uint64  `json:"Collected Data"`
 	Revenue       float64 `json:"Revenue" required:"true" entity:"Money" bit:"0"`
 	CostOfSales   float64 `json:"Cost Of Revenue" required:"true" entity:"Money" bit:"1"`
 	GrossMargin   float64 `json:"Gross Margin" required:"true" generate:"true" entity:"Money" bit:"2"`
@@ -31,7 +31,7 @@ type opsData struct {
 }
 
 type cfData struct {
-	CollectedData uint64  `json:"-"`
+	CollectedData uint64  `json:"Collected Data"`
 	OpCashFlow    float64 `json:"Operating Cash Flow" required:"true" entity:"Money" bit:"0"`
 	CapEx         float64 `json:"Capital Expenditure" required:"true" entity:"Money" bit:"1"`
 	Dividends     float64 `json:"Dividends paid" required:"false" entity:"Money" bit:"2"`
@@ -39,7 +39,7 @@ type cfData struct {
 }
 
 type bsData struct {
-	CollectedData uint64  `json:"-"`
+	CollectedData uint64  `json:"Collected Data"`
 	LDebt         float64 `json:"Long-Term debt" required:"false" entity:"Money" bit:"0"`
 	SDebt         float64 `json:"Short-Term debt" required:"false" entity:"Money" bit:"1"`
 	CLiab         float64 `json:"Current Liabilities" required:"true" entity:"Money" bit:"2"`
