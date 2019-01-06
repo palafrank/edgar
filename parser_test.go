@@ -338,6 +338,27 @@ func TestOps1Parser(t *testing.T) {
 	}
 }
 
+func TestOps2Parser(t *testing.T) {
+	fmt.Println("*** Income Parser testing ***")
+	doc := "https://www.sec.gov//Archives/edgar/data/1534701/000153470118000065/R2.htm"
+	f := getPage(doc)
+	ops := new(opsData)
+	_, err := finReportParser(f, ops)
+	f.Close()
+	if err != nil {
+		t.Error("Error parsing net income sheet ", err.Error())
+	}
+	if ops.Revenue != 102354000000 {
+		t.Error("Incorrect Revenue ", ops.Revenue)
+	}
+	if ops.OpIncome != 3555000000 {
+		t.Error("Inorrect operational income ", ops.OpIncome)
+	}
+	if ops.OpExpense != 4699000000 {
+		t.Error("Incorrect operational expense ", ops.OpExpense)
+	}
+}
+
 func Test10KOpsParser(t *testing.T) {
 
 	var file filing

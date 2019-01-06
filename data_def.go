@@ -172,7 +172,10 @@ func setData(data interface{},
 		tag, ok := t.Field(i).Tag.Lookup("json")
 		if ok && string(finType) == tag {
 			if v.Field(i).Float() == 0 {
-				num := normalizeNumber(val)
+				num, err := normalizeNumber(val)
+				if err != nil {
+					return err
+				}
 				tag, ok := t.Field(i).Tag.Lookup("entity")
 				if ok {
 					factor, o := scale[scaleEntity(tag)]

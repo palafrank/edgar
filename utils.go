@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func normalizeNumber(str string) float64 {
+func normalizeNumber(str string) (float64, error) {
 	negative := float64(1)
 	//Remove any leading spaces or $ signs
 	if strings.Contains(str, "(") && strings.Contains(str, ")") {
@@ -38,10 +38,10 @@ func normalizeNumber(str string) float64 {
 		}
 		num, err := strconv.ParseFloat(s1, 64)
 		if err == nil {
-			return num * negative
+			return num * negative, nil
 		}
 	}
-	return 0
+	return 0, errors.New("Error normalizing number")
 }
 
 func filingScale(strs []string) map[scaleEntity]scaleFactor {

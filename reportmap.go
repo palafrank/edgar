@@ -23,7 +23,7 @@ func lookupDocType(data string, menu string) filingDocType {
 			return filingDocIg
 		}
 		// Financial statements
-		if strings.Contains(data, "BALANCE SHEETS") {
+		if strings.Contains(data, "BALANCE SHEET") {
 			//Balance sheet
 			return filingDocBS
 		} else if strings.Contains(data, "FINANCIAL POSITION") {
