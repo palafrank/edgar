@@ -145,6 +145,7 @@ func validate(data interface{}) error {
 					err += t.Field(i).Name + ","
 				} else {
 					v.Field(i).SetFloat(num)
+					setCollectedData(data, i)
 				}
 			} else {
 				err += t.Field(i).Name + ","

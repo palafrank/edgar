@@ -611,7 +611,7 @@ func TestFolderWriter(t *testing.T) {
 }
 
 func TestLiveMSFTParsing(t *testing.T) {
-	fmt.Println("*** Running a live test ***")
+	fmt.Println("*** Running a live MSFT test ***")
 	fetcher := NewFilingFetcher()
 	c, err := fetcher.CompanyFolder("MSFT", FilingType10K)
 	if err != nil {
@@ -697,7 +697,7 @@ func TestLiveMSFTParsing(t *testing.T) {
 }
 
 func TestLiveIBMParsing(t *testing.T) {
-	fmt.Println("*** Running a live test ***")
+	fmt.Println("*** Running a live IBM test ***")
 	fetcher := NewFilingFetcher()
 	c, err := fetcher.CompanyFolder("IBM", FilingType10K)
 	if err != nil {
@@ -731,6 +731,29 @@ func TestLiveIBMParsing(t *testing.T) {
 			}
 			if val, _ := fs.Interest(); val != 995000000 {
 				t.Error("Incorrect Interest paid-2017: ", val)
+			}
+		}
+	}
+}
+
+func TestLivePSXParsing(t *testing.T) {
+	fmt.Println("*** Running a live PSX test ***")
+	fetcher := NewFilingFetcher()
+	c, err := fetcher.CompanyFolder("PSX", FilingType10K)
+	if err != nil {
+		t.Error(err)
+	}
+	files := c.AvailableFilings(FilingType10K)
+
+	for _, val := range files {
+		if val.Year() == 2018 {
+			fs, err := c.Filing(FilingType10K, val)
+			if err != nil {
+				t.Error("Failed to get filing " + val.String())
+			}
+			ret := fs.CollectedData()
+			if len(ret) != 15 {
+				t.Error("Incorrect number of data points collected")
 			}
 		}
 	}

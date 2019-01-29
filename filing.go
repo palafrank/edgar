@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"reflect"
 )
 
 type filing struct {
@@ -208,4 +209,29 @@ func (f *filing) Interest() (float64, error) {
 		}
 	}
 	return 0, errors.New(filingErrorString + " Interest paid")
+}
+
+func (f *filing) CollectedData() []string {
+
+	eval := func(data interface{}) []string {
+		var ret []string
+		if data != nil {
+			t := reflect.TypeOf(data)
+			if t.Kind() == reflect.Ptr {
+				t = t.Elem()
+			}
+			for i := 0; i < t.NumField(); i++ {
+				if isCollectedDataSet(data, t.Field(i).Name) {
+					ret = append(ret, t.Field(i).Name)
+				}
+			}
+		}
+		return ret
+	}
+	ret := eval(f.FinData.Entity)
+	ret = append(ret, eval(f.FinData.Bs)...)
+	ret = append(ret, eval(f.FinData.Cf)...)
+	ret = append(ret, eval(f.FinData.Ops)...)
+
+	return ret
 }
