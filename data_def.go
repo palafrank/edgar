@@ -79,13 +79,6 @@ var (
 		filingDocCF:  true,
 		filingDocEN:  true,
 	}
-
-	filingScales = map[string]scaleInfo{
-		"shares in thousand": scaleInfo{scale: scaleThousand, entity: scaleEntityShares},
-		"shares in million":  scaleInfo{scale: scaleMillion, entity: scaleEntityShares},
-		"$ in million":       scaleInfo{scale: scaleMillion, entity: scaleEntityMoney},
-		"$ in billion":       scaleInfo{scale: scaleBillion, entity: scaleEntityMoney},
-	}
 )
 
 type date struct {

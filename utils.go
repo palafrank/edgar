@@ -51,10 +51,23 @@ func filingScale(strs []string) map[scaleEntity]scaleFactor {
 	ret[scaleEntityMoney] = scaleMillion
 	ret[scaleEntityPerShare] = scaleNone
 	for _, str := range strs {
-		for key, val := range filingScales {
-			if strings.Contains(strings.ToLower(str), strings.ToLower(key)) {
-				//Some scale available in this line
-				ret[val.entity] = val.scale
+		s := strings.ToLower(str)
+		parts := strings.Split(s, ",")
+		for _, part := range parts {
+			if strings.Contains(part, "share") {
+				// Share scale
+				if strings.Contains(part, "thousand") {
+					ret[scaleEntityShares] = scaleThousand
+				} else if strings.Contains(part, "million") {
+					ret[scaleEntityShares] = scaleMillion
+				}
+			} else if strings.Contains(part, "$") || strings.Contains(part, "usd") {
+				//Money scale
+				if strings.Contains(part, "thousand") {
+					ret[scaleEntityMoney] = scaleThousand
+				} else if strings.Contains(part, "billion") {
+					ret[scaleEntityMoney] = scaleBillion
+				}
 			}
 		}
 	}

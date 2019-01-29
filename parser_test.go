@@ -753,7 +753,7 @@ func TestLivePSXParsing(t *testing.T) {
 			}
 			ret := fs.CollectedData()
 			if len(ret) != 17 {
-				t.Error("Incorrect number of data points collected")
+				t.Error("Incorrect number of data points collected ", len(ret))
 			}
 		}
 	}
