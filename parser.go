@@ -341,7 +341,7 @@ func finReportParser(page io.Reader, retData interface{}) (interface{}, error) {
 		}
 		data, err = parseTableRow(z, true)
 	}
-	return retData, validate(retData)
+	return retData, nil
 }
 
 // parseAllReports gets all the reports filed under a given account normalizeNumber
@@ -393,5 +393,5 @@ func parseMappedReports(docs map[filingDocType]string, docType FilingType) (*fin
 		}(baseURL+url, fr, t)
 	}
 	wg.Wait()
-	return fr, validate(fr)
+	return fr, validateFinancialReport(fr)
 }

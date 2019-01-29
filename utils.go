@@ -2,6 +2,7 @@ package edgar
 
 import (
 	"errors"
+	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -177,4 +178,8 @@ func isCollectedDataSet(data interface{}, fieldName string) bool {
 		}
 	}
 	return false
+}
+
+func round(val float64) float64 {
+	return math.Floor(val*100) / 100
 }

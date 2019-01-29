@@ -752,7 +752,7 @@ func TestLivePSXParsing(t *testing.T) {
 				t.Error("Failed to get filing " + val.String())
 			}
 			ret := fs.CollectedData()
-			if len(ret) != 15 {
+			if len(ret) != 17 {
 				t.Error("Incorrect number of data points collected")
 			}
 		}

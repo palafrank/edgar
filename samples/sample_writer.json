@@ -12,7 +12,7 @@
                         "Shares Outstanding": 335224713
                     },
                     "Operational Information": {
-                        "Collected Data": 127,
+                        "Collected Data": 255,
                         "Revenue": 14570600000,
                         "Cost Of Revenue": 1860800000,
                         "Gross Margin": -2832000000,
@@ -20,7 +20,7 @@
                         "Operational Expense": 16396099999.999998,
                         "Net Income": 14973400000,
                         "Weighted Average Share Count": 384900000,
-                        "Dividend Per Share": 0
+                        "Dividend Per Share": 0.72
                     },
                     "Balance Sheet Information": {
                         "Collected Data": 55,
@@ -50,7 +50,7 @@
                         "Shares Outstanding": 330320420
                     },
                     "Operational Information": {
-                        "Collected Data": 127,
+                        "Collected Data": 255,
                         "Revenue": 15940700000,
                         "Cost Of Revenue": 2168000000,
                         "Gross Margin": -10386400000,
@@ -58,7 +58,7 @@
                         "Operational Expense": 21861900000,
                         "Net Income": -4125500000,
                         "Weighted Average Share Count": 333800000,
-                        "Dividend Per Share": 0
+                        "Dividend Per Share": 3.64
                     },
                     "Balance Sheet Information": {
                         "Collected Data": 55,

@@ -3,6 +3,7 @@ package edgar
 import (
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 )
 
@@ -109,20 +110,75 @@ func (d date) String() string {
 	return fmt.Sprintf("%04d-%02d-%02d", d.year, d.month, d.day)
 }
 
-func generateData(data interface{}, name string) float64 {
+func generateData(fin *financialReport, name string) float64 {
 	switch name {
 	case "GrossMargin":
-		val, ok := data.(*opsData)
-		if ok {
-			//Do this only when the parsing is complete for required fields
-			if val.Revenue != 0 && val.CostOfSales != 0 {
-				return val.Revenue - val.CostOfSales
-			}
+		//Do this only when the parsing is complete for required fields
+		if isCollectedDataSet(fin.Ops, "Revenue") && isCollectedDataSet(fin.Ops, "CostOfSales") {
+			log.Println("Generating Gross Margin")
+			return fin.Ops.Revenue - fin.Ops.CostOfSales
+		}
+
+	case "Dps":
+		if isCollectedDataSet(fin.Cf, "Dividends") && isCollectedDataSet(fin.Ops, "WAShares") {
+			log.Println("Generating Dividends per Share")
+			return round(fin.Cf.Dividends * -1 / fin.Ops.WAShares)
 		}
 	}
 	return 0
 }
 
+func validateFinancialReport(fin *financialReport) error {
+	validate := func(data interface{}) error {
+		var err string
+		t := reflect.TypeOf(data)
+		v := reflect.ValueOf(data)
+		if t.Kind() == reflect.Ptr {
+			t = t.Elem()
+			v = v.Elem()
+		}
+		for i := 0; i < t.NumField(); i++ {
+			if t.Field(i).Type.Kind() != reflect.Float64 {
+				continue
+			}
+			tag, ok := t.Field(i).Tag.Lookup("required")
+			if !isCollectedDataSet(data, t.Field(i).Name) && (ok && tag == "true") {
+				tag, ok = t.Field(i).Tag.Lookup("generate")
+				if ok && tag == "true" {
+					num := generateData(fin, t.Field(i).Name)
+					if num == 0 {
+						err += t.Field(i).Name + ","
+					} else {
+						v.Field(i).SetFloat(num)
+						setCollectedData(data, i)
+					}
+				} else {
+					err += t.Field(i).Name + ","
+				}
+			}
+		}
+		if len(err) > 0 {
+			return errors.New("[" + err + "] " + "attributes did not parse")
+		}
+		return nil
+	}
+	if err := validate(fin.Bs); err != nil {
+		return err
+	}
+	if err := validate(fin.Entity); err != nil {
+		return err
+	}
+	if err := validate(fin.Cf); err != nil {
+		return err
+	}
+
+	if err := validate(fin.Ops); err != nil {
+		return err
+	}
+	return nil
+}
+
+/*
 //Validate is a function to check that no field is set to 0 after parsing
 func validate(data interface{}) error {
 	var err string
@@ -140,6 +196,7 @@ func validate(data interface{}) error {
 		if !isCollectedDataSet(data, t.Field(i).Name) && (ok && tag == "true") {
 			tag, ok = t.Field(i).Tag.Lookup("generate")
 			if ok && tag == "true" {
+				fmt.Println("Generate time ", t.Field(i).Name)
 				num := generateData(data, t.Field(i).Name)
 				if num == 0 {
 					err += t.Field(i).Name + ","
@@ -157,6 +214,7 @@ func validate(data interface{}) error {
 	}
 	return nil
 }
+*/
 
 func setData(data interface{},
 	finType finDataType,

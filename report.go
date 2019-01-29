@@ -27,7 +27,7 @@ type opsData struct {
 	OpExpense     float64 `json:"Operational Expense" required:"true" entity:"Money" bit:"4"`
 	NetIncome     float64 `json:"Net Income" required:"true" entity:"Money" bit:"5"`
 	WAShares      float64 `json:"Weighted Average Share Count" required:"true" entity:"Shares" bit:"6"`
-	Dps           float64 `json:"Dividend Per Share" required:"false" entity:"PerShare" bit:"7"`
+	Dps           float64 `json:"Dividend Per Share" required:"true" generate:"true" entity:"PerShare" bit:"7"`
 }
 
 type cfData struct {
