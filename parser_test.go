@@ -641,7 +641,7 @@ func TestLiveMSFTParsing(t *testing.T) {
 				if val, _ := fs.DividendPerShare(); val != 1.68 {
 					t.Error("Incorrect dividend per share-2018: ", val)
 				}
-				if val, _ := fs.Dividend(); val != -12699000000 {
+				if val, _ := fs.Dividend(); val != 12699000000 {
 					t.Error("Incorrect dividend per share-2018: ", val)
 				}
 
@@ -665,7 +665,7 @@ func TestLiveMSFTParsing(t *testing.T) {
 				if val, _ := fs.DividendPerShare(); val != 0.64 {
 					t.Error("Incorrect dividend per share-2011: ", val)
 				}
-				if val, _ := fs.Dividend(); val != -5180000000 {
+				if val, _ := fs.Dividend(); val != 5180000000 {
 					t.Error("Incorrect dividend per share-2018: ", val)
 				}
 			}
@@ -688,7 +688,7 @@ func TestLiveMSFTParsing(t *testing.T) {
 				if val, _ := fs.DividendPerShare(); val != 1.24 {
 					t.Error("Incorrect dividend per share-2015: ", val)
 				}
-				if val, _ := fs.Dividend(); val != -9882000000 {
+				if val, _ := fs.Dividend(); val != 9882000000 {
 					t.Error("Incorrect dividend per share-2018: ", val)
 				}
 			}

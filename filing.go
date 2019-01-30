@@ -178,7 +178,8 @@ func (f *filing) CapitalExpenditure() (float64, error) {
 func (f *filing) Dividend() (float64, error) {
 	if f.FinData != nil && f.FinData.Cf != nil {
 		if isCollectedDataSet(f.FinData.Cf, "Dividends") {
-			return f.FinData.Cf.Dividends, nil
+			// Dividend is recorded as an expense and is -ve. Hence reversing sign
+			return f.FinData.Cf.Dividends * -1, nil
 		}
 	}
 	return 0, errors.New(filingErrorString + " Dividend")

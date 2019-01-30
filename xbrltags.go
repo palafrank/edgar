@@ -64,8 +64,8 @@ var (
 		"defref_us-gaap_CommonStockDividendsPerShareDeclared":            finDataDps,
 		"CommonStockDividendsPerShareDeclared":                           finDataDps,
 
-		"defref_us-gaap_IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": finDataGrossMargin,
-		"IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest":                finDataGrossMargin,
+		"defref_us-gaap_IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest": finDataOpsIncome,
+		"IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest":                finDataOpsIncome,
 
 		//Cash Flow Sheet info
 		"defref_us-gaap_NetCashProvidedByUsedInOperatingActivities":                     finDataOpCashFlow,
