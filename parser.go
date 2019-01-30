@@ -321,7 +321,7 @@ func parseFilingScale(z *html.Tokenizer) map[scaleEntity]scaleFactor {
 	that field
 */
 
-func finReportParser(page io.Reader, retData interface{}) (interface{}, error) {
+func finReportParser(page io.Reader, fr *financialReport) (*financialReport, error) {
 
 	z := html.NewTokenizer(page)
 	scales := parseFilingScale(z)
@@ -332,7 +332,7 @@ func finReportParser(page io.Reader, retData interface{}) (interface{}, error) {
 			if finType != finDataUnknown {
 				for _, str := range data[1:] {
 					if len(str) > 0 {
-						if setData(retData, finType, str, scales) == nil {
+						if setData(fr, finType, str, scales) == nil {
 							break
 						}
 					}
@@ -341,7 +341,7 @@ func finReportParser(page io.Reader, retData interface{}) (interface{}, error) {
 		}
 		data, err = parseTableRow(z, true)
 	}
-	return retData, nil
+	return fr, nil
 }
 
 // parseAllReports gets all the reports filed under a given account normalizeNumber
@@ -377,18 +377,7 @@ func parseMappedReports(docs map[filingDocType]string, docType FilingType) (*fin
 			defer wg.Done()
 			page := getPage(url)
 			if page != nil {
-				switch t {
-				case filingDocBS:
-					finReportParser(page, fr.Bs)
-				case filingDocEN:
-					finReportParser(page, fr.Entity)
-				case filingDocCF:
-					finReportParser(page, fr.Cf)
-				case filingDocOps:
-					finReportParser(page, fr.Ops)
-				case filingDocInc:
-					finReportParser(page, fr.Ops)
-				}
+				finReportParser(page, fr)
 			}
 		}(baseURL+url, fr, t)
 	}

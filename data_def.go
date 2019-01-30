@@ -209,37 +209,57 @@ func validate(data interface{}) error {
 }
 */
 
-func setData(data interface{},
+func setData(fr *financialReport,
 	finType finDataType,
 	val string,
 	scale map[scaleEntity]scaleFactor) error {
 
-	t := reflect.TypeOf(data)
-	v := reflect.ValueOf(data)
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-		v = v.Elem()
-	}
-	for i := 0; i < t.NumField(); i++ {
-		tag, ok := t.Field(i).Tag.Lookup("json")
-		if ok && string(finType) == tag {
-			if v.Field(i).Float() == 0 {
-				num, err := normalizeNumber(val)
-				if err != nil {
-					return err
-				}
-				tag, ok := t.Field(i).Tag.Lookup("entity")
-				if ok {
-					factor, o := scale[scaleEntity(tag)]
-					if o {
-						num *= float64(factor)
-					}
-				}
-				v.Field(i).SetFloat(num)
-				setCollectedData(data, i)
-			}
-			return nil
+	setter := func(data interface{},
+		finType finDataType,
+		val string,
+		scale map[scaleEntity]scaleFactor) error {
+
+		t := reflect.TypeOf(data)
+		v := reflect.ValueOf(data)
+		if t.Kind() == reflect.Ptr {
+			t = t.Elem()
+			v = v.Elem()
 		}
+		for i := 0; i < t.NumField(); i++ {
+			tag, ok := t.Field(i).Tag.Lookup("json")
+			if ok && string(finType) == tag {
+				if v.Field(i).Float() == 0 {
+					num, err := normalizeNumber(val)
+					if err != nil {
+						return err
+					}
+					tag, ok := t.Field(i).Tag.Lookup("entity")
+					if ok {
+						factor, o := scale[scaleEntity(tag)]
+						if o {
+							num *= float64(factor)
+						}
+					}
+					v.Field(i).SetFloat(num)
+					setCollectedData(data, i)
+				}
+				return nil
+			}
+		}
+		return errors.New("Could not find the field to set: " + string(finType))
 	}
-	return errors.New("Could not find the field to set: " + string(finType))
+	var err error
+	if err = setter(fr.Entity, finType, val, scale); err == nil {
+		return nil
+	}
+	if err = setter(fr.Bs, finType, val, scale); err == nil {
+		return nil
+	}
+	if err = setter(fr.Cf, finType, val, scale); err == nil {
+		return nil
+	}
+	if err = setter(fr.Ops, finType, val, scale); err == nil {
+		return nil
+	}
+	return err
 }

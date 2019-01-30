@@ -255,7 +255,7 @@ func TestEntityParser(t *testing.T) {
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_entity.html")
 
-	_, err := finReportParser(f, file.FinData.Entity)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -266,25 +266,27 @@ func TestEntityParser(t *testing.T) {
 
 func TestEntity1Parser(t *testing.T) {
 	f, _ := os.Open("samples/sample_entity1.html")
-	entity := new(entityData)
-	_, err := finReportParser(f, entity)
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
-	} else if entity.ShareCount != 266252295 {
-		t.Error("Incorrect sharecount value parsed: ", entity.ShareCount)
+	} else if val, _ := file.ShareCount(); val != 266252295 {
+		t.Error("Incorrect sharecount value parsed: ", val)
 	}
 }
 
 func Test10KEntityParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_entity.html")
-	entity := new(entityData)
-	_, err := finReportParser(f, entity)
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
-	} else if entity.ShareCount != 5575331000 {
-		t.Error("Incorrect sharecount value parsed")
+	} else if val, _ := file.ShareCount(); val != 5575331000 {
+		t.Error("Incorrect sharecount value parsed ", val)
 	}
 }
 
@@ -295,12 +297,14 @@ func Test10KEntityParser(t *testing.T) {
 func TestOpsParser(t *testing.T) {
 	fmt.Println("*** Operations Parser testing ***")
 	f, _ := os.Open("samples/sample_ops.html")
-	ops := new(opsData)
-	_, err := finReportParser(f, ops)
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
+		ops := file.FinData.Ops
 		if ops.Revenue != 53265000000 {
 			t.Error("Revenue amount did not match")
 		}
@@ -326,14 +330,15 @@ func TestOps1Parser(t *testing.T) {
 	fmt.Println("*** Income Parser testing ***")
 	doc := "https://www.sec.gov//Archives/edgar/data/789019/000119312511200680/R2.htm"
 	f := getPage(doc)
-	ops := new(opsData)
-	_, err := finReportParser(f, ops)
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error("Error parsing net income sheet ", err.Error())
 	} else {
-		if ops.Dps != 0.64 {
-			t.Error("Incorrect dividends per share ", ops.Dps)
+		if dps, _ := file.DividendPerShare(); dps != 0.64 {
+			t.Error("Incorrect dividends per share ", dps)
 		}
 	}
 }
@@ -342,12 +347,14 @@ func TestOps2Parser(t *testing.T) {
 	fmt.Println("*** Income Parser testing ***")
 	doc := "https://www.sec.gov//Archives/edgar/data/1534701/000153470118000065/R2.htm"
 	f := getPage(doc)
-	ops := new(opsData)
-	_, err := finReportParser(f, ops)
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error("Error parsing net income sheet ", err.Error())
 	}
+	ops := file.FinData.Ops
 	if ops.Revenue != 102354000000 {
 		t.Error("Incorrect Revenue ", ops.Revenue)
 	}
@@ -364,7 +371,7 @@ func Test10KOpsParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_10K_ops.html")
-	_, err := finReportParser(f, file.FinData.Ops)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 
 	if err != nil {
@@ -398,12 +405,14 @@ func Test10KOpsParser(t *testing.T) {
 func TestCfParser(t *testing.T) {
 	fmt.Println("*** Cash flow parser testing ***")
 	f, _ := os.Open("samples/sample_cf.html")
-	cf := new(cfData)
-	_, err := finReportParser(f, cf)
+	var file filing
+	file.FinData = newFinancialReport(FilingType10K)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
 	} else {
+		cf := file.FinData.Cf
 		if cf.OpCashFlow != 57911000000 {
 			t.Error("Incorrect cash flow from operations value parsed")
 		}
@@ -417,7 +426,7 @@ func Test10KCfParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_10K_cf.html")
-	_, err := finReportParser(f, file.FinData.Cf)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -440,7 +449,7 @@ func TestBSParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs.html")
-	_, err := finReportParser(f, file.FinData.Bs)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -463,7 +472,7 @@ func TestBS1Parser(t *testing.T) {
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs1.html")
 
-	_, err := finReportParser(f, file.FinData.Bs)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -493,7 +502,7 @@ func Test10KBSParser(t *testing.T) {
 	var file filing
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData.Bs)
+	_, err := finReportParser(f, file.FinData)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -517,31 +526,26 @@ Reader/Writer testcases
 func TestFinReportMarshal(t *testing.T) {
 
 	var file filing
-	var data financialReport
 
 	file.Date = "2017-02-1"
 	file.Company = "AAPL"
-	file.FinData = &data
+	file.FinData = newFinancialReport(FilingType10K)
 
 	comp := newCompany("AAPL")
 	comp.AddReport(&file)
 
-	data.DocType = FilingType10K
+	data := file.FinData
 	f, _ := os.Open("samples/sample_10K_bs.html")
-	data.Bs = new(bsData)
-	_, _ = finReportParser(f, data.Bs)
+	_, _ = finReportParser(f, data)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_cf.html")
-	data.Cf = new(cfData)
-	_, _ = finReportParser(f, data.Cf)
+	_, _ = finReportParser(f, data)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_ops.html")
-	data.Ops = new(opsData)
-	_, _ = finReportParser(f, data.Ops)
+	_, _ = finReportParser(f, data)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_entity.html")
-	data.Entity = new(entityData)
-	_, _ = finReportParser(f, data.Entity)
+	_, _ = finReportParser(f, data)
 	f.Close()
 	str := data.String()
 	str1 := file.String()
@@ -752,8 +756,13 @@ func TestLivePSXParsing(t *testing.T) {
 				t.Error("Failed to get filing " + val.String())
 			}
 			ret := fs.CollectedData()
-			if len(ret) != 17 {
+			if len(ret) != 18 {
 				t.Error("Incorrect number of data points collected ", len(ret))
+			}
+			// This interest is being tested because this number usually comes from
+			// the CF statement but in PSX cases comes from the income statement
+			if val, _ := fs.Interest(); val != 438000000 {
+				t.Error("Incorrect interest collected from the income statement ", val)
 			}
 		}
 	}
