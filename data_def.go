@@ -113,9 +113,12 @@ func generateData(fin *financialReport, name string) float64 {
 		}
 
 	case "Dps":
-		if isCollectedDataSet(fin.Cf, "Dividends") && isCollectedDataSet(fin.Ops, "WAShares") {
-			log.Println("Generating Dividends per Share")
-			return round(fin.Cf.Dividends * -1 / fin.Ops.WAShares)
+		if isCollectedDataSet(fin.Cf, "Dividends") {
+			if isCollectedDataSet(fin.Ops, "WAShares") {
+				return round(fin.Cf.Dividends * -1 / fin.Ops.WAShares)
+			} else if isCollectedDataSet(fin.Entity, "ShareCount") {
+				return round(fin.Cf.Dividends * -1 / fin.Entity.ShareCount)
+			}
 		}
 	}
 	return 0
