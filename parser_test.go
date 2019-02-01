@@ -255,7 +255,7 @@ func TestEntityParser(t *testing.T) {
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_entity.html")
 
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocEN)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -268,7 +268,7 @@ func TestEntity1Parser(t *testing.T) {
 	f, _ := os.Open("samples/sample_entity1.html")
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocEN)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -281,7 +281,7 @@ func Test10KEntityParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_10K_entity.html")
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocEN)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -299,7 +299,7 @@ func TestOpsParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_ops.html")
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocOps)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -332,7 +332,7 @@ func TestOps1Parser(t *testing.T) {
 	f := getPage(doc)
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocOps)
 	f.Close()
 	if err != nil {
 		t.Error("Error parsing net income sheet ", err.Error())
@@ -349,7 +349,7 @@ func TestOps2Parser(t *testing.T) {
 	f := getPage(doc)
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocOps)
 	f.Close()
 	if err != nil {
 		t.Error("Error parsing net income sheet ", err.Error())
@@ -371,7 +371,7 @@ func Test10KOpsParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_10K_ops.html")
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocOps)
 	f.Close()
 
 	if err != nil {
@@ -407,7 +407,7 @@ func TestCfParser(t *testing.T) {
 	f, _ := os.Open("samples/sample_cf.html")
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocCF)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -426,7 +426,7 @@ func Test10KCfParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_10K_cf.html")
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocCF)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -449,7 +449,7 @@ func TestBSParser(t *testing.T) {
 	var file filing
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs.html")
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocBS)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -472,7 +472,7 @@ func TestBS1Parser(t *testing.T) {
 	file.FinData = newFinancialReport(FilingType10K)
 	f, _ := os.Open("samples/sample_bs1.html")
 
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocBS)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -502,7 +502,7 @@ func Test10KBSParser(t *testing.T) {
 	var file filing
 	f, _ := os.Open("samples/sample_10K_bs.html")
 	file.FinData = newFinancialReport(FilingType10K)
-	_, err := finReportParser(f, file.FinData)
+	_, err := finReportParser(f, file.FinData, filingDocBS)
 	f.Close()
 	if err != nil {
 		t.Error(err.Error())
@@ -536,16 +536,16 @@ func TestFinReportMarshal(t *testing.T) {
 
 	data := file.FinData
 	f, _ := os.Open("samples/sample_10K_bs.html")
-	_, _ = finReportParser(f, data)
+	_, _ = finReportParser(f, data, filingDocBS)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_cf.html")
-	_, _ = finReportParser(f, data)
+	_, _ = finReportParser(f, data, filingDocCF)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_ops.html")
-	_, _ = finReportParser(f, data)
+	_, _ = finReportParser(f, data, filingDocOps)
 	f.Close()
 	f, _ = os.Open("samples/sample_10K_entity.html")
-	_, _ = finReportParser(f, data)
+	_, _ = finReportParser(f, data, filingDocEN)
 	f.Close()
 	str := data.String()
 	str1 := file.String()
@@ -763,6 +763,49 @@ func TestLivePSXParsing(t *testing.T) {
 			// the CF statement but in PSX cases comes from the income statement
 			if val, _ := fs.Interest(); val != 438000000 {
 				t.Error("Incorrect interest collected from the income statement ", val)
+			}
+		}
+	}
+}
+
+func TestVariousExceptions(t *testing.T) {
+	fetcher := NewFilingFetcher()
+	c, err := fetcher.CompanyFolder("TGT", FilingType10K)
+	if err != nil {
+		t.Error(err)
+	}
+	files := c.AvailableFilings(FilingType10K)
+	for _, val := range files {
+		if val.Year() == 2011 {
+			t.Error("Threshold year not being enforced")
+		}
+		// Check if the threshold starts with 2012
+		if val.Year() == 2012 {
+			fmt.Println("*** Test threshold year include ***")
+			fs, err := c.Filing(FilingType10K, val)
+			if err != nil {
+				t.Error("Failed to get filing " + val.String())
+			}
+			if fs == nil {
+				t.Error("Threshold collection did not start at 2012")
+			}
+		}
+
+		if val.Year() == 2015 {
+			fs, err := c.Filing(FilingType10K, val)
+			if err != nil {
+				t.Error("Failed to get filing " + val.String())
+			}
+			fmt.Println("*** Test operating expense generation ***")
+			// Check to see if Operating expense can be generated
+			if val, _ := fs.OperatingExpense(); val != 17687000000 {
+				t.Error("Did not generate operating expense correctly", val)
+			}
+			// Check if default scale for share count is Million for non-entity docs
+			// If the heading does not explicitly call out the scale for shares
+			fmt.Println("*** Test default share count scale ***")
+			if val, _ := fs.WAShares(); val != 640100000 {
+				t.Error("Weighted Average shares did not default to million scale", val)
 			}
 		}
 	}

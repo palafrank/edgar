@@ -302,12 +302,12 @@ func parseTableHeading(z *html.Tokenizer) ([]string, error) {
 	return retData, nil
 }
 
-func parseFilingScale(z *html.Tokenizer) map[scaleEntity]scaleFactor {
+func parseFilingScale(z *html.Tokenizer, t filingDocType) map[scaleEntity]scaleFactor {
 	scales := make(map[scaleEntity]scaleFactor)
 	data, err := parseTableHeading(z)
 	if err == nil {
 		if len(data) > 0 {
-			scales = filingScale(data)
+			scales = filingScale(data, t)
 		}
 	}
 	return scales
@@ -321,10 +321,10 @@ func parseFilingScale(z *html.Tokenizer) map[scaleEntity]scaleFactor {
 	that field
 */
 
-func finReportParser(page io.Reader, fr *financialReport) (*financialReport, error) {
+func finReportParser(page io.Reader, fr *financialReport, t filingDocType) (*financialReport, error) {
 
 	z := html.NewTokenizer(page)
-	scales := parseFilingScale(z)
+	scales := parseFilingScale(z, t)
 	data, err := parseTableRow(z, true)
 	for err == nil {
 		if len(data) > 0 {
@@ -377,7 +377,7 @@ func parseMappedReports(docs map[filingDocType]string, docType FilingType) (*fin
 			defer wg.Done()
 			page := getPage(url)
 			if page != nil {
-				finReportParser(page, fr)
+				finReportParser(page, fr, t)
 			}
 		}(baseURL+url, fr, t)
 	}

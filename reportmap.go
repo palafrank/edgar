@@ -35,6 +35,9 @@ func lookupDocType(data string, menu string) filingDocType {
 		} else if strings.Contains(data, "INCOME") {
 			//Income statement
 			return filingDocInc
+		} else if strings.Contains(data, "EARNINGS") {
+			//Income statement
+			return filingDocInc
 		} else if strings.Contains(data, "CASH FLOWS") {
 			//Cash flow statement
 			return filingDocCF

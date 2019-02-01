@@ -64,6 +64,9 @@ func (c *company) Filing(fileType FilingType, key Date) (Filing, error) {
 			file.Date = key.String()
 			file.Company = c.Ticker()
 			c.AddReport(file)
+			if err != nil {
+				log.Println(file.Company + "-Filed on: " + key.String() + ":" + err.Error())
+			}
 			return file, nil
 		} else {
 			return nil, err

@@ -24,7 +24,7 @@ type opsData struct {
 	CostOfSales   float64 `json:"Cost Of Revenue" required:"true" entity:"Money" bit:"1"`
 	GrossMargin   float64 `json:"Gross Margin" required:"true" generate:"true" entity:"Money" bit:"2"`
 	OpIncome      float64 `json:"Operational Income" required:"true" entity:"Money" bit:"3"`
-	OpExpense     float64 `json:"Operational Expense" required:"true" entity:"Money" bit:"4"`
+	OpExpense     float64 `json:"Operational Expense" required:"true" generate:"true" entity:"Money" bit:"4"`
 	NetIncome     float64 `json:"Net Income" required:"true" entity:"Money" bit:"5"`
 	WAShares      float64 `json:"Weighted Average Share Count" required:"true" entity:"Shares" bit:"6"`
 	Dps           float64 `json:"Dividend Per Share" required:"true" generate:"true" entity:"PerShare" bit:"7"`

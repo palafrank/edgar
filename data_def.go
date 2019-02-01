@@ -23,9 +23,9 @@ type scaleInfo struct {
 }
 
 var (
-	filingErrorString string = "Filing information has not been collected"
+
 	// Threshold year is the earliest year for which we will collect data
-	thresholdYear int = 2011
+	thresholdYear int = 2012
 
 	//Document types
 	filingDocOps      filingDocType = "Operations"
@@ -104,6 +104,7 @@ func (d date) String() string {
 }
 
 func generateData(fin *financialReport, name string) float64 {
+	log.Println("Generating data: ", name)
 	switch name {
 	case "GrossMargin":
 		//Do this only when the parsing is complete for required fields
@@ -120,11 +121,18 @@ func generateData(fin *financialReport, name string) float64 {
 				return round(fin.Cf.Dividends * -1 / fin.Entity.ShareCount)
 			}
 		}
+	case "OpExpense":
+		if isCollectedDataSet(fin.Ops, "Revenue") &&
+			isCollectedDataSet(fin.Ops, "CostOfSales") &&
+			isCollectedDataSet(fin.Ops, "OpIncome") {
+			return round(fin.Ops.Revenue - fin.Ops.CostOfSales - fin.Ops.OpIncome)
+		}
 	}
 	return 0
 }
 
 func validateFinancialReport(fin *financialReport) error {
+
 	validate := func(data interface{}) error {
 		var err string
 		t := reflect.TypeOf(data)
@@ -154,63 +162,36 @@ func validateFinancialReport(fin *financialReport) error {
 			}
 		}
 		if len(err) > 0 {
-			return errors.New("[" + err + "] " + "attributes did not parse")
+			return errors.New("[" + err + "]")
 		}
 		return nil
 	}
+
+	// Now make sure the scale factors make sense
+	if !isSameScale(fin.Entity.ShareCount, fin.Ops.WAShares) {
+		//somethings wrong. Override with Share count
+		fin.Ops.WAShares = fin.Entity.ShareCount
+	}
+
+	var ret string
 	if err := validate(fin.Bs); err != nil {
-		return err
+		ret = ret + "Missing fields in " + string(filingDocBS) + err.Error() + "\n"
 	}
 	if err := validate(fin.Entity); err != nil {
-		return err
+		ret = ret + "Missing fields in " + string(filingDocEN) + err.Error() + "\n"
 	}
 	if err := validate(fin.Cf); err != nil {
-		return err
+		ret = ret + "Missing fields in " + string(filingDocCF) + err.Error() + "\n"
 	}
-
 	if err := validate(fin.Ops); err != nil {
-		return err
+		ret = ret + "Missing fields in " + string(filingDocOps) + err.Error() + "\n"
 	}
-	return nil
-}
 
-/*
-//Validate is a function to check that no field is set to 0 after parsing
-func validate(data interface{}) error {
-	var err string
-	t := reflect.TypeOf(data)
-	v := reflect.ValueOf(data)
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-		v = v.Elem()
-	}
-	for i := 0; i < t.NumField(); i++ {
-		if t.Field(i).Type.Kind() != reflect.Float64 {
-			continue
-		}
-		tag, ok := t.Field(i).Tag.Lookup("required")
-		if !isCollectedDataSet(data, t.Field(i).Name) && (ok && tag == "true") {
-			tag, ok = t.Field(i).Tag.Lookup("generate")
-			if ok && tag == "true" {
-				fmt.Println("Generate time ", t.Field(i).Name)
-				num := generateData(data, t.Field(i).Name)
-				if num == 0 {
-					err += t.Field(i).Name + ","
-				} else {
-					v.Field(i).SetFloat(num)
-					setCollectedData(data, i)
-				}
-			} else {
-				err += t.Field(i).Name + ","
-			}
-		}
-	}
-	if len(err) > 0 {
-		return errors.New("[" + err + "] " + "attributes did not parse")
+	if len(ret) > 0 {
+		return errors.New(ret)
 	}
 	return nil
 }
-*/
 
 func setData(fr *financialReport,
 	finType finDataType,

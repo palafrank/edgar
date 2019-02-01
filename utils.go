@@ -45,9 +45,13 @@ func normalizeNumber(str string) (float64, error) {
 	return 0, errors.New("Error normalizing number")
 }
 
-func filingScale(strs []string) map[scaleEntity]scaleFactor {
+func filingScale(strs []string, t filingDocType) map[scaleEntity]scaleFactor {
 	ret := make(map[scaleEntity]scaleFactor)
-	ret[scaleEntityShares] = scaleNone
+	if t == filingDocEN {
+		ret[scaleEntityShares] = scaleNone
+	} else {
+		ret[scaleEntityShares] = scaleMillion
+	}
 	ret[scaleEntityMoney] = scaleMillion
 	ret[scaleEntityPerShare] = scaleNone
 	for _, str := range strs {
@@ -195,4 +199,18 @@ func isCollectedDataSet(data interface{}, fieldName string) bool {
 
 func round(val float64) float64 {
 	return math.Floor(val*100) / 100
+}
+
+// For now we will say that two numbers are in the same scale
+// if it is within 50% of each other
+// This is a fallback cross check if the scale used for metrics is accurate
+func isSameScale(one float64, two float64) bool {
+	val := (one - two) / two
+	if one < two {
+		val = (two - one) / one
+	}
+	if val <= 1 {
+		return true
+	}
+	return false
 }
