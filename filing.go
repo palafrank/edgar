@@ -143,6 +143,15 @@ func (f *filing) CurrentLiabilities() (float64, error) {
 	return 0, errors.New(f.filingErrorString() + "Current Liabilities")
 }
 
+func (f *filing) CurrentAssets() (float64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		if isCollectedDataSet(f.FinData.Bs, "CAssets") {
+			return f.FinData.Bs.CAssets, nil
+		}
+	}
+	return 0, errors.New(f.filingErrorString() + "Current Assets")
+}
+
 func (f *filing) DeferredRevenue() (float64, error) {
 	if f.FinData != nil && f.FinData.Bs != nil {
 		if isCollectedDataSet(f.FinData.Bs, "Deferred") {

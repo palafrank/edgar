@@ -62,6 +62,7 @@ var (
 	finDataLDebt             finDataType = "Long-Term debt"
 	finDataSDebt             finDataType = "Short-Term debt"
 	finDataCLiab             finDataType = "Current Liabilities"
+	finDataCAssets           finDataType = "Current Assets"
 	finDataDeferred          finDataType = "Deferred revenue"
 	finDataRetained          finDataType = "Retained Earnings"
 	finDataTotalEquity       finDataType = "Total Shareholder Equity"

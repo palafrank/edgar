@@ -37,6 +37,7 @@ type Filing interface {
 	ShortTermDebt() (float64, error)
 	LongTermDebt() (float64, error)
 	CurrentLiabilities() (float64, error)
+	CurrentAssets() (float64, error)
 	DeferredRevenue() (float64, error)
 	RetainedEarnings() (float64, error)
 	OperatingCashFlow() (float64, error)

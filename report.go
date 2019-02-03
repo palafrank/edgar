@@ -46,6 +46,7 @@ type bsData struct {
 	Deferred      float64 `json:"Deferred revenue" required:"false" entity:"Money" bit:"3"`
 	Retained      float64 `json:"Retained Earnings" required:"true" entity:"Money" bit:"4"`
 	Equity        float64 `json:"Total Shareholder Equity" required:"true" entity:"Money" bit:"5"`
+	CAssets       float64 `json:"Current Assets" required:"true" entity:"Money" bit:"6"`
 }
 
 func newFinancialReport(docType FilingType) *financialReport {

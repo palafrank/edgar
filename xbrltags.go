@@ -16,6 +16,8 @@ var (
 		"RetainedEarningsAccumulatedDeficit":                    finDataRetained,
 		"defref_us-gaap_LiabilitiesCurrent":                     finDataCLiab,
 		"LiabilitiesCurrent":                                    finDataCLiab,
+		"defref_us-gaap_AssetsCurrent":                          finDataCAssets,
+		"AssetsCurrent":                                         finDataCAssets,
 		"defref_us-gaap_LongTermDebtNoncurrent":                 finDataLDebt,
 		"LongTermDebtNoncurrent":                                finDataLDebt,
 		"defref_us-gaap_LongTermDebtAndCapitalLeaseObligations": finDataLDebt,

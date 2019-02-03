@@ -23,13 +23,14 @@
                         "Dividend Per Share": 0.72
                     },
                     "Balance Sheet Information": {
-                        "Collected Data": 55,
+                        "Collected Data": 119,
                         "Long-Term debt": 29970800000,
                         "Short-Term debt": 2797900000,
                         "Current Liabilities": 7874700000,
                         "Deferred revenue": 0,
                         "Retained Earnings": 18342500000,
-                        "Total Shareholder Equity": 76192700000
+                        "Total Shareholder Equity": 76192700000,
+                        "Current Assets": 17857900000
                     },
                     "Cash Flow Information": {
                         "Collected Data": 7,
@@ -61,13 +62,14 @@
                         "Dividend Per Share": 3.64
                     },
                     "Balance Sheet Information": {
-                        "Collected Data": 55,
+                        "Collected Data": 119,
                         "Long-Term debt": 25843500000,
                         "Short-Term debt": 4231800000,
                         "Current Liabilities": 9848100000,
                         "Deferred revenue": 0,
                         "Retained Earnings": 12957200000,
-                        "Total Shareholder Equity": 73821100000
+                        "Total Shareholder Equity": 73821100000,
+                        "Current Assets": 11376700000
                     },
                     "Cash Flow Information": {
                         "Collected Data": 7,

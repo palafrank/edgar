@@ -756,12 +756,15 @@ func TestLivePSXParsing(t *testing.T) {
 				t.Error("Failed to get filing " + val.String())
 			}
 			ret := fs.CollectedData()
-			if len(ret) != 18 {
+			if len(ret) != 19 {
 				t.Error("Incorrect number of data points collected ", len(ret))
 			}
 			// This interest is being tested because this number usually comes from
 			// the CF statement but in PSX cases comes from the income statement
 			if val, _ := fs.Interest(); val != 438000000 {
+				t.Error("Incorrect interest collected from the income statement ", val)
+			}
+			if val, _ := fs.CurrentAssets(); val != 14390000000 {
 				t.Error("Incorrect interest collected from the income statement ", val)
 			}
 		}
