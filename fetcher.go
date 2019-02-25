@@ -25,7 +25,7 @@ func (f *fetcher) CompanyFolder(
 		}
 		f.folders[ticker] = comp
 		for _, t := range fileTypes {
-			comp.FilingLinks[t] = getFilingLinks(ticker, t)
+			comp.addFilingLinks(t, getFilingLinks(ticker, t))
 		}
 	}
 	return comp, nil
@@ -54,7 +54,7 @@ func (f *fetcher) CreateFolder(
 	f.folders[c.Ticker()] = c
 	// Get all the latest links for all the filing types
 	for _, key := range fileTypes {
-		c.FilingLinks[key] = getFilingLinks(c.Ticker(), key)
+		c.addFilingLinks(key, getFilingLinks(c.Ticker(), key))
 	}
 	return c, nil
 }

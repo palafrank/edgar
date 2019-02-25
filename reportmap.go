@@ -114,7 +114,6 @@ loop:
 					docType := lookupDocType(token.String(), menuCategory)
 					if docType != filingDocIg {
 						//Get the report number
-						//fmt.Println("Found a wanted doc ", docType, token.String(), reportNum)
 						_, ok := retData[docType]
 						if !ok {
 							retData[docType] = filingLinks[reportNum-1]

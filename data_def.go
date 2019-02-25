@@ -2,7 +2,6 @@ package edgar
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"reflect"
 )
@@ -81,28 +80,6 @@ var (
 		filingDocEN:  true,
 	}
 )
-
-type date struct {
-	day   int
-	month int
-	year  int
-}
-
-func (d date) Day() int {
-	return d.day
-}
-
-func (d date) Month() int {
-	return d.month
-}
-
-func (d date) Year() int {
-	return d.year
-}
-
-func (d date) String() string {
-	return fmt.Sprintf("%04d-%02d-%02d", d.year, d.month, d.day)
-}
 
 func generateData(fin *financialReport, name string) float64 {
 	log.Println("Generating data: ", name)

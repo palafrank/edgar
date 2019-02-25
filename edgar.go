@@ -2,6 +2,7 @@ package edgar
 
 import (
 	"io"
+	"time"
 )
 
 type FilingType string
@@ -12,6 +13,7 @@ var (
 	FilingType10K FilingType = "10-K"
 )
 
+/*
 // Date defines an interface for filing date
 // This is mainly to validate the date being passed into the package.
 type Date interface {
@@ -20,11 +22,11 @@ type Date interface {
 	Year() int
 	String() string
 }
-
+*/
 // Filing interface for fetching financial data
 type Filing interface {
 	Ticker() string
-	FiledOn() string
+	FiledOn() time.Time
 	Type() (FilingType, error)
 	ShareCount() (float64, error)
 	Revenue() (float64, error)
@@ -56,10 +58,13 @@ type CompanyFolder interface {
 	Ticker() string
 
 	//AvailableFilings gets the list of dates of available filings
-	AvailableFilings(FilingType) []Date
+	AvailableFilings(FilingType) []time.Time
 
 	// Filing gets a filing given a filing type and date of filing.
-	Filing(FilingType, Date) (Filing, error)
+	Filing(FilingType, time.Time) (Filing, error)
+
+	// Filings gets a list of filings. Parallel fetch.
+	Filings(FilingType, ...time.Time) ([]Filing, error)
 
 	// SaveFolder persists the data from the company folder into a writer
 	// provided by the user. This stored info can be presented back to

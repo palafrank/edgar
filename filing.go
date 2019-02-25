@@ -5,11 +5,12 @@ import (
 	"errors"
 	"log"
 	"reflect"
+	"time"
 )
 
 type filing struct {
 	Company string           `json:"Company"`
-	Date    string           `json:"Report date"`
+	Date    Timestamp        `json:"Report date"`
 	FinData *financialReport `json:"Financial Data"`
 }
 
@@ -25,16 +26,12 @@ func (f *filing) Ticker() string {
 	return f.Company
 }
 
-func (f *filing) FiledOn() string {
-	return getDate(f.Date).String()
-}
-
-func (f *filing) Month() int {
-	return getMonth(f.Date)
+func (f *filing) FiledOn() time.Time {
+	return time.Time(f.Date)
 }
 
 func (f *filing) filingErrorString() string {
-	return "Filing information has not been collected for " + f.FiledOn() + " "
+	return "Filing information has not been collected for " + getDateString(f.FiledOn()) + " "
 }
 
 func (f *filing) Type() (FilingType, error) {

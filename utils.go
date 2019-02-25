@@ -78,41 +78,6 @@ func filingScale(strs []string, t filingDocType) map[scaleEntity]scaleFactor {
 	return ret
 }
 
-func getYear(date string) int {
-	strs := strings.Split(date, "-")
-	if len(strs) != 3 {
-		return 0
-	}
-	year, _ := strconv.Atoi(strs[0])
-	return year
-}
-
-func getMonth(date string) int {
-	strs := strings.Split(date, "-")
-	if len(strs) != 3 {
-		return 0
-	}
-	year, _ := strconv.Atoi(strs[1])
-	return year
-}
-
-func getDay(date string) int {
-	strs := strings.Split(date, "-")
-	if len(strs) != 3 {
-		return 0
-	}
-	year, _ := strconv.Atoi(strs[2])
-	return year
-}
-
-func getDate(dateStr string) Date {
-	var d date
-	d.year = getYear(dateStr)
-	d.month = getMonth(dateStr)
-	d.day = getDay(dateStr)
-	return d
-}
-
 func getFinDataXBRLTag(onclick string) (string, error) {
 	if strings.Contains(onclick, "showAR") {
 		d := strings.Split(onclick, `'`)

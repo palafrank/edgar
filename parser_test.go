@@ -527,7 +527,7 @@ func TestFinReportMarshal(t *testing.T) {
 
 	var file filing
 
-	file.Date = "2017-02-1"
+	file.Date = getDate("2017-02-1")
 	file.Company = "AAPL"
 	file.FinData = newFinancialReport(FilingType10K)
 
@@ -562,7 +562,7 @@ func TestFinReportMarshal(t *testing.T) {
 	//There is an extra byte at the end of the save file that needs to be
 	//eliminated to avoid a mismatch
 	if str1 != string(b[:len(b)-1]) {
-		t.Error("Marshaled data doesnot match reference JSON\n", str)
+		t.Error("Marshaled data doesnot match reference JSON\n", str1)
 	}
 }
 
@@ -610,7 +610,6 @@ func TestFolderWriter(t *testing.T) {
 	//eliminated to avoid a mismatch
 	if c.String() != string(b[:len(b)-1]) {
 		t.Error("Created folder does not match sample stored folder ", c.String())
-		fmt.Println(len(c.String()), len(string(b)))
 	}
 }
 
@@ -695,6 +694,92 @@ func TestLiveMSFTParsing(t *testing.T) {
 				if val, _ := fs.Dividend(); val != 9882000000 {
 					t.Error("Incorrect dividend per share-2018: ", val)
 				}
+			}
+		}
+	}
+}
+
+func TestLiveMSFTParallel(t *testing.T) {
+	fmt.Println("*** Running a live MSFT parallel test ***")
+	fetcher := NewFilingFetcher()
+	c, err := fetcher.CompanyFolder("MSFT", FilingType10K)
+	if err != nil {
+		t.Error(err)
+	}
+	files := c.AvailableFilings(FilingType10K)
+	filings, err := c.Filings(FilingType10K, files...)
+	if err != nil {
+		t.Error("Error running parallel processing: ", err.Error())
+		return
+	}
+	for _, fs := range filings {
+
+		if strings.Contains(getDateString(fs.FiledOn()), "2018") {
+			if val, _ := fs.LongTermDebt(); val != 72242000000 {
+				t.Error("Incorrect Long term debt-2018: ", val)
+			}
+			if val, _ := fs.RetainedEarnings(); val != 13682000000 {
+				t.Error("Incorrect retained earnings-2018: ", val)
+			}
+			if val, _ := fs.ShareCount(); val != 7668217316 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.OperatingCashFlow(); val != 43884000000 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.DividendPerShare(); val != 1.68 {
+				t.Error("Incorrect dividend per share-2018: ", val)
+			}
+			if val, _ := fs.Dividend(); val != 12699000000 {
+				t.Error("Incorrect dividend per share-2018: ", val)
+			}
+
+		}
+		if strings.Contains(getDateString(fs.FiledOn()), "2012") {
+
+			if val, _ := fs.LongTermDebt(); val != 10713000000 {
+				t.Error("Incorrect Long term debt-2018: ", val)
+			}
+			if val, _ := fs.RetainedEarnings(); val != 566000000 {
+				t.Error("Incorrect retained earnings-2018: ", val)
+			}
+			if val, _ := fs.ShareCount(); val != 8383396575 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.OperatingCashFlow(); val != 31626000000 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.CapitalExpenditure(); val != -2305000000 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.DividendPerShare(); val != 0.8 {
+				t.Error("Incorrect dividend per share-2011: ", val)
+			}
+			if val, _ := fs.Dividend(); val != 6385000000 {
+				t.Error("Incorrect dividend per share-2018: ", val)
+			}
+		}
+		if strings.Contains(getDateString(fs.FiledOn()), "2015") {
+			if val, _ := fs.LongTermDebt(); val != 27808000000 {
+				t.Error("Incorrect Long term debt-2018: ", val)
+			}
+			if val, _ := fs.RetainedEarnings(); val != 9096000000 {
+				t.Error("Incorrect retained earnings-2018: ", val)
+			}
+			if val, _ := fs.ShareCount(); val != 7997980969 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.OperatingCashFlow(); val != 29080000000 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.CapitalExpenditure(); val != -5944000000 {
+				t.Error("Incorrect share count-2018: ", val)
+			}
+			if val, _ := fs.DividendPerShare(); val != 1.24 {
+				t.Error("Incorrect dividend per share-2015: ", val)
+			}
+			if val, _ := fs.Dividend(); val != 9882000000 {
+				t.Error("Incorrect dividend per share-2018: ", val)
 			}
 		}
 	}
