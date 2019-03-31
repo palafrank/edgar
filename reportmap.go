@@ -9,15 +9,37 @@ import (
 	"golang.org/x/net/html"
 )
 
-func lookupDocType(data string, menu string) filingDocType {
+type menuCat string
+
+var (
+	menuCatCover   menuCat = "Cover"
+	menuCatFS      menuCat = "Financial statements"
+	menuCatNFS     menuCat = "Notes to Financial statements"
+	menuCatUnknown menuCat = "Unknown"
+)
+
+func getMenuCategory(data string) menuCat {
+	data = strings.ToLower(data)
+	if strings.Contains(data, "financial") && strings.Contains(data, "statement") {
+		if strings.Contains(data, "note") {
+			return menuCatNFS
+		}
+		return menuCatFS
+	} else if strings.Contains(data, "cover") {
+		return menuCatCover
+	}
+	return menuCatUnknown
+}
+
+func lookupDocType(data string, menu menuCat) filingDocType {
 
 	data = strings.ToUpper(data)
 
-	if menu == "menu_cat1" && strings.Contains(data, "DOCUMENT") &&
+	if menu == menuCatCover && strings.Contains(data, "DOCUMENT") &&
 		strings.Contains(data, "ENTITY") {
 		//Entity document
 		return filingDocEN
-	} else if menu == "menu_cat2" {
+	} else if menu == menuCatFS {
 		if strings.Contains(data, "PARENTHETICAL") {
 			//skip this doc
 			return filingDocIg
@@ -42,7 +64,7 @@ func lookupDocType(data string, menu string) filingDocType {
 			//Cash flow statement
 			return filingDocCF
 		}
-	} else if menu == "menu_cat3" {
+	} else if menu == menuCatNFS {
 		// Notes to Financial statements
 		if strings.Contains(data, "EARNINGS") && strings.Contains(data, "SHARE") {
 			return filingDocEPSNotes
@@ -91,7 +113,7 @@ func getMissingDocs(data map[filingDocType]string) string {
 
 func mapReports(page io.Reader, filingLinks []string) map[filingDocType]string {
 
-	menuCategory := ""
+	menuCategory := menuCatUnknown
 
 	retData := make(map[filingDocType]string)
 
@@ -121,8 +143,15 @@ loop:
 					}
 				} else if a.Key == "id" && strings.Contains(a.Val, "menu_cat") {
 					// Set the menu level
-					menuCategory = a.Val
-					if menuCategory == "menu_cat4" {
+					for !(token.Data == "a" && token.Type == html.EndTagToken) {
+						if token.Type == html.TextToken {
+							str := strings.TrimSpace(token.String())
+							menuCategory = getMenuCategory(str)
+						}
+						z.Next()
+						token = z.Token()
+					}
+					if menuCategory == menuCatUnknown {
 						//Gone too far. Menu category 4 is beyond notes of financial statements.
 						//Stop parsing
 						break loop

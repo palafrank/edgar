@@ -3,6 +3,7 @@ package edgar
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"sort"
@@ -24,6 +25,36 @@ func (c company) String() string {
 		log.Fatal("Error marshaling Company data")
 	}
 	return string(data)
+}
+
+func (c company) HTML(t FilingType) string {
+
+	fs, ok := c.Reports[t]
+	if !ok {
+		return ""
+	}
+
+	header := `<html><body><table border="1">`
+	title := fmt.Sprintf(`<h2>%s <br><br>Filed Data</h2>`, c.Company)
+	footer := `</table></body></html>`
+
+	trDoc := header + title + HTMLTableHeader()
+
+	var filings []*filing
+	for _, f := range fs {
+		filings = append(filings, f)
+	}
+
+	sort.Slice(filings, func(i, j int) bool {
+		return getDateString(filings[i].FiledOn()) < getDateString(filings[j].FiledOn())
+	})
+
+	for _, f := range filings {
+		data := f.ToHtmlTable()
+		trDoc += data
+	}
+	trDoc += footer
+	return trDoc
 }
 
 func newCompany(ticker string) *company {

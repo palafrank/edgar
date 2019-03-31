@@ -47,6 +47,10 @@ type bsData struct {
 	Retained      float64 `json:"Retained Earnings" required:"true" entity:"Money" bit:"4"`
 	Equity        float64 `json:"Total Shareholder Equity" required:"true" entity:"Money" bit:"5"`
 	CAssets       float64 `json:"Current Assets" required:"true" entity:"Money" bit:"6"`
+	Cash          float64 `json:"Cash" required:"true" entity:"Money" bit:"7"`
+	Securities    float64 `json:"Securities" required:"false" entity:"Money" bit:"8"`
+	Goodwill      float64 `json:"Goodwill" required:"false" entity:"Money" bit:"9"`
+	Intangibles   float64 `json:"Intangibles" required:"false" entity:"Money" bit:"10"`
 }
 
 func newFinancialReport(docType FilingType) *financialReport {

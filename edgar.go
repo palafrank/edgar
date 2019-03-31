@@ -48,6 +48,10 @@ type Filing interface {
 	WAShares() (float64, error)
 	DividendPerShare() (float64, error)
 	Interest() (float64, error)
+	Cash() (float64, error)
+	Securities() (float64, error)
+	Goodwill() (float64, error)
+	Intangibles() (float64, error)
 	CollectedData() []string
 }
 
@@ -74,6 +78,9 @@ type CompanyFolder interface {
 
 	// String is a dump routine to view the contents of the folder
 	String() string
+
+	// Returns a HTML tabulated form of the data
+	HTML(FilingType) string
 }
 
 // FilingFetcher fetches the filing requested
