@@ -901,10 +901,10 @@ func TestLiveCSCOParsing(t *testing.T) {
 				t.Error("Failed to get filing " + val.String())
 			}
 			if data, _ := fs.Cash(); data != 9799000000 {
-				t.Error("Incorrect cash collected from the BS statement ", val)
+				t.Error("Incorrect cash collected from the BS statement ", data)
 			}
 			if data, _ := fs.Goodwill(); data != 16998000000 {
-				t.Error("Incorrect Goodwill collected from the BS statement ", val)
+				t.Error("Incorrect Goodwill collected from the BS statement ", data)
 			}
 		}
 	}

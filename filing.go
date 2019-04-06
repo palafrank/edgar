@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"reflect"
-	"strconv"
 	"time"
 )
 
@@ -21,103 +20,6 @@ func (f filing) String() string {
 		log.Fatal("Error marshaling Filing data")
 	}
 	return string(data)
-}
-
-func HTMLTableHeader() string {
-	trOpen := `<tr>`
-	trClose := `</tr>`
-	trDataOpen := `<th>`
-	trDataClose := `</th>`
-
-	trData := trOpen
-
-	trData += trDataOpen + "Filed" + trDataClose
-	trData += trDataOpen + "Equity" + trDataClose
-	trData += trDataOpen + "Shares" + trDataClose
-	trData += trDataOpen + "Revenue" + trDataClose
-	trData += trDataOpen + "C of Rev" + trDataClose
-	trData += trDataOpen + "Ops Exp" + trDataClose
-	trData += trDataOpen + "Ops Inc" + trDataClose
-	trData += trDataOpen + "Net Inc" + trDataClose
-	trData += trDataOpen + "L Debt" + trDataClose
-	trData += trDataOpen + "S Debt" + trDataClose
-	trData += trDataOpen + "Cash" + trDataClose
-
-	trData += trClose
-
-	return trData
-}
-
-func (f filing) ToHtmlTable() string {
-	trOpen := `<tr>`
-	trClose := `</tr>`
-	trDataOpen := `<th>`
-	trDataClose := `</th>`
-	trData := ``
-
-	trData += trDataOpen + getDateString(f.FiledOn()) + trDataClose
-
-	if data, err := f.TotalEquity(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.ShareCount(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.Revenue(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.CostOfRevenue(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.OperatingExpense(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.OperatingIncome(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.NetIncome(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.LongTermDebt(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.ShortTermDebt(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	if data, err := f.Cash(); err == nil {
-		trData += trDataOpen + strconv.FormatFloat(data, 'f', 2, 64) + trDataClose
-	} else {
-		trData += trDataOpen + "INVALID" + trDataClose
-	}
-
-	return trOpen + trData + trClose
 }
 
 func (f *filing) Ticker() string {

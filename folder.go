@@ -1,9 +1,10 @@
 package edgar
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"sort"
@@ -27,34 +28,15 @@ func (c company) String() string {
 	return string(data)
 }
 
-func (c company) HTML(t FilingType) string {
-
-	fs, ok := c.Reports[t]
-	if !ok {
-		return ""
+func (c company) HTML(ty FilingType) string {
+	by := bytes.NewBuffer(nil)
+	t := template.New("tables")
+	t, err := t.Parse(tableTemplate)
+	if err != nil {
+		panic(err.Error())
 	}
-
-	header := `<html><body><table border="1">`
-	title := fmt.Sprintf(`<h2>%s <br><br>Filed Data</h2>`, c.Company)
-	footer := `</table></body></html>`
-
-	trDoc := header + title + HTMLTableHeader()
-
-	var filings []*filing
-	for _, f := range fs {
-		filings = append(filings, f)
-	}
-
-	sort.Slice(filings, func(i, j int) bool {
-		return getDateString(filings[i].FiledOn()) < getDateString(filings[j].FiledOn())
-	})
-
-	for _, f := range filings {
-		data := f.ToHtmlTable()
-		trDoc += data
-	}
-	trDoc += footer
-	return trDoc
+	t.Execute(by, c.Reports[ty])
+	return string(by.Bytes())
 }
 
 func newCompany(ticker string) *company {
