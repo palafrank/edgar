@@ -3,40 +3,41 @@ package edgar
 var tableTemplate = `
 <html>
 <body>
+  <h4>Filed Data</h4>
   <table border="1">
     <tr>
       <th>
-        "Filed"
+        Filed
       </th>
       <th>
-        "Equity"
+        Equity
       </th>
       <th>
-        "Shares"
+        Shares
       </th>
       <th>
-        "Revenue"
+        Revenue
       </th>
       <th>
-        "CoRev"
+        CoRev
       </th>
       <th>
-        "OpsExp"
+        OpsExp
       </th>
       <th>
-        "OpsInc"
+        OpsInc
       </th>
       <th>
-        "NetInc"
+        NetInc
       </th>
       <th>
-        "LDebt"
+        LDebt
       </th>
       <th>
-        "SDebt"
+        SDebt
       </th>
       <th>
-        "Cash"
+        Cash
       </th>
     </tr>
     {{ range $date, $report := . }}

@@ -129,7 +129,7 @@ func TestFilingQuery(t *testing.T) {
 
 func TestParseCIKAndDocID(t *testing.T) {
 	str1 := "/cgi-bin/viewer?action=view&cik=320193&accession_number=0001193125-15-259935&xbrl_type=v"
-	s1, s2 := parseCikAndDocId(str1)
+	s1, s2 := parseCikAndDocID(str1)
 	if s1 != "320193" || s2 != "000119312515259935" {
 		t.Error("Error in parsing CIK and doc id ", s1, s2)
 	}
@@ -504,7 +504,7 @@ func TestBS1Parser(t *testing.T) {
 			t.Error("Incorrect intangibles ", data)
 		}
 		if data, _ := file.Cash(); data != 250000000 {
-			t.Error("Incorrect intangibles ", data)
+			t.Error("Incorrect cash ", data)
 		}
 	}
 }

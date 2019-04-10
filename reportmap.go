@@ -83,7 +83,7 @@ func getMissingDocs(data map[filingDocType]string) string {
 		return ""
 	}
 	var diff []filingDocType
-	for key, _ := range requiredDocTypes {
+	for key := range requiredDocTypes {
 		if _, ok := data[key]; !ok {
 			switch key {
 			case filingDocOps:

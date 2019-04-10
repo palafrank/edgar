@@ -7,16 +7,19 @@ import (
 	"time"
 )
 
+// Timestamp is the edgar package representation of time.Time
 type Timestamp time.Time
 
 func (t Timestamp) String() string {
 	return time.Time(t).Format("2006-01-02")
 }
 
+// MarshalJSON marshals Timestamp in a specific format for JSON marsahlling
 func (t Timestamp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t.String())
 }
 
+// UnmarshalJSON unmarshals Timestamp in a specific format for JSON unmarshal
 func (t *Timestamp) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {

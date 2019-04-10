@@ -122,7 +122,7 @@ func getFinDataTypeFromXBRLTag(key string) finDataType {
 		// as defref_msft_XXX
 		splits := strings.Split(key, "_")
 		if len(splits) == 3 {
-			data, ok := xbrlTags[splits[2]]
+			data, ok = xbrlTags[splits[2]]
 			if ok {
 				return data
 			}

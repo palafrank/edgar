@@ -14,7 +14,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-func parseCikAndDocId(url string) (string, string) {
+func parseCikAndDocID(url string) (string, string) {
 	var s1 string
 	var d1, d2, d3, d4 int
 	fmt.Sscanf(url, "/cgi-bin/viewer?action=view&cik=%d&accession_number=%d-%d-%d%s", &d1, &d2, &d3, &d4, &s1)
@@ -97,7 +97,9 @@ func filingPageParser(page io.Reader, fileType FilingType) map[filingDocType]str
 
 			//cnt-1 because we skip the 'all' in the list
 			for i := 0; i < cnt-1; i++ {
-				s, e = r.ReadString('\n')
+				if s, e = r.ReadString('\n'); e != nil {
+					panic(e.Error())
+				}
 				s1 := strings.Split(s, " = ")
 				s2 := strings.Split(s1[1], ";")
 				s3 := strings.Trim(s2[0], "\"")
@@ -332,7 +334,7 @@ func finReportParser(page io.Reader, fr *financialReport, t filingDocType) (*fin
 			if finType != finDataUnknown {
 				for _, str := range data[1:] {
 					if len(str) > 0 {
-						if setData(fr, finType, str, scales) == nil {
+						if setData(fr, finType, str, scales, t) == nil {
 							break
 						}
 					}
@@ -355,7 +357,7 @@ func parseAllReports(cik string, an string) []int {
 	for err == nil {
 		var num int
 		if len(data) > 0 && strings.Contains(data[0], "R") {
-			_, err := fmt.Sscanf(data[0], "R%d.htm", &num)
+			_, err = fmt.Sscanf(data[0], "R%d.htm", &num)
 			if err == nil {
 				reports = append(reports, num)
 			}

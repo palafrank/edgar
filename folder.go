@@ -14,13 +14,13 @@ import (
 
 type company struct {
 	sync.Mutex
-	Company     string                            `json:"Company"`
-	CIK         string                            `json:"-"`
+	Company     string `json:"Company"`
+	cik         string
 	FilingLinks map[FilingType]map[string]string  `json:"-"`
 	Reports     map[FilingType]map[string]*filing `json:"Financial Reports"`
 }
 
-func (c company) String() string {
+func (c *company) String() string {
 	data, err := json.MarshalIndent(c, "", "    ")
 	if err != nil {
 		log.Fatal("Error marshaling Company data")
@@ -28,7 +28,7 @@ func (c company) String() string {
 	return string(data)
 }
 
-func (c company) HTML(ty FilingType) string {
+func (c *company) HTML(ty FilingType) string {
 	by := bytes.NewBuffer(nil)
 	t := template.New("tables")
 	t, err := t.Parse(tableTemplate)
@@ -42,7 +42,7 @@ func (c company) HTML(ty FilingType) string {
 func newCompany(ticker string) *company {
 	return &company{
 		Company:     ticker,
-		CIK:         getCompanyCIK(ticker),
+		cik:         getCompanyCIK(ticker),
 		FilingLinks: make(map[FilingType]map[string]string),
 		Reports:     make(map[FilingType]map[string]*filing),
 	}
@@ -60,7 +60,7 @@ func (c *company) Filing(fileType FilingType, ts time.Time) (Filing, error) {
 			log.Println(c.AvailableFilings(fileType))
 			return nil, errors.New("No filing available for given date " + getDateString(ts))
 		}
-		file := new(filing)
+		file = new(filing)
 		var err error
 		file.FinData, err = getFinancialData(link, fileType)
 		if file.FinData != nil {
@@ -71,9 +71,8 @@ func (c *company) Filing(fileType FilingType, ts time.Time) (Filing, error) {
 				log.Println(file.Company + "-Filed on: " + getDateString(ts) + ":" + err.Error())
 			}
 			return file, nil
-		} else {
-			return nil, err
 		}
+		return nil, err
 	}
 	return file, nil
 }
@@ -135,7 +134,7 @@ func (c *company) AvailableFilings(filingType FilingType) []time.Time {
 	var d []time.Time
 	c.Lock()
 	links := c.FilingLinks[filingType]
-	for key, _ := range links {
+	for key := range links {
 		d = append(d, time.Time(getDate(key)))
 	}
 	c.Unlock()
@@ -143,6 +142,10 @@ func (c *company) AvailableFilings(filingType FilingType) []time.Time {
 		return d[i].After(d[j])
 	})
 	return d
+}
+
+func (c *company) CIK() string {
+	return c.cik
 }
 
 func (c *company) getFilingLink(fileType FilingType, ts time.Time) (string, bool) {

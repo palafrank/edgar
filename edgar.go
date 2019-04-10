@@ -5,25 +5,16 @@ import (
 	"time"
 )
 
+// FilingType is the type definition of various filing types
 type FilingType string
 
-var (
-	//Filing types
-	FilingType10Q FilingType = "10-Q"
-	FilingType10K FilingType = "10-K"
-)
+// FilingType10Q is a 10-Q quarterly filing of a company with the SEC
+const FilingType10Q FilingType = "10-Q"
 
-/*
-// Date defines an interface for filing date
-// This is mainly to validate the date being passed into the package.
-type Date interface {
-	Day() int
-	Month() int
-	Year() int
-	String() string
-}
-*/
-// Filing interface for fetching financial data
+// FilingType10K is a 10-K annual filing of a company with the SEC
+const FilingType10K FilingType = "10-K"
+
+// Filing interface for fetching financial data from a collected filing
 type Filing interface {
 	Ticker() string
 	FiledOn() time.Time
@@ -55,13 +46,16 @@ type Filing interface {
 	CollectedData() []string
 }
 
-// Company interface used to get information and filing about a company
+// CompanyFolder interface used to get filing information about a company
 type CompanyFolder interface {
 
-	// GetTicker gets the ticker of this company
+	// Ticker gets the ticker of this company
 	Ticker() string
 
-	//AvailableFilings gets the list of dates of available filings
+	// CIK gets the CIK assigned to the company
+	CIK() string
+
+	// AvailableFilings gets the list of dates of available filings
 	AvailableFilings(FilingType) []time.Time
 
 	// Filing gets a filing given a filing type and date of filing.
@@ -86,7 +80,7 @@ type CompanyFolder interface {
 // FilingFetcher fetches the filing requested
 type FilingFetcher interface {
 
-	// GetFilings creates a folder for the company with a list of
+	// CompanyFolder creates a folder for the company with a list of
 	// available filings. No financial data is pulled and the user
 	// of the interface can selectively pull financial data into the
 	// folder using the CompanyFolder interface

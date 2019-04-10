@@ -20,7 +20,7 @@ func (f *fetcher) CompanyFolder(
 	comp, ok := f.folders[ticker]
 	if !ok {
 		comp = newCompany(ticker)
-		if comp.CIK == "" {
+		if comp.cik == "" {
 			return nil, errors.New("Could not find the CIK for the given ticker")
 		}
 		f.folders[ticker] = comp
@@ -46,8 +46,8 @@ func (f *fetcher) CreateFolder(
 		return nil, err
 	}
 	// Populate the CIK
-	c.CIK = getCompanyCIK(c.Ticker())
-	if c.CIK == "" {
+	c.cik = getCompanyCIK(c.Ticker())
+	if c.cik == "" {
 		return nil, errors.New("Could not find the CIK for the given ticker")
 	}
 
@@ -59,6 +59,7 @@ func (f *fetcher) CreateFolder(
 	return c, nil
 }
 
+// NewFilingFetcher creates a new empty filing fetcher
 func NewFilingFetcher() FilingFetcher {
 	return &fetcher{folders: make(map[string]*company)}
 }

@@ -24,7 +24,7 @@ type scaleInfo struct {
 var (
 
 	// Threshold year is the earliest year for which we will collect data
-	thresholdYear int = 2012
+	thresholdYear = 2012
 
 	//Document types
 	filingDocOps      filingDocType = "Operations"
@@ -39,9 +39,9 @@ var (
 
 	//Scale of the money in the filing
 	scaleNone     scaleFactor = 1
-	scaleThousand scaleFactor = 1000 * scaleNone
-	scaleMillion  scaleFactor = 1000 * scaleThousand
-	scaleBillion  scaleFactor = 1000 * scaleMillion
+	scaleThousand             = 1000 * scaleNone
+	scaleMillion              = 1000 * scaleThousand
+	scaleBillion              = 1000 * scaleMillion
 
 	// Scaling entities in filings
 	scaleEntityShares   scaleEntity = "Shares"
@@ -82,6 +82,11 @@ var (
 		filingDocBS:  true,
 		filingDocCF:  true,
 		filingDocEN:  true,
+	}
+
+	// Strict Data to doc mapping
+	strictDataToDocMap = map[finDataType]filingDocType{
+		finDataCash: filingDocBS,
 	}
 )
 
@@ -178,7 +183,7 @@ func validateFinancialReport(fin *financialReport) error {
 func setData(fr *financialReport,
 	finType finDataType,
 	val string,
-	scale map[scaleEntity]scaleFactor) error {
+	scale map[scaleEntity]scaleFactor, t filingDocType) error {
 
 	setter := func(data interface{},
 		finType finDataType,
@@ -194,6 +199,7 @@ func setData(fr *financialReport,
 		for i := 0; i < t.NumField(); i++ {
 			tag, ok := t.Field(i).Tag.Lookup("json")
 			if ok && string(finType) == tag {
+				//override, _ := t.Field(i).Tag.Lookup("override")
 				if v.Field(i).Float() == 0 {
 					num, err := normalizeNumber(val)
 					if err != nil {
@@ -214,7 +220,16 @@ func setData(fr *financialReport,
 		}
 		return errors.New("Could not find the field to set: " + string(finType))
 	}
+
 	var err error
+
+	// If there is a strict mapping collect only for the mapped document
+	if fileType, ok := strictDataToDocMap[finType]; ok {
+		if t != fileType {
+			return nil
+		}
+	}
+
 	if err = setter(fr.Entity, finType, val, scale); err == nil {
 		return nil
 	}
