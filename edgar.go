@@ -72,9 +72,6 @@ type CompanyFolder interface {
 
 	// String is a dump routine to view the contents of the folder
 	String() string
-
-	// Returns a HTML tabulated form of the data
-	HTML(FilingType) string
 }
 
 // FilingFetcher fetches the filing requested

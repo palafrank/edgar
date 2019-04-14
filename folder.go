@@ -1,10 +1,8 @@
 package edgar
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
-	"html/template"
 	"io"
 	"log"
 	"sort"
@@ -26,17 +24,6 @@ func (c *company) String() string {
 		log.Fatal("Error marshaling Company data")
 	}
 	return string(data)
-}
-
-func (c *company) HTML(ty FilingType) string {
-	by := bytes.NewBuffer(nil)
-	t := template.New("tables")
-	t, err := t.Parse(tableTemplate)
-	if err != nil {
-		panic(err.Error())
-	}
-	t.Execute(by, c.Reports[ty])
-	return string(by.Bytes())
 }
 
 func newCompany(ticker string) *company {
