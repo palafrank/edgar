@@ -51,6 +51,8 @@ type bsData struct {
 	Securities    float64 `json:"Securities" required:"false" entity:"Money" bit:"8"`
 	Goodwill      float64 `json:"Goodwill" required:"false" entity:"Money" bit:"9"`
 	Intangibles   float64 `json:"Intangibles" required:"false" entity:"Money" bit:"10"`
+	Assets        float64 `json:"Total Assets" required:"true" entity:"Money" bit:"11"`
+	Liab          float64 `json:"Total Liabilities" required:"true" entity:"Money" bit:"12"`
 }
 
 func newFinancialReport(docType FilingType) *financialReport {

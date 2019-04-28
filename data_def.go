@@ -62,6 +62,8 @@ var (
 	finDataSDebt             finDataType = "Short-Term debt"
 	finDataCLiab             finDataType = "Current Liabilities"
 	finDataCAssets           finDataType = "Current Assets"
+	finDataAssets            finDataType = "Total Assets"
+	finDataLiab              finDataType = "Total Liabilities"
 	finDataCash              finDataType = "Cash"
 	finDataGoodwill          finDataType = "Goodwill"
 	finDataIntangible        finDataType = "Intangibles"

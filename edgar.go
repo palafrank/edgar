@@ -43,6 +43,8 @@ type Filing interface {
 	Securities() (float64, error)
 	Goodwill() (float64, error)
 	Intangibles() (float64, error)
+	Assets() (float64, error)
+	Liabilities() (float64, error)
 	CollectedData() []string
 }
 

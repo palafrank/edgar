@@ -258,6 +258,24 @@ func (f *filing) Intangibles() (float64, error) {
 	return 0, errors.New(f.filingErrorString() + "Intangibles")
 }
 
+func (f *filing) Assets() (float64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		if isCollectedDataSet(f.FinData.Bs, "Assets") {
+			return f.FinData.Bs.Assets, nil
+		}
+	}
+	return 0, errors.New(f.filingErrorString() + "Total Assets")
+}
+
+func (f *filing) Liabilities() (float64, error) {
+	if f.FinData != nil && f.FinData.Bs != nil {
+		if isCollectedDataSet(f.FinData.Bs, "Liab") {
+			return f.FinData.Bs.Liab, nil
+		}
+	}
+	return 0, errors.New(f.filingErrorString() + "Total Liabilities")
+}
+
 func (f *filing) CollectedData() []string {
 
 	eval := func(data interface{}) []string {

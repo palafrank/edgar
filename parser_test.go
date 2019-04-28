@@ -466,6 +466,13 @@ func TestBSParser(t *testing.T) {
 		if data, _ := file.Cash(); data != 31971000000 {
 			t.Error("Incorrect cash from balance sheet value parsed ", data)
 		}
+		if data, _ := file.Liabilities(); data != 234248000000 {
+			t.Error("Incorrect total liabilities from balance sheet value parsed ", data)
+		}
+		if data, _ := file.Assets(); data != 349197000000 {
+			t.Error("Incorrect total assets from balance sheet value parsed ", data)
+		}
+
 	}
 }
 
@@ -506,6 +513,12 @@ func TestBS1Parser(t *testing.T) {
 		if data, _ := file.Cash(); data != 250000000 {
 			t.Error("Incorrect cash ", data)
 		}
+		if data, _ := file.Liabilities(); data != 24193600000 {
+			t.Error("Incorrect total liabilities from balance sheet value parsed ", data)
+		}
+		if data, _ := file.Assets(); data != 52529100000 {
+			t.Error("Incorrect total assets from balance sheet value parsed ", data)
+		}
 	}
 }
 
@@ -526,6 +539,12 @@ func Test10KBSParser(t *testing.T) {
 		}
 		if data, _ := file.RetainedEarnings(); data != 92284000000 {
 			t.Error("Incorrect retained earningd from balance sheet value parsed")
+		}
+		if data, _ := file.Liabilities(); data != 171124000000 {
+			t.Error("Incorrect total liabilities from balance sheet value parsed ", data)
+		}
+		if data, _ := file.Assets(); data != 290479000000 {
+			t.Error("Incorrect total assets from balance sheet value parsed ", data)
 		}
 	}
 }
@@ -852,7 +871,7 @@ func TestLivePSXParsing(t *testing.T) {
 				t.Error("Failed to get filing " + val.String())
 			}
 			ret := fs.CollectedData()
-			if len(ret) != 22 {
+			if len(ret) != 24 {
 				t.Error("Incorrect number of data points collected ", len(ret))
 			}
 			// This interest is being tested because this number usually comes from
